@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bitácora CMT Ituango — App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    color-scheme: light;
+    --page:#eef2f6; --surface:#fbfcfd; --surface-2:#ffffff;
+    --ink:#0e1420; --ink-2:#4c5566; --ink-muted:#8c93a3;
+    --hairline:#dce1e8; --hairline-strong:#c3cad6;
+    --accent:#009653; --accent-ink:#ffffff; --accent-wash:#e1f5ea;
+    --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b; --critical-text:#a92c2c;
+    --shadow: 0 1px 2px rgba(14,20,32,0.06), 0 8px 24px -12px rgba(14,20,32,0.18);
+    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7;
+    --rel-alta:#d03b3b; --rel-media:#fab219; --rel-baja:#0ca30c;
+    --page-tint: rgba(238,242,246,.86);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --page:#0a0d13; --surface:#121722; --surface-2:#161d2b;
+      --ink:#f3f5f8; --ink-2:#aeb6c4; --ink-muted:#6e7686;
+      --hairline:#232b3a; --hairline-strong:#2f3849;
+      --accent:#3ddb8f; --accent-ink:#06291a; --accent-wash:#0f2e1d;
+      --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#e66767; --critical-text:#f0a0a0;
+      --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 12px 32px -14px rgba(0,0,0,0.6);
+      --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9;
+      --rel-alta:#e66767; --rel-media:#fab219; --rel-baja:#0ca30c;
+      --page-tint: rgba(10,13,19,.82);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --page:#0a0d13; --surface:#121722; --surface-2:#161d2b;
+    --ink:#f3f5f8; --ink-2:#aeb6c4; --ink-muted:#6e7686;
+    --hairline:#232b3a; --hairline-strong:#2f3849;
+    --accent:#3ddb8f; --accent-ink:#06291a; --accent-wash:#0f2e1d;
+    --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#e66767; --critical-text:#f0a0a0;
+    --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 12px 32px -14px rgba(0,0,0,0.6);
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9;
+    --rel-alta:#e66767; --rel-media:#fab219; --rel-baja:#0ca30c;
+    --page-tint: rgba(10,13,19,.82);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{ background:var(--page); }
+  body{
+    margin:0; color:var(--ink); font-family:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; padding:0 20px;
+    background-color:var(--page);
+    background-image: linear-gradient(var(--page-tint), var(--page-tint)), url('fondo-marca-agua.jpg');
+    background-repeat: no-repeat, no-repeat;
+    background-position: center, center;
+    background-size: auto, cover;
+    background-attachment: fixed, fixed;
+  }
+  .wrap{ max-width:1180px; margin:0 auto; padding-block: 28px 64px; }
+  h1,h2,h3{ font-family:"IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif; text-wrap:balance; margin:0; }
+  .mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  a{ color: var(--accent); }
+  button{ font-family:inherit; }
+
+  .masthead{ display:flex; justify-content:space-between; align-items:flex-end; gap:24px; padding-block: 6px 22px; border-bottom:1px solid var(--hairline); flex-wrap:wrap; }
+  .masthead-brand{ display:flex; align-items:flex-start; gap:16px; }
+  .epm-logo{ height:34px; width:auto; flex:none; margin-top:3px; background:#fff; padding:4px 7px; border-radius:7px; box-shadow:var(--shadow); }
+  .masthead .eyebrow{ font-family:"IBM Plex Mono", monospace; font-size:11.5px; letter-spacing:.11em; text-transform:uppercase; color:var(--accent); display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .masthead .eyebrow .dot{ width:7px; height:7px; border-radius:50%; background:var(--good); box-shadow:0 0 0 3px color-mix(in srgb, var(--good) 22%, transparent); }
+  .masthead h1{ font-size:clamp(26px,3.4vw,34px); font-weight:700; letter-spacing:-.01em; }
+  .masthead .sub{ color:var(--ink-2); font-size:14.5px; margin-top:5px; }
+  .masthead .meta{ text-align:right; color:var(--ink-muted); font-size:12.5px; line-height:1.7; }
+  .masthead .meta b{ color:var(--ink-2); font-weight:500; }
+  .masthead .sync-btn{ display:inline-flex; gap:6px; align-items:center; }
+
+  .theme-switch{
+    display:inline-flex; align-items:center; gap:0; background:var(--surface-2); border:1px solid var(--hairline-strong);
+    border-radius:999px; padding:3px; cursor:pointer; position:relative; width:58px; height:28px; flex:none;
+  }
+  .theme-switch .ts-icon{ font-size:12px; width:22px; text-align:center; line-height:1; color:var(--ink-muted); z-index:1; }
+  .theme-switch .ts-knob{
+    position:absolute; left:3px; top:3px; width:22px; height:22px; border-radius:50%; background:var(--accent);
+    box-shadow:var(--shadow); transition:transform .18s ease;
+  }
+  .theme-switch[aria-checked="true"] .ts-knob{ transform:translateX(30px); }
+
+  .stats{ display:grid; grid-template-columns:repeat(6,1fr); gap:1px; background:var(--hairline); border:1px solid var(--hairline); border-radius:12px; overflow:hidden; margin-top:22px; box-shadow:var(--shadow); }
+  .stat{ background:var(--surface); padding:16px 16px; display:flex; flex-direction:column; gap:6px; min-width:0; }
+  .stat .label{ font-size:10.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-muted); }
+  .stat .value{ font-family:"IBM Plex Mono",monospace; font-size:24px; font-weight:600; letter-spacing:-.01em; }
+  .stat .value small{ font-size:13px; font-weight:500; color:var(--ink-2); }
+  .stat .foot{ font-size:11.5px; color:var(--ink-2); }
+  .stat .foot.critical{ color:var(--critical-text); }
+
+  .section-head{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin:40px 0 14px; flex-wrap:wrap;}
+  .section-head h2{ font-size:19px; font-weight:600; }
+  .section-head .note{ font-size:12.5px; color:var(--ink-muted); }
+
+  .panel{ background:var(--surface); border:1px solid var(--hairline); border-radius:12px; padding:20px 22px; box-shadow:var(--shadow); }
+  .panel h3{ font-size:14px; font-weight:600; color:var(--ink); }
+  .panel .panel-sub{ font-size:12px; color:var(--ink-muted); margin-top:2px; }
+  .grid-secondary{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:16px; }
+
+  .legend{ display:flex; flex-wrap:wrap; gap:12px 18px; margin-top:14px; padding-top:14px; border-top:1px solid var(--hairline); }
+  .legend-item{ display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--ink-2); }
+  .legend-swatch{ width:10px; height:10px; border-radius:2.5px; flex:none; }
+
+  .rank-row{ display:grid; grid-template-columns: 120px 1fr 40px; align-items:center; gap:10px; padding:5px 0; }
+  .rank-row .rname{ font-size:12.5px; color:var(--ink-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .rank-track{ height:14px; background:var(--hairline); border-radius:3px; overflow:hidden; }
+  .rank-fill{ height:100%; border-radius:3px; }
+  .rank-row .rval{ font-family:"IBM Plex Mono",monospace; font-size:12px; text-align:right; color:var(--ink-2); }
+
+  .viz-tooltip{ position:fixed; pointer-events:none; background:var(--ink); color:var(--page); font-size:12px; padding:7px 10px; border-radius:7px; line-height:1.5; z-index:900; box-shadow:0 8px 20px -6px rgba(0,0,0,.4); opacity:0; transform:translateY(2px); transition:opacity .1s ease; max-width:220px; }
+  .viz-tooltip.show{ opacity:1; }
+  .viz-tooltip .tt-title{ font-weight:600; font-family:"IBM Plex Mono",monospace; margin-bottom:2px; }
+  svg text{ font-family:"IBM Plex Mono", monospace; fill:var(--ink-muted); }
+  .bar-seg{ cursor:pointer; }
+  .axis-line{ stroke:var(--hairline-strong); stroke-width:1; }
+  .grid-line{ stroke:var(--hairline); stroke-width:1; }
+
+  /* ---- hitos timeline (zigzag, estilo mural EPM) ---- */
+  .ztl-wrap{ overflow-x:auto; padding:6px 4px 10px; }
+  .ztl-track{ display:flex; position:relative; min-width:max-content; padding:0 28px; height:660px; }
+  .ztl-line{
+    position:absolute; left:0; right:0; top:325px; height:10px; border-radius:999px; z-index:0;
+    background:linear-gradient(90deg, var(--accent), var(--s6) 50%, var(--accent));
+    box-shadow:0 0 18px color-mix(in srgb, var(--accent) 55%, transparent), inset 0 1px 2px rgba(0,0,0,.18);
+  }
+  .ztl-slot{ width:230px; flex:none; position:relative; height:660px; z-index:1; }
+  .ztl-half{ position:absolute; left:0; right:0; display:flex; flex-direction:column; align-items:center; height:330px; overflow:visible; }
+  .ztl-top{ top:0; justify-content:flex-end; }
+  .ztl-bottom{ bottom:0; justify-content:flex-start; }
+  .ztl-stem{ width:4px; height:18px; flex:none; background:var(--accent); border-radius:2px; }
+  .ztl-dot{
+    position:absolute; top:330px; left:50%; width:26px; height:26px; border-radius:50%; z-index:2;
+    background:radial-gradient(circle at 32% 28%, color-mix(in srgb, var(--accent) 45%, white) 0%, var(--accent) 55%, color-mix(in srgb, var(--accent) 70%, black) 100%);
+    border:2px solid color-mix(in srgb, var(--accent) 55%, black);
+    box-shadow:0 0 0 5px var(--page), 0 0 0 8px color-mix(in srgb, var(--accent) 40%, transparent), 0 3px 7px rgba(0,0,0,.35);
+    transform:translate(-50%,-50%);
+  }
+  .ztl-content{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:7px; }
+  .ztl-top .ztl-content{ margin-bottom:9px; }
+  .ztl-bottom .ztl-content{ margin-top:9px; }
+  .ztl-photo{
+    width:170px; height:170px; border-radius:50%; border:5px solid var(--accent);
+    background:var(--surface-2); overflow:hidden; cursor:pointer; position:relative;
+    display:flex; align-items:center; justify-content:center; flex:none;
+    box-shadow:0 0 0 4px var(--page), 0 0 0 7px color-mix(in srgb, var(--accent) 40%, transparent), 0 4px 10px rgba(0,0,0,.25);
+  }
+  .ztl-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .ztl-photo.empty{ flex-direction:column; gap:4px; color:var(--ink-muted); font-size:12px; }
+  .ztl-photo.empty .plus{ font-size:32px; color:var(--accent); line-height:1; }
+  .ztl-photo .count-badge{ position:absolute; bottom:2px; right:2px; background:rgba(0,0,0,.6); color:#fff; font-size:10px; padding:1px 5px; border-radius:999px; font-family:"IBM Plex Mono",monospace; }
+  .ztl-date{ font-family:"IBM Plex Sans Condensed"; font-size:17px; font-weight:700; color:var(--accent); line-height:1; }
+  .ztl-title{ font-size:12.5px; font-weight:500; color:var(--ink); line-height:1.35; max-width:205px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; cursor:default; }
+  .ztl-sub{ font-size:10.5px; color:var(--ink-muted); }
+  .ztl-actions{ display:flex; gap:7px; opacity:.25; transition:opacity .15s ease; }
+  .ztl-content:hover .ztl-actions{ opacity:1; }
+  .ztl-action-btn{ background:none; border:none; cursor:pointer; font-size:11px; padding:1px 2px; line-height:1; color:var(--ink-muted); }
+  .ztl-action-btn:hover{ color:var(--accent); }
+  .ztl-action-btn.danger:hover{ color:var(--critical-text); }
+  .ztl-rel{ display:inline-block; font-size:9.5px; font-weight:600; padding:1px 7px; border-radius:999px; text-transform:uppercase; letter-spacing:.04em; }
+
+  .filter-bar{ display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; background:var(--surface); border:1px solid var(--hairline); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow); }
+  .filter-group{ display:flex; align-items:center; gap:7px; }
+  .filter-group .fg-label{ font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-muted); white-space:nowrap; }
+  select, input[type="search"], input[type="text"]{ font-family:inherit; font-size:13px; color:var(--ink); background:var(--surface-2); border:1px solid var(--hairline-strong); border-radius:7px; padding:7px 10px; }
+  select:focus, input:focus, button:focus, .chip:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  input[type="search"]{ width:230px; }
+  .chip{ font-family:inherit; font-size:12.5px; color:var(--ink-2); background:var(--surface-2); border:1px solid var(--hairline-strong); border-radius:999px; padding:6px 12px; cursor:pointer; user-select:none; display:flex; align-items:center; gap:6px; }
+  .chip .sw{ width:8px; height:8px; border-radius:50%; }
+  .chip[aria-pressed="true"]{ background:var(--accent-wash); border-color:var(--accent); color:var(--ink); font-weight:500; }
+  .chips-row{ display:flex; flex-wrap:wrap; gap:8px; }
+  .reset-link{ font-size:12.5px; color:var(--accent); background:none; border:none; cursor:pointer; font-family:inherit; padding:4px 2px; }
+  .reset-link.push{ margin-left:auto; }
+  .count-pill{ font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-muted); }
+  .btn-primary{ font-family:inherit; font-size:12.5px; font-weight:500; color:var(--accent-ink); background:var(--accent); border:1px solid transparent; border-radius:7px; padding:7px 13px; cursor:pointer; display:flex; align-items:center; gap:6px; }
+  .row-del-btn{ background:none; border:1px solid var(--hairline-strong); border-radius:7px; padding:3px 7px; cursor:pointer; color:var(--critical-text); font-size:11px; }
+  .row-edit-btn{ background:none; border:1px solid var(--hairline-strong); border-radius:7px; padding:3px 7px; cursor:pointer; color:var(--ink-2); font-size:11px; }
+  .row-actions-line{ display:flex; align-items:center; gap:6px; }
+
+  .table-wrap{ margin-top:14px; background:var(--surface); border:1px solid var(--hairline); border-radius:12px; box-shadow:var(--shadow); overflow:auto; max-height:640px; }
+  table{ border-collapse:collapse; width:100%; min-width:1040px; font-size:13px; table-layout:fixed; }
+  th, td{ overflow-wrap:break-word; }
+  thead th{ position:sticky; top:0; background:var(--surface-2); text-align:left; font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-muted); padding:10px 14px; border-bottom:1px solid var(--hairline-strong); white-space:nowrap; }
+  tbody td{ padding:9px 14px; border-bottom:1px solid var(--hairline); vertical-align:top; color:var(--ink-2); }
+  tbody tr:hover td{ background: color-mix(in srgb, var(--accent) 6%, transparent); }
+  td.id, td.fecha{ font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-muted); white-space:nowrap; }
+  td.tipo_evento{ color:var(--ink); font-weight:500; }
+  td.desc{ max-width:none; }
+  .badge{ display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:500; white-space:nowrap; }
+  .empty-row td{ text-align:center; padding:38px; color:var(--ink-muted); }
+  .photo-btn{ background:none; border:1px solid var(--hairline-strong); border-radius:7px; padding:4px 8px; cursor:pointer; color:var(--ink-2); font-size:12px; display:inline-flex; align-items:center; gap:5px; }
+  .photo-btn.has{ border-color:var(--accent); color:var(--accent); background:var(--accent-wash); }
+  .row-photos-cell{ display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
+  .row-thumb{ width:160px; height:115px; border-radius:8px; object-fit:cover; cursor:pointer; border:1px solid var(--hairline-strong); flex:none; display:block; box-shadow:var(--shadow); }
+
+  footer{ margin-top:40px; padding-top:18px; border-top:1px solid var(--hairline); color:var(--ink-muted); font-size:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+
+
+  /* ---- modal (photo viewer/uploader) ---- */
+  .modal-backdrop{ position:fixed; inset:0; background:rgba(8,10,16,.55); display:flex; align-items:center; justify-content:center; z-index:1000; padding:20px; }
+  .modal-backdrop[hidden]{ display:none; }
+  .modal{ background:var(--surface-2); border-radius:14px; max-width:720px; width:100%; max-height:88vh; overflow:auto; box-shadow:0 30px 60px -20px rgba(0,0,0,.5); }
+  .modal-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:18px 20px; border-bottom:1px solid var(--hairline); position:sticky; top:0; background:var(--surface-2); }
+  .modal-head h3{ font-size:16px; }
+  .modal-head .mh-sub{ font-size:12px; color:var(--ink-muted); margin-top:3px; }
+  .modal-close{ background:none; border:none; font-size:20px; color:var(--ink-muted); cursor:pointer; line-height:1; padding:4px; }
+  .modal-body{ padding:18px 20px; }
+  .drop-zone{ border:2px dashed var(--hairline-strong); border-radius:10px; padding:22px; text-align:center; color:var(--ink-muted); font-size:13px; cursor:pointer; }
+  .ne-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
+  .ne-field{ display:flex; flex-direction:column; gap:5px; font-size:11.5px; color:var(--ink-muted); text-transform:uppercase; letter-spacing:.04em; }
+  .ne-field input, .ne-field textarea{ font-family:"IBM Plex Sans"; font-size:13px; text-transform:none; letter-spacing:normal; color:var(--ink); background:var(--surface-2); border:1px solid var(--hairline-strong); border-radius:7px; padding:8px 10px; }
+  .ne-field textarea{ resize:vertical; }
+  @media (max-width:560px){ .ne-grid{ grid-template-columns:1fr; } }
+  .drop-zone.drag{ border-color:var(--accent); background:var(--accent-wash); color:var(--ink); }
+  .photo-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:10px; margin-top:14px; }
+  .photo-tile{ position:relative; border-radius:8px; overflow:hidden; aspect-ratio:1; background:var(--hairline); }
+  .photo-tile img{ width:100%; height:100%; object-fit:cover; display:block; cursor:zoom-in; }
+  .photo-tile .del{ position:absolute; top:4px; right:4px; background:rgba(0,0,0,.6); color:#fff; border:none; border-radius:50%; width:22px; height:22px; cursor:pointer; font-size:13px; line-height:1; }
+
+  @media (max-width: 900px){
+    .stats{ grid-template-columns:repeat(3,1fr); }
+    .grid-secondary{ grid-template-columns:1fr; }
+    .masthead{ align-items:flex-start; }
+    .masthead .meta{ text-align:left; }
+  }
+  @media (max-width: 460px){
+    .stats{ grid-template-columns:repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="masthead-brand">
+      <img src="epm-logo.png" alt="Logo EPM" class="epm-logo">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> Centro de Monitoreo Técnico · EPM</div>
+        <h1>Bitácora de Hitos y Eventos</h1>
+        <div class="sub">Proyecto Hidroeléctrico Ituango — KPIs, hitos con evidencia fotográfica y registro completo</div>
+      </div>
+    </div>
+    <div class="meta">
+      <button class="theme-switch" id="theme-switch" type="button" role="switch" aria-checked="false" aria-label="Alternar modo día/noche">
+        <span class="ts-icon sun">☀</span><span class="ts-knob"></span><span class="ts-icon moon">☾</span>
+      </button>
+      <div style="margin-top:8px;">
+        Fuente: <b id="source-name">Bitácora de Hitos y eventos CMT.xlsx</b><br>
+        Responsable: <b>Alexander Castillo Gudiño</b><br>
+        <label class="reset-link sync-btn" style="cursor:pointer; color:var(--accent); font-weight:600;">⟳ Cargar Excel actualizado<input type="file" id="excel-reload-input" accept=".xlsx" style="display:none;"></label> ·
+        <button class="reset-link sync-btn" id="btn-export-zip" type="button">⇩ Exportar fotos (ZIP)</button> ·
+        <label class="reset-link" style="cursor:pointer;">⇧ Importar ZIP<input type="file" id="import-zip-input" accept=".zip" style="display:none;"></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats" id="stat-strip"></div>
+
+  <div class="section-head">
+    <h2>Línea de tiempo de hitos</h2>
+    <div class="note" id="hitos-note"></div>
+  </div>
+  <div class="filter-bar" id="hitos-hidden-bar" style="margin-bottom:10px; display:none;">
+    <span class="count-pill" id="hitos-hidden-pill"></span>
+    <button class="reset-link push" id="btn-show-hidden-hitos" type="button">Mostrar todos</button>
+  </div>
+  <div class="panel">
+    <div class="ztl-wrap">
+      <div class="ztl-track" id="hitos-scroll"><div class="ztl-line"></div></div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h2>Eventos por año y componente</h2>
+    <div class="note">2012 – 2023 · apilado por componente responsable</div>
+  </div>
+  <div class="panel">
+    <svg id="chart-timeline" width="100%" viewBox="0 0 1120 340" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="legend" id="legend-componente"></div>
+  </div>
+
+  <div class="grid-secondary">
+    <div class="panel">
+      <h3>Tipo de obra</h3>
+      <div class="panel-sub">Subterránea vs. superficial</div>
+      <div id="rank-tipo-obra" style="margin-top:14px;"></div>
+    </div>
+    <div class="panel">
+      <h3>Frentes con más eventos</h3>
+      <div class="panel-sub">Top 8 frentes registrados</div>
+      <div id="rank-frente" style="margin-top:14px;"></div>
+    </div>
+    <div class="panel">
+      <h3>Tipos de evento más reportados</h3>
+      <div class="panel-sub">Top 8 categorías</div>
+      <div id="rank-tipo-evento" style="margin-top:14px;"></div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h2>Registro de eventos</h2>
+    <div class="note" id="total-note"></div>
+  </div>
+
+  <div class="filter-bar" style="margin-bottom:12px;">
+    <button class="btn-primary" id="btn-new-event" type="button">＋ Nuevo evento</button>
+    <span class="count-pill" id="manual-count-pill"></span>
+    <button class="reset-link push" id="btn-export-manual" type="button">Exportar eventos manuales (CSV)</button>
+  </div>
+
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="fg-label">Desde</span>
+      <select id="f-year-from"></select>
+    </div>
+    <div class="filter-group">
+      <span class="fg-label">Hasta</span>
+      <select id="f-year-to"></select>
+    </div>
+    <div class="filter-group">
+      <span class="fg-label">Obra</span>
+      <select id="f-tipo-obra"><option value="">Todas</option></select>
+    </div>
+    <div class="filter-group">
+      <label style="display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--ink-2);">
+        <input type="checkbox" id="f-destacados"> Solo destacados
+      </label>
+    </div>
+    <div class="filter-group" style="flex:1; min-width:200px;">
+      <input type="search" id="f-search" placeholder="Buscar evento, frente, descripción…">
+    </div>
+    <button class="reset-link push" id="f-reset">Limpiar filtros</button>
+  </div>
+
+  <div class="chips-row" id="chips-componente" style="margin-top:12px;"></div>
+
+  <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:10px;">
+    <span class="count-pill" id="result-count"></span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <colgroup>
+        <col style="width:58px;"><col style="width:104px;"><col style="width:88px;"><col style="width:120px;">
+        <col style="width:100px;"><col style="width:140px;"><col style="width:190px;"><col><col style="width:184px;">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>ID</th><th>Fecha</th><th>Relevancia</th><th>Componente</th><th>Tipo de obra</th><th>Frente</th><th>Tipo de evento</th><th>Descripción</th><th>Fotos</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+
+  <footer>
+    <span>Bitácora general de Hitos y eventos relevantes CMT — Proyecto Hidroeléctrico Ituango · app local con fotos</span>
+    <span id="footer-count"></span>
+  </footer>
+
+</div>
+
+<div class="viz-tooltip" id="tooltip"></div>
+<div id="toast-stack" style="position:fixed; bottom:20px; right:20px; z-index:2000; display:flex; flex-direction:column; gap:8px; align-items:flex-end;"></div>
+
+<!-- Photo modal -->
+<div class="modal-backdrop" id="photo-modal" hidden>
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3 id="pm-title">Evento</h3>
+        <div class="mh-sub" id="pm-sub"></div>
+      </div>
+      <button class="modal-close" id="pm-close" type="button">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="drop-zone" id="pm-dropzone">Arrastra fotos aquí, o haz clic para elegir archivos</div>
+      <input type="file" id="pm-file-input" accept="image/*" multiple style="display:none;">
+      <div class="photo-grid" id="pm-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="modal-backdrop" id="lightbox" hidden>
+  <img id="lightbox-img" style="max-width:100%; max-height:85vh; border-radius:10px;" alt="Foto ampliada">
+</div>
+
+<!-- Nuevo evento -->
+<div class="modal-backdrop" id="new-event-modal" hidden>
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3>Nuevo evento</h3>
+        <div class="mh-sub">Se guarda en este navegador · expórtalo a CSV para pegarlo en el Excel maestro</div>
+      </div>
+      <button class="modal-close" id="ne-close" type="button">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="ne-form">
+        <div class="ne-grid">
+          <label class="ne-field"><span>Fecha *</span><input type="date" id="ne-fecha" required></label>
+          <label class="ne-field"><span>Nivel de relevancia</span><input list="dl-relevancia" id="ne-relevancia" placeholder="Alta / Media / Baja"></label>
+          <label class="ne-field"><span>Clase de registro</span><input list="dl-evento" id="ne-evento" placeholder="RELEVANTE / HITO / POR CLASIFICAR"></label>
+          <label class="ne-field"><span>Categoría de evento</span><input list="dl-categoria" id="ne-categoria"></label>
+          <label class="ne-field"><span>Componente</span><input list="dl-componente" id="ne-componente"></label>
+          <label class="ne-field"><span>Tipo de obra</span><input list="dl-tipoobra" id="ne-tipoobra"></label>
+          <label class="ne-field"><span>Frente</span><input list="dl-frente" id="ne-frente"></label>
+          <label class="ne-field"><span>Subfrente</span><input list="dl-subfrente" id="ne-subfrente"></label>
+          <label class="ne-field"><span>Estado</span><input list="dl-estado" id="ne-estado"></label>
+          <label class="ne-field"><span>Estación de monitoreo</span><input list="dl-estacion" id="ne-estacion"></label>
+          <label class="ne-field" style="grid-column:1/-1;"><span>Tipo de evento *</span><input list="dl-tipoevento" id="ne-tipoevento" required></label>
+          <label class="ne-field" style="grid-column:1/-1;"><span>Descripción del evento</span><textarea id="ne-descripcion" rows="3"></textarea></label>
+        </div>
+        <datalist id="dl-relevancia"></datalist>
+        <datalist id="dl-evento"></datalist>
+        <datalist id="dl-categoria"></datalist>
+        <datalist id="dl-componente"></datalist>
+        <datalist id="dl-tipoobra"></datalist>
+        <datalist id="dl-frente"></datalist>
+        <datalist id="dl-subfrente"></datalist>
+        <datalist id="dl-estado"></datalist>
+        <datalist id="dl-estacion"></datalist>
+        <datalist id="dl-tipoevento"></datalist>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px;">
+          <button type="button" class="reset-link" id="ne-cancel">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar evento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener('error', function(e){
+  document.body.insertAdjacentHTML('afterbegin',
+    '<pre id="DEBUG_ERR" style="background:#fff;color:#b00;border:3px solid red;padding:16px;white-space:pre-wrap;font-size:13px;z-index:99999;position:relative;">FATAL JS ERROR:\n' +
+    e.message + '\nFile: ' + e.filename + ':' + e.lineno + ':' + e.colno + '\n' + (e.error && e.error.stack || '') + '</pre>');
+});
+window.addEventListener('unhandledrejection', function(e){
+  document.body.insertAdjacentHTML('afterbegin',
+    '<pre id="DEBUG_REJ" style="background:#fff;color:#b00;border:3px solid orange;padding:16px;white-space:pre-wrap;font-size:13px;z-index:99999;position:relative;">UNHANDLED PROMISE REJECTION:\n' +
+    (e.reason && (e.reason.message || e.reason) || e.reason) + '\n' + (e.reason && e.reason.stack || '') + '</pre>');
+});
+</script>
+<script src="bitacora_data.js"></script>
+<script src="bitacora_listas.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  const cs = getComputedStyle(document.documentElement);
+  const tok = name => cs.getPropertyValue(name).trim();
+
+  const COMPONENTE_ORDER = ["CIVIL","CMT","ELECTROMECÁNICA","COMPUESTO","SOCIO-AMBIENTAL","ORIGEN NATURAL","PMU"];
+  const COMPONENTE_SLOT = { "CIVIL":"--s1","CMT":"--s2","ELECTROMECÁNICA":"--s3","COMPUESTO":"--s4","SOCIO-AMBIENTAL":"--s5","ORIGEN NATURAL":"--s6","PMU":"--s7" };
+  const REL_COLOR = { "Alta":"--rel-alta", "Media":"--rel-media", "Baja":"--rel-baja" };
+  let YEARS = [];
+  function computeYears(records){
+    const yrs = records.map(r => +String(r.FECHA).slice(0,4)).filter(y => y > 1990 && y < 2100);
+    const minY = Math.min(...yrs, new Date().getFullYear());
+    const maxY = Math.max(...yrs, new Date().getFullYear());
+    const out = [];
+    for (let y = minY; y <= maxY; y++) out.push(y);
+    return out;
+  }
+
+  const tooltip = document.getElementById('tooltip');
+  function showTip(x, y, html){ tooltip.innerHTML = html; tooltip.style.left=(x+14)+'px'; tooltip.style.top=(y+14)+'px'; tooltip.classList.add('show'); }
+  function hideTip(){ tooltip.classList.remove('show'); }
+
+  function showToast(message, kind){
+    const stack = document.getElementById('toast-stack');
+    const el = document.createElement('div');
+    const color = kind === 'error' ? tok('--critical') : kind === 'warn' ? tok('--warning') : tok('--accent');
+    el.style.cssText = `background:${tok('--surface-2')}; color:${tok('--ink')}; border:1px solid ${color}; border-left:4px solid ${color}; border-radius:8px; padding:10px 14px; font-size:13px; max-width:340px; box-shadow:${tok('--shadow')}; opacity:0; transform:translateY(6px); transition:opacity .15s ease, transform .15s ease;`;
+    el.textContent = message;
+    stack.appendChild(el);
+    requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
+    setTimeout(() => {
+      el.style.opacity = '0'; el.style.transform = 'translateY(6px)';
+      setTimeout(() => el.remove(), 200);
+    }, 4200);
+  }
+
+  // ============ IndexedDB fotos ============
+  // ---- eventos ingresados manualmente ----
+  const EV_DB_NAME = 'BitacoraCMTEventosManual', EV_DB_VERSION = 1, EV_STORE = 'eventos';
+  let evDbPromise = new Promise((resolve, reject) => {
+    const req = indexedDB.open(EV_DB_NAME, EV_DB_VERSION);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(EV_STORE)) db.createObjectStore(EV_STORE, { keyPath: 'ID' });
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  function getManualEvents(){
+    return evDbPromise.then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction(EV_STORE, 'readonly');
+      const req = tx.objectStore(EV_STORE).getAll();
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    }));
+  }
+  function saveManualEvent(rec){
+    return evDbPromise.then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction(EV_STORE, 'readwrite');
+      const req = tx.objectStore(EV_STORE).put(rec);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    }));
+  }
+  function deleteManualEvent(id){
+    return evDbPromise.then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction(EV_STORE, 'readwrite');
+      const req = tx.objectStore(EV_STORE).delete(id);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    }));
+  }
+
+  // ---- ajustes locales sobre hitos del Excel (editar texto u ocultar del mural) ----
+  // Se guardan aparte, enlazados por la huella estable del evento (evKey), para que
+  // sobrevivan a una recarga del Excel sin tocar el archivo maestro.
+  const OV_DB_NAME = 'BitacoraCMTHitoOverrides', OV_DB_VERSION = 1, OV_STORE = 'overrides';
+  let ovDbPromise = new Promise((resolve, reject) => {
+    const req = indexedDB.open(OV_DB_NAME, OV_DB_VERSION);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(OV_STORE)) db.createObjectStore(OV_STORE, { keyPath: 'pkey' });
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  function getAllOverrides(){
+    return ovDbPromise.then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction(OV_STORE, 'readonly');
+      const req = tx.objectStore(OV_STORE).getAll();
+      req.onsuccess = () => {
+        const out = {};
+        req.result.forEach(r => { out[r.pkey] = r; });
+        resolve(out);
+      };
+      req.onerror = () => reject(req.error);
+    }));
+  }
+  function saveOverride(pkey, data){
+    return ovDbPromise.then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction(OV_STORE, 'readwrite');
+      const req = tx.objectStore(OV_STORE).put(Object.assign({ pkey }, data));
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    }));
+  }
+
+  const DB_NAME = 'BitacoraCMTFotos', DB_VERSION = 1, STORE = 'fotos';
+  let dbPromise = new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(STORE)){
+        const os = db.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
+        os.createIndex('eventId', 'eventId', { unique: false });
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+
+  function idbAll(eventId){
+    return dbPromise.then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const idx = tx.objectStore(STORE).index('eventId');
+      const req = idx.getAll(IDBKeyRange.only(String(eventId)));
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    }));
+  }
+  function idbAllRecords(){
+    return dbPromise.then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).getAll();
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    }));
+  }
+  function idbCountByEvent(){
+    return idbAllRecords().then(all => {
+      const out = {};
+      all.forEach(r => { out[r.eventId] = (out[r.eventId]||0)+1; });
+      return out;
+    });
+  }
+  function idbAdd(rec){
+    return dbPromise.then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      const req = tx.objectStore(STORE).add(rec);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    }));
+  }
+  function idbDelete(id){
+    return dbPromise.then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      const req = tx.objectStore(STORE).delete(id);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    }));
+  }
+  function idbPut(rec){
+    return dbPromise.then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      const req = tx.objectStore(STORE).put(rec);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    }));
+  }
+  // Las fotos subidas antes de este cambio quedaron guardadas con el ID numerico del Excel
+  // como llave (eventId). Como ese ID puede correrse si se insertan/eliminan filas, aqui se
+  // re-enlazan una sola vez a la huella estable (evKey) del registro que tiene ese mismo ID
+  // en la carga actual. Es idempotente: una vez migrada, la llave ya no es puramente numerica
+  // y esta funcion no vuelve a tocarla.
+  async function migratePhotoKeys(records){
+    const legacy = (await idbAllRecords()).filter(p => /^\d+$/.test(String(p.eventId)));
+    if (!legacy.length) return;
+    const byId = {};
+    records.forEach(r => { byId[String(r.ID)] = r._pkey; });
+    for (const p of legacy){
+      const newKey = byId[String(p.eventId)];
+      if (newKey) await idbPut(Object.assign({}, p, { eventId: newKey }));
+    }
+  }
+
+  function resizeImage(file, maxDim){
+    return new Promise((resolve) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim){
+          if (width > height){ height = Math.round(height * maxDim / width); width = maxDim; }
+          else { width = Math.round(width * maxDim / height); height = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        canvas.toBlob(blob => { URL.revokeObjectURL(url); resolve(blob); }, 'image/jpeg', 0.85);
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+      img.src = url;
+    });
+  }
+
+  async function addPhotosToEvent(eventId, files){
+    for (const file of files){
+      if (!file.type.startsWith('image/')) continue;
+      const full = await resizeImage(file, 1600);
+      const thumb = await resizeImage(file, 320);
+      await idbAdd({ eventId: String(eventId), name: file.name, blob: full, thumb, addedAt: Date.now() });
+    }
+  }
+
+  // ============ tema dia/noche ============
+  const THEME_KEY = 'bitacora_ituango_theme';
+  function applyTheme(mode){
+    const root = document.documentElement;
+    if (mode === 'light' || mode === 'dark') root.setAttribute('data-theme', mode);
+    else root.removeAttribute('data-theme');
+    const btn = document.getElementById('theme-switch');
+    const isDark = mode === 'dark' || (mode !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    btn.setAttribute('aria-checked', String(isDark));
+  }
+  function setupThemeSwitch(){
+    const btn = document.getElementById('theme-switch');
+    const saved = localStorage.getItem(THEME_KEY);
+    applyTheme(saved || 'system');
+    btn.addEventListener('click', () => {
+      const isDarkNow = btn.getAttribute('aria-checked') === 'true';
+      const next = isDarkNow ? 'light' : 'dark';
+      localStorage.setItem(THEME_KEY, next);
+      applyTheme(next);
+      // los colores de SVG quedan fijados al momento de dibujarse; re-renderizamos para que tomen el tema nuevo
+      if (typeof BASE_RECORDS !== 'undefined' && BASE_RECORDS) loadAndRender(BASE_RECORDS);
+    });
+  }
+
+  // ============ data ============
+  let PHOTO_COUNTS = {};
+  let LAST_RECORDS = null;
+  let BASE_RECORDS = null;
+  let EDIT_EVENT_FN = null;
+  let EDIT_OVERRIDE_FN = null;
+
+  setupThemeSwitch();
+  setupPhotoModal();
+  setupZipSync();
+  setupExcelReload();
+  setupNewEventForm();
+  setupHitosHiddenControl();
+
+  if (typeof RECORDS_DATA === 'undefined'){
+    document.getElementById('table-body').innerHTML = '<tr class="empty-row"><td colspan="9">No se encontró bitacora_data.js — debe estar en la misma carpeta.</td></tr>';
+  } else {
+    loadAndRender(RECORDS_DATA);
+  }
+
+  async function loadAndRender(base){
+    BASE_RECORDS = base;
+    const manual = await getManualEvents();
+    const merged = base.concat(manual.map(m => Object.assign({}, m, { _manual: true })));
+    await init(merged);
+  }
+
+  async function init(records){
+    LAST_RECORDS = records;
+    YEARS = computeYears(records);
+    records.forEach(r => { r._pkey = evKey(r); });
+    const overrides = await getAllOverrides();
+    records.forEach(r => {
+      const ov = overrides[r._pkey];
+      if (ov){
+        if (ov.patch) Object.assign(r, ov.patch);
+        r._hiddenFromTimeline = !!ov.hidden;
+      }
+    });
+    await migratePhotoKeys(records);
+    PHOTO_COUNTS = await idbCountByEvent();
+
+    const total = records.length;
+    const dates = records.map(r => r.FECHA).filter(Boolean).sort();
+    const first = dates[0], last = dates[dates.length-1];
+    const compCounts = countBy(records, 'COMPONENTE');
+    const topComp = Object.entries(compCounts).sort((a,b)=>b[1]-a[1])[0];
+    const sismicos = records.filter(r => (r.TIPO_EVENTO||'').toLowerCase().includes('sísmico')).length;
+    const subterranea = records.filter(r => r.TIPO_OBRA === 'SUBTERRÁNEA').length;
+    const destacados = records.filter(isDestacado);
+    const altaCount = destacados.filter(r => r.NIVEL_RELEVANCIA === 'Alta').length;
+
+    const stats = [
+      {label:'Total de eventos', value: total, foot: `desde ${fmtDate(first)}`},
+      {label:'Periodo cubierto', value: (last.slice(0,4)-first.slice(0,4))+1, unit:'años', foot: `${first.slice(0,4)}–${last.slice(0,4)}`},
+      {label:'Componente principal', value: topComp[0], mono:false, foot: `${topComp[1]} eventos · ${pct(topComp[1],total)}`},
+      {label:'Obra subterránea', value: pct(subterranea, total), foot: `${subterranea} de ${total} eventos`},
+      {label:'Eventos destacados', value: destacados.length, foot: `${altaCount} de relevancia Alta`},
+      {label:'Eventos sísmicos', value: sismicos, foot: 'sentidos en el proyecto', critical: sismicos>0},
+    ];
+    document.getElementById('stat-strip').innerHTML = stats.map(s => `
+      <div class="stat">
+        <div class="label">${s.label}</div>
+        <div class="value" style="${s.mono===false?'font-family:\'IBM Plex Sans Condensed\';font-size:18px;':''}">${s.value}${s.unit?` <small>${s.unit}</small>`:''}</div>
+        <div class="foot${s.critical?' critical':''}">${s.foot}</div>
+      </div>`).join('');
+
+    document.getElementById('total-note').textContent = `${total} registros · filtra y busca en la bitácora completa`;
+    document.getElementById('footer-count').textContent = `${total} eventos · ${first.slice(0,4)}–${last.slice(0,4)}`;
+    const manualCount = records.filter(r => r._manual).length;
+    document.getElementById('manual-count-pill').textContent = manualCount ? `${manualCount} evento${manualCount===1?'':'s'} manual${manualCount===1?'':'es'} sin exportar` : '';
+
+    await renderHitos(records);
+    drawTimeline(records);
+
+    const legendEl = document.getElementById('legend-componente');
+    legendEl.innerHTML = COMPONENTE_ORDER.filter(c=>compCounts[c]).map(c => `
+      <div class="legend-item"><span class="legend-swatch" style="background:${tok(COMPONENTE_SLOT[c])}"></span>${cap(c)} · ${compCounts[c]}</div>
+    `).join('');
+
+    drawRanking('rank-tipo-obra', countBy(records,'TIPO_OBRA'), tok('--accent'), 3);
+    drawRanking('rank-frente', countBy(records,'FRENTE'), tok('--s1'), 8);
+    drawRanking('rank-tipo-evento', countBy(records,'TIPO_EVENTO'), tok('--s2'), 8);
+
+    setupFilters(records);
+  }
+
+  // ============ hitos timeline (zigzag) ============
+  async function renderHitos(records){
+    const allHitoRecords = records.filter(r => r.EVENTO === 'HITO');
+    const hitos = allHitoRecords.filter(r => !r._hiddenFromTimeline).sort((a,b)=>a.FECHA.localeCompare(b.FECHA));
+    const hiddenCount = allHitoRecords.length - hitos.length;
+    const hiddenBar = document.getElementById('hitos-hidden-bar');
+    if (hiddenCount > 0){
+      hiddenBar.style.display = 'flex';
+      document.getElementById('hitos-hidden-pill').textContent = `${hiddenCount} hito${hiddenCount===1?'':'s'} oculto${hiddenCount===1?'':'s'} de la línea de tiempo`;
+    } else {
+      hiddenBar.style.display = 'none';
+    }
+    document.getElementById('hitos-note').textContent = `${hitos.length} hitos del proyecto · clic en la foto para ver o subir evidencia`;
+    const trackEl = document.getElementById('hitos-scroll');
+    if (!hitos.length){
+      trackEl.innerHTML = `<div class="ztl-line"></div><div style="color:var(--ink-muted); font-size:13px; padding:20px;">No hay eventos marcados como "Hito" todavía.</div>`;
+      return;
+    }
+    trackEl.innerHTML = `<div class="ztl-line"></div>` + hitos.map((h, i) => hitoSlotHtml(h, i % 2 === 0)).join('');
+    await Promise.all(hitos.map(h => refreshHitoPhoto(h._pkey)));
+    trackEl.querySelectorAll('.ztl-photo').forEach(el => {
+      el.addEventListener('click', () => openPhotoModal(el.dataset.eventId, el.dataset.title, el.dataset.displayId));
+    });
+    trackEl.querySelectorAll('[data-hito-edit-pkey]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (btn.dataset.hitoEditIsmanual === '1'){
+          const manual = await getManualEvents();
+          const rec = manual.find(r => +r.ID === +btn.dataset.hitoEditId);
+          if (rec && EDIT_EVENT_FN) EDIT_EVENT_FN(rec);
+        } else {
+          const rec = hitos.find(h => h._pkey === btn.dataset.hitoEditPkey);
+          if (rec && EDIT_OVERRIDE_FN) EDIT_OVERRIDE_FN(rec);
+        }
+      });
+    });
+    trackEl.querySelectorAll('[data-hito-del-pkey]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (btn.dataset.hitoDelIsmanual === '1'){
+          if (!confirm(`¿Eliminar el hito manual #${btn.dataset.hitoDelId}? Esta acción no se puede deshacer.`)) return;
+          await deleteManualEvent(+btn.dataset.hitoDelId);
+          await loadAndRender(BASE_RECORDS);
+        } else {
+          if (!confirm('¿Quitar este hito de la línea de tiempo? Sigue existiendo como evento normal en el listado; esto solo lo oculta del mural. Puedes mostrarlo de nuevo con "Mostrar todos".')) return;
+          const pkey = btn.dataset.hitoDelPkey;
+          const existing = (await getAllOverrides())[pkey] || {};
+          await saveOverride(pkey, { patch: existing.patch || {}, hidden: true });
+          await loadAndRender(BASE_RECORDS);
+        }
+      });
+    });
+  }
+
+  function hitoSlotHtml(h, up){
+    const content = `
+      <div class="ztl-content">
+        <div class="ztl-photo empty" id="hito-photo-${cssSafe(h._pkey)}" data-event-id="${escapeAttr(h._pkey)}" data-display-id="${escapeAttr(h.ID)}" data-title="${escapeAttr(h.TIPO_EVENTO||'')}">
+          <span class="plus">＋</span><span>Foto</span>
+        </div>
+        <div class="ztl-date">${fmtDateShort(h.FECHA)}</div>
+        <div class="ztl-title" title="${escapeAttr(h.DESCRIPCION || h.TIPO_EVENTO || '')}">${escapeHtml(h.DESCRIPCION || cap(h.TIPO_EVENTO) || '')}</div>
+        <div class="ztl-sub">${cap(h.FRENTE)}</div>
+        <div class="ztl-actions">
+          <button class="ztl-action-btn" data-hito-edit-pkey="${escapeAttr(h._pkey)}" data-hito-edit-ismanual="${h._manual?'1':'0'}" data-hito-edit-id="${escapeAttr(h.ID)}" type="button" title="Editar hito">✏️</button>
+          <button class="ztl-action-btn danger" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="${h._manual?'1':'0'}" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="${h._manual ? 'Eliminar hito' : 'Quitar de la línea de tiempo'}">🗑</button>
+        </div>
+      </div>`;
+    return `
+    <div class="ztl-slot">
+      <div class="ztl-half ztl-top">${up ? content + '<div class="ztl-stem"></div>' : ''}</div>
+      <div class="ztl-dot"></div>
+      <div class="ztl-half ztl-bottom">${!up ? '<div class="ztl-stem"></div>' + content : ''}</div>
+    </div>`;
+  }
+
+  async function refreshHitoPhoto(eventId){
+    const el = document.getElementById('hito-photo-' + cssSafe(eventId));
+    if (!el) return;
+    const photos = await idbAll(eventId);
+    if (photos.length){
+      const cover = photos[0];
+      const url = URL.createObjectURL(cover.thumb || cover.blob);
+      el.classList.remove('empty');
+      el.innerHTML = `<img src="${url}" alt="Foto del hito"><span class="count-badge">${photos.length}</span>`;
+    } else {
+      el.classList.add('empty');
+      el.innerHTML = `<span class="plus">＋</span><span>Agregar foto</span>`;
+    }
+  }
+
+  async function refreshRowThumbnails(records){
+    const withPhotos = records.filter(r => (PHOTO_COUNTS[r._pkey] || 0) > 0);
+    await Promise.all(withPhotos.map(async (r) => {
+      const img = document.getElementById('row-thumb-' + cssSafe(r._pkey));
+      if (!img) return;
+      const photos = await idbAll(r._pkey);
+      if (photos.length){
+        const cover = photos[0];
+        img.src = URL.createObjectURL(cover.thumb || cover.blob);
+      }
+    }));
+  }
+
+  function cssSafe(s){ return String(s).replace(/[^a-zA-Z0-9_-]/g, '_'); }
+
+  // ============ timeline chart ============
+  function drawTimeline(records){
+    const svg = document.getElementById('chart-timeline');
+    const W = 1120, H = 340;
+    const marginL = 40, marginR = 10, marginT = 14, marginB = 34;
+    const plotW = W - marginL - marginR, plotH = H - marginT - marginB;
+    const n = YEARS.length, gap = 10;
+    const barW = (plotW - gap*(n-1)) / n;
+
+    const byYear = {};
+    YEARS.forEach(y => byYear[y] = {});
+    records.forEach(r => {
+      const y = +String(r.FECHA).slice(0,4);
+      if (!byYear[y]) return;
+      const c = r.COMPONENTE || 'OTRO';
+      byYear[y][c] = (byYear[y][c]||0) + 1;
+    });
+    const totals = YEARS.map(y => Object.values(byYear[y]).reduce((a,b)=>a+b,0));
+    const maxTotal = Math.max(...totals, 1);
+    const step = [10,20,25,50,100,200].find(s => Math.ceil(maxTotal/s) <= 5) || 200;
+    const niceMax = Math.ceil(maxTotal/step)*step;
+
+    let parts = [];
+    for (let val=0; val<=niceMax; val+=step){
+      const y = marginT + plotH - (val/niceMax)*plotH;
+      parts.push(`<line class="grid-line" x1="${marginL}" y1="${y}" x2="${W-marginR}" y2="${y}"></line>`);
+      parts.push(`<text x="${marginL-8}" y="${y+3}" font-size="10.5" text-anchor="end">${val}</text>`);
+    }
+    parts.push(`<line class="axis-line" x1="${marginL}" y1="${marginT+plotH}" x2="${W-marginR}" y2="${marginT+plotH}"></line>`);
+
+    YEARS.forEach((y, i) => {
+      const x = marginL + i*(barW+gap);
+      const yearData = byYear[y];
+      let cursorY = marginT + plotH;
+      COMPONENTE_ORDER.forEach((c) => {
+        const v = yearData[c] || 0;
+        if (v <= 0) return;
+        const h = (v/niceMax) * plotH;
+        cursorY -= h;
+        const isTop = COMPONENTE_ORDER.slice(COMPONENTE_ORDER.indexOf(c)+1).every(cc => !(yearData[cc]>0));
+        const rTop = isTop ? 3 : 0;
+        parts.push(`<path class="bar-seg" data-year="${y}" data-comp="${escapeAttr(c)}" data-val="${v}" d="${roundedTopRectPath(x, cursorY, barW, h, rTop)}" fill="${tok(COMPONENTE_SLOT[c])}"></path>`);
+        cursorY -= 2;
+      });
+      const totalY = totals[i];
+      parts.push(`<text x="${x+barW/2}" y="${marginT+plotH+18}" font-size="11" text-anchor="middle">${y}</text>`);
+      if (totalY > 0){
+        const topY = marginT + plotH - (totalY/niceMax)*plotH;
+        parts.push(`<text x="${x+barW/2}" y="${topY-6}" font-size="10.5" text-anchor="middle" fill="${tok('--ink-muted')}">${totalY}</text>`);
+      }
+    });
+    svg.innerHTML = parts.join('');
+    svg.querySelectorAll('.bar-seg').forEach(el => {
+      el.addEventListener('mousemove', (e) => {
+        const c = el.getAttribute('data-comp'), y = el.getAttribute('data-year'), v = el.getAttribute('data-val');
+        showTip(e.clientX, e.clientY, `<div class="tt-title">${y}</div>${cap(c)}: ${v} evento${v==1?'':'s'}`);
+      });
+      el.addEventListener('mouseleave', hideTip);
+    });
+  }
+
+  function drawRanking(containerId, counts, color, topN){
+    const el = document.getElementById(containerId);
+    const entries = Object.entries(counts).filter(([k])=>k).sort((a,b)=>b[1]-a[1]).slice(0, topN);
+    const max = entries.length ? entries[0][1] : 1;
+    el.innerHTML = entries.map(([name, val]) => `
+      <div class="rank-row">
+        <div class="rname" title="${escapeAttr(name)}">${cap(name)}</div>
+        <div class="rank-track"><div class="rank-fill" style="width:${(val/max*100).toFixed(1)}%; background:${color};"></div></div>
+        <div class="rval">${val}</div>
+      </div>`).join('');
+  }
+
+  // ============ filters + table ============
+  let state = { yFrom: 2012, yTo: 2023, tipoObra: '', search: '', destacados:false, componentes: new Set(COMPONENTE_ORDER) };
+  let RENDER_FN = null;
+
+  function freshEl(id){
+    const old = document.getElementById(id);
+    const clone = old.cloneNode(true);
+    old.replaceWith(clone);
+    return clone;
+  }
+
+  function setupFilters(records){
+    // clone-replace persistent controls so re-loading data (e.g. nuevo Excel) doesn't stack duplicate listeners
+    const selFrom = freshEl('f-year-from');
+    const selTo = freshEl('f-year-to');
+    const selObra = freshEl('f-tipo-obra');
+    const chkDestacados = freshEl('f-destacados');
+    const inputSearch = freshEl('f-search');
+    const btnReset = freshEl('f-reset');
+
+    const minYear = YEARS[0], maxYear = YEARS[YEARS.length-1];
+    [selFrom, selTo].forEach(sel => { sel.innerHTML = YEARS.map(y => `<option value="${y}">${y}</option>`).join(''); });
+    selFrom.value = minYear; selTo.value = maxYear;
+
+    selObra.innerHTML = '<option value="">Todas</option>';
+    const tipoObras = [...new Set(records.map(r=>r.TIPO_OBRA).filter(Boolean))];
+    tipoObras.forEach(t => selObra.insertAdjacentHTML('beforeend', `<option value="${escapeAttr(t)}">${cap(t)}</option>`));
+
+    const compCounts = countBy(records, 'COMPONENTE');
+    const chipsEl = document.getElementById('chips-componente');
+    chipsEl.innerHTML = COMPONENTE_ORDER.filter(c=>compCounts[c]).map(c => `
+      <button class="chip" type="button" data-comp="${escapeAttr(c)}" aria-pressed="true">
+        <span class="sw" style="background:${tok(COMPONENTE_SLOT[c])}"></span>${cap(c)} <span class="mono">(${compCounts[c]})</span>
+      </button>`).join('');
+
+    chipsEl.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const c = chip.getAttribute('data-comp');
+        const pressed = chip.getAttribute('aria-pressed') === 'true';
+        chip.setAttribute('aria-pressed', String(!pressed));
+        if (pressed) state.componentes.delete(c); else state.componentes.add(c);
+        render();
+      });
+    });
+
+    state = { yFrom: minYear, yTo: maxYear, tipoObra: '', search: '', destacados:false, componentes: new Set(COMPONENTE_ORDER) };
+
+    selFrom.addEventListener('change', () => { state.yFrom = +selFrom.value; render(); });
+    selTo.addEventListener('change', () => { state.yTo = +selTo.value; render(); });
+    selObra.addEventListener('change', () => { state.tipoObra = selObra.value; render(); });
+    chkDestacados.addEventListener('change', (e) => { state.destacados = e.target.checked; render(); });
+    inputSearch.addEventListener('input', (e) => { state.search = normalizeText(e.target.value.trim()); render(); });
+    btnReset.addEventListener('click', () => {
+      state = { yFrom: minYear, yTo: maxYear, tipoObra: '', search: '', destacados:false, componentes: new Set(COMPONENTE_ORDER) };
+      selFrom.value = minYear; selTo.value = maxYear; selObra.value = '';
+      inputSearch.value = ''; chkDestacados.checked = false;
+      chipsEl.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed','true'));
+      render();
+    });
+
+    function render(){
+      const filtered = records.filter(r => {
+        const y = +String(r.FECHA).slice(0,4);
+        if (y < state.yFrom || y > state.yTo) return false;
+        if (state.tipoObra && r.TIPO_OBRA !== state.tipoObra) return false;
+        if (!state.componentes.has(r.COMPONENTE)) return false;
+        if (state.destacados && !isDestacado(r)) return false;
+        if (state.search){
+          const hay = normalizeText([r.TIPO_EVENTO, r.FRENTE, r.SUBFRENTE, r.DESCRIPCION, r.COMPONENTE].join(' '));
+          if (!hay.includes(state.search)) return false;
+        }
+        return true;
+      }).sort((a,b) => b.FECHA.localeCompare(a.FECHA));
+
+      document.getElementById('result-count').textContent = `${filtered.length} de ${records.length} eventos`;
+
+      const tbody = document.getElementById('table-body');
+      if (!filtered.length){
+        tbody.innerHTML = `<tr class="empty-row"><td colspan="9">Sin resultados — ajusta los filtros.</td></tr>`;
+        return;
+      }
+      const rowsHtml = filtered.slice(0, 400).map(r => {
+        const relVar = REL_COLOR[r.NIVEL_RELEVANCIA];
+        const nPhotos = PHOTO_COUNTS[r._pkey] || 0;
+        return `
+        <tr>
+          <td class="id">${r.ID}</td>
+          <td class="fecha">${r.FECHA || '—'}</td>
+          <td>${r.NIVEL_RELEVANCIA ? `<span class="badge" style="color:${tok(relVar)}; background:color-mix(in srgb, ${tok(relVar)} 16%, transparent);">${r.NIVEL_RELEVANCIA}</span>` : '<span style="color:var(--ink-muted)">—</span>'}</td>
+          <td>${badge(r.COMPONENTE)}</td>
+          <td>${cap(r.TIPO_OBRA)}</td>
+          <td>${cap(r.FRENTE)}</td>
+          <td class="tipo_evento">${cap(r.TIPO_EVENTO)}</td>
+          <td class="desc">${r.DESCRIPCION ? escapeHtml(r.DESCRIPCION) : '<span style="color:var(--ink-muted)">—</span>'}</td>
+          <td style="white-space:nowrap;">
+            <div class="row-photos-cell">
+              ${nPhotos ? `<img class="row-thumb" id="row-thumb-${cssSafe(r._pkey)}" data-event-id="${escapeAttr(r._pkey)}" data-display-id="${escapeAttr(r.ID)}" data-title="${escapeAttr(r.TIPO_EVENTO||'')}" alt="Foto del evento">` : ''}
+              <div class="row-actions-line">
+                <button class="photo-btn${nPhotos?' has':''}" data-event-id="${escapeAttr(r._pkey)}" data-display-id="${escapeAttr(r.ID)}" data-title="${escapeAttr(r.TIPO_EVENTO||'')}" type="button">📷 ${nPhotos || ''}</button>
+                ${r._manual ? `<button class="row-edit-btn" data-edit-id="${escapeAttr(r.ID)}" type="button" title="Editar evento manual">✏️</button>` : ''}
+                ${r._manual ? `<button class="row-del-btn" data-del-id="${escapeAttr(r.ID)}" type="button" title="Eliminar evento manual">🗑</button>` : ''}
+              </div>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+      tbody.innerHTML = rowsHtml;
+      if (filtered.length > 400){
+        tbody.insertAdjacentHTML('beforeend', `<tr class="empty-row"><td colspan="9">Mostrando los 400 más recientes de ${filtered.length} — refina la búsqueda para ver más.</td></tr>`);
+      }
+      tbody.querySelectorAll('.row-del-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm(`¿Eliminar el evento manual #${btn.dataset.delId}? Esta acción no se puede deshacer.`)) return;
+          await deleteManualEvent(+btn.dataset.delId);
+          await loadAndRender(BASE_RECORDS);
+        });
+      });
+      tbody.querySelectorAll('.row-edit-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const manual = await getManualEvents();
+          const rec = manual.find(r => +r.ID === +btn.dataset.editId);
+          if (rec && EDIT_EVENT_FN) EDIT_EVENT_FN(rec);
+        });
+      });
+      tbody.querySelectorAll('.photo-btn, .row-thumb').forEach(el => {
+        el.addEventListener('click', () => openPhotoModal(el.dataset.eventId, el.dataset.title, el.dataset.displayId));
+      });
+      refreshRowThumbnails(filtered.slice(0, 400));
+    }
+    RENDER_FN = render;
+    render();
+  }
+
+  function badge(comp){
+    const slotVar = COMPONENTE_SLOT[comp];
+    const color = slotVar ? tok(slotVar) : tok('--ink-muted');
+    return `<span class="badge" style="background:color-mix(in srgb, ${color} 16%, transparent); color:${color==tok('--ink-muted')?'var(--ink-2)':color};">${cap(comp)}</span>`;
+  }
+
+  // ============ photo modal ============
+  let currentEventId = null;
+  function setupPhotoModal(records){
+    const modal = document.getElementById('photo-modal');
+    const dropzone = document.getElementById('pm-dropzone');
+    const fileInput = document.getElementById('pm-file-input');
+    document.getElementById('pm-close').addEventListener('click', closePhotoModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closePhotoModal(); });
+    dropzone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', async (e) => {
+      await addPhotosToEvent(currentEventId, [...e.target.files]);
+      fileInput.value = '';
+      await refreshModalGrid();
+    });
+    ['dragover','dragleave','drop'].forEach(evt => {
+      dropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        dropzone.classList.toggle('drag', evt === 'dragover');
+        if (evt === 'drop'){
+          addPhotosToEvent(currentEventId, [...e.dataTransfer.files]).then(refreshModalGrid);
+        }
+      });
+    });
+    document.getElementById('lightbox').addEventListener('click', () => { document.getElementById('lightbox').hidden = true; });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape'){ closePhotoModal(); document.getElementById('lightbox').hidden = true; } });
+  }
+
+  function openPhotoModal(eventId, title, displayId){
+    currentEventId = String(eventId);
+    document.getElementById('pm-title').textContent = title || ('Evento ' + (displayId || eventId));
+    document.getElementById('pm-sub').textContent = 'ID ' + (displayId || eventId);
+    document.getElementById('photo-modal').hidden = false;
+    refreshModalGrid();
+  }
+  function closePhotoModal(){
+    document.getElementById('photo-modal').hidden = true;
+    PHOTO_COUNTS[currentEventId] = undefined;
+    idbCountByEvent().then(c => { PHOTO_COUNTS = c; if (RENDER_FN) RENDER_FN(); refreshHitoPhoto(currentEventId); });
+  }
+  async function refreshModalGrid(){
+    const grid = document.getElementById('pm-grid');
+    const photos = await idbAll(currentEventId);
+    grid.innerHTML = photos.map(p => {
+      const url = URL.createObjectURL(p.thumb || p.blob);
+      return `<div class="photo-tile"><img src="${url}" data-full-id="${p.id}" alt="${escapeAttr(p.name||'foto')}"><button class="del" data-id="${p.id}" type="button">✕</button></div>`;
+    }).join('') || `<div style="color:var(--ink-muted); font-size:12.5px; padding:10px 0;">Sin fotos todavía.</div>`;
+    grid.querySelectorAll('img').forEach(img => {
+      img.addEventListener('click', async () => {
+        const rec = photos.find(p => String(p.id) === img.dataset.fullId);
+        if (rec){
+          document.getElementById('lightbox-img').src = URL.createObjectURL(rec.blob);
+          document.getElementById('lightbox').hidden = false;
+        }
+      });
+    });
+    grid.querySelectorAll('.del').forEach(btn => {
+      btn.addEventListener('click', async () => { await idbDelete(+btn.dataset.id); refreshModalGrid(); });
+    });
+  }
+
+  // ============ ZIP sync ============
+  function setupZipSync(){
+    document.getElementById('btn-export-zip').addEventListener('click', exportZip);
+    document.getElementById('import-zip-input').addEventListener('change', (e) => {
+      const f = e.target.files[0]; if (f) importZip(f);
+      e.target.value = '';
+    });
+  }
+  async function exportZip(){
+    const all = await idbAllRecords();
+    const zip = new JSZip();
+    const manifest = [];
+    all.forEach((r) => {
+      const path = `fotos/${r.eventId}/${r.id}.jpg`;
+      zip.file(path, r.blob);
+      manifest.push({ id: r.id, eventId: r.eventId, name: r.name, addedAt: r.addedAt, path });
+    });
+    zip.file('manifest.json', JSON.stringify(manifest, null, 2));
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `Bitacora_CMT_fotos_${new Date().toISOString().slice(0,10)}.zip`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+  async function importZip(file){
+    const zip = await JSZip.loadAsync(file);
+    const manifestFile = zip.file('manifest.json');
+    if (!manifestFile){ showToast('El ZIP no tiene manifest.json — no se reconoce el formato.', 'error'); return; }
+    const manifest = JSON.parse(await manifestFile.async('string'));
+    const existing = await idbAllRecords();
+    const existKeys = new Set(existing.map(r => `${r.eventId}|${r.name}|${r.addedAt}`));
+    let imported = 0;
+    for (const entry of manifest){
+      const key = `${entry.eventId}|${entry.name}|${entry.addedAt}`;
+      if (existKeys.has(key)) continue;
+      const zf = zip.file(entry.path);
+      if (!zf) continue;
+      const blob = await zf.async('blob');
+      await idbAdd({ eventId: String(entry.eventId), name: entry.name, blob, thumb: blob, addedAt: entry.addedAt || Date.now() });
+      imported++;
+    }
+    PHOTO_COUNTS = await idbCountByEvent();
+    if (RENDER_FN) RENDER_FN();
+    showToast(`${imported} foto(s) importada(s) (de ${manifest.length} en el ZIP).`);
+    location.reload();
+  }
+
+  // ============ recarga de Excel en vivo ============
+  function setupExcelReload(){
+    document.getElementById('excel-reload-input').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      e.target.value = '';
+      if (!file) return;
+      try {
+        const records = await parseBitacoraExcel(file);
+        if (!records.length){
+          showToast('No se encontraron filas válidas (con fecha) en la hoja de la bitácora. Verifica el formato de la hoja Base Dashboard.', 'error');
+          return;
+        }
+        document.getElementById('source-name').textContent = file.name;
+        await loadAndRender(records);
+        showToast(`Datos actualizados: ${records.length} eventos cargados desde "${file.name}".`);
+      } catch (err){
+        showToast('No se pudo leer el Excel: ' + err.message, 'error');
+      }
+    });
+  }
+
+  // Soporta dos formatos de hoja:
+  // - "Base Dashboard" (fuente oficial normalizada): encabezado ID/FECHA en columnas C/D, 15 campos.
+  // - "Bitácora Hitos-Eventos" (hoja legacy, incluida su variante "clasificada" con columna
+  //   de clasificación técnica CMT en el mismo lugar donde antes iba "Evento"): encabezado
+  //   ID/FECHA en columnas B/C, 12 campos; ANIO/TRIMESTRE/CATEGORIA_EVENTO no existen y se
+  //   calculan o quedan vacíos.
+  const EXCEL_FIELDS = ['ID','FECHA','ANIO','TRIMESTRE','NIVEL_RELEVANCIA','EVENTO','CATEGORIA_EVENTO','TIPO_EVENTO','DESCRIPCION','COMPONENTE','TIPO_OBRA','FRENTE','SUBFRENTE','ESTADO','ESTACION'];
+  const LEGACY_FIELDS = ['ID','FECHA','NIVEL_RELEVANCIA','EVENTO','ESTACION','ESTADO','COMPONENTE','TIPO_OBRA','FRENTE','SUBFRENTE','TIPO_EVENTO','DESCRIPCION'];
+
+  function detectSheetLayout(rows2d){
+    const scanLimit = Math.min(20, rows2d.length);
+    for (let i = 0; i < scanLimit; i++){
+      const row = rows2d[i] || [];
+      const cellAt = (idx) => String(row[idx] || '').trim().toUpperCase();
+      if (cellAt(2) === 'ID' && cellAt(3).startsWith('FECHA')) return { headerRow: i, colStart: 2, fields: EXCEL_FIELDS };
+      if (cellAt(1) === 'ID' && cellAt(2).startsWith('FECHA')) return { headerRow: i, colStart: 1, fields: LEGACY_FIELDS };
+    }
+    return null;
+  }
+
+  async function parseBitacoraExcel(file){
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: 'array', cellDates: true });
+    const sheetName = wb.SheetNames.find(n => /base.*dashboard/i.test(n)) || wb.SheetNames.find(n => /hitos.*eventos|bit.cora/i.test(n)) || wb.SheetNames[0];
+    const ws = wb.Sheets[sheetName];
+    const rows2d = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: null });
+
+    const layout = detectSheetLayout(rows2d);
+    if (!layout) return [];
+    const { headerRow, colStart, fields } = layout;
+
+    const out = [];
+    for (let i = headerRow + 1; i < rows2d.length; i++){
+      const row = rows2d[i] || [];
+      const id = row[colStart];
+      const fecha = row[colStart + 1];
+      if (id === null || id === undefined || id === '') continue;
+      if (!(fecha instanceof Date) || isNaN(fecha.getTime())) continue;
+      const rec = {};
+      fields.forEach((field, idx) => {
+        let v = row[colStart + idx];
+        if (typeof v === 'string') v = v.trim();
+        rec[field] = (v === '' || v === undefined) ? null : v;
+      });
+      rec.FECHA = fecha.toISOString().slice(0,10);
+      rec.YEAR = fecha.getFullYear();
+      if (rec.ANIO == null) rec.ANIO = rec.YEAR;
+      if (rec.TRIMESTRE == null) rec.TRIMESTRE = 'T' + (Math.floor(fecha.getMonth()/3)+1);
+      out.push(rec);
+    }
+    return out;
+  }
+
+  // ============ formulario de nuevo evento (manual) ============
+  const NE_FIELD_MAP = [
+    ['ne-relevancia','dl-relevancia','NIVEL_RELEVANCIA'],
+    ['ne-evento','dl-evento','EVENTO'],
+    ['ne-categoria','dl-categoria','CATEGORIA_EVENTO'],
+    ['ne-componente','dl-componente','COMPONENTE'],
+    ['ne-tipoobra','dl-tipoobra','TIPO_OBRA'],
+    ['ne-frente','dl-frente','FRENTE'],
+    ['ne-subfrente','dl-subfrente','SUBFRENTE'],
+    ['ne-estado','dl-estado','ESTADO'],
+    ['ne-estacion','dl-estacion','ESTACION'],
+    ['ne-tipoevento','dl-tipoevento','TIPO_EVENTO'],
+  ];
+
+  function setupNewEventForm(){
+    const modal = document.getElementById('new-event-modal');
+    const form = document.getElementById('ne-form');
+    const modalTitle = modal.querySelector('h3');
+    let editMode = { kind: 'new' };
+    const openIt = (rec, kind) => {
+      populateDatalists();
+      form.reset();
+      if (rec && kind === 'override'){
+        editMode = { kind: 'override', pkey: rec._pkey };
+        modalTitle.textContent = `Editar hito (ajuste local) · ID ${rec.ID}`;
+        document.getElementById('ne-fecha').value = rec.FECHA || new Date().toISOString().slice(0,10);
+        document.getElementById('ne-descripcion').value = rec.DESCRIPCION || '';
+        NE_FIELD_MAP.forEach(([inputId,,field]) => {
+          document.getElementById(inputId).value = rec[field] || '';
+        });
+      } else if (rec){
+        editMode = { kind: 'manual', id: rec.ID };
+        modalTitle.textContent = `Editar evento #${rec.ID}`;
+        document.getElementById('ne-fecha').value = rec.FECHA || new Date().toISOString().slice(0,10);
+        document.getElementById('ne-descripcion').value = rec.DESCRIPCION || '';
+        NE_FIELD_MAP.forEach(([inputId,,field]) => {
+          document.getElementById(inputId).value = rec[field] || '';
+        });
+      } else {
+        editMode = { kind: 'new' };
+        modalTitle.textContent = 'Nuevo evento';
+        document.getElementById('ne-fecha').value = new Date().toISOString().slice(0,10);
+      }
+      modal.hidden = false;
+    };
+    const closeIt = () => { modal.hidden = true; editMode = { kind: 'new' }; };
+    document.getElementById('btn-new-event').addEventListener('click', () => openIt());
+    document.getElementById('ne-close').addEventListener('click', closeIt);
+    document.getElementById('ne-cancel').addEventListener('click', closeIt);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeIt(); });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fecha = document.getElementById('ne-fecha').value;
+      const tipoEvento = document.getElementById('ne-tipoevento').value.trim();
+      if (!fecha || !tipoEvento){ showToast('Fecha y Tipo de evento son obligatorios.', 'error'); return; }
+      const d = new Date(fecha + 'T00:00:00');
+      const fields = {
+        FECHA: fecha, YEAR: d.getFullYear(), ANIO: d.getFullYear(),
+        TRIMESTRE: 'T' + (Math.floor(d.getMonth()/3)+1),
+        DESCRIPCION: document.getElementById('ne-descripcion').value.trim() || null,
+      };
+      NE_FIELD_MAP.forEach(([inputId,,field]) => {
+        const v = document.getElementById(inputId).value.trim();
+        fields[field] = v || null;
+      });
+
+      if (editMode.kind === 'override'){
+        await saveOverride(editMode.pkey, { patch: fields, hidden: false });
+        closeIt();
+        await loadAndRender(BASE_RECORDS);
+        showToast('Ajuste guardado en este navegador — se reaplica automáticamente aunque vuelvas a cargar el Excel.');
+        return;
+      }
+
+      let id = editMode.kind === 'manual' ? editMode.id : null;
+      if (id == null){
+        const allIds = (BASE_RECORDS||[]).map(r=>+r.ID).concat((await getManualEvents()).map(r=>+r.ID)).filter(n=>!isNaN(n));
+        id = (allIds.length ? Math.max(...allIds) : 0) + 1;
+      }
+      const wasEditing = editMode.kind === 'manual';
+      const rec = Object.assign({ ID: id }, fields);
+      await saveManualEvent(rec);
+      closeIt();
+      await loadAndRender(BASE_RECORDS);
+      showToast(wasEditing ? `Evento #${id} actualizado.` : `Evento #${id} guardado. Recuerda exportarlo a CSV cuando quieras incorporarlo al Excel maestro.`);
+    });
+
+    document.getElementById('btn-export-manual').addEventListener('click', exportManualCsv);
+    EDIT_EVENT_FN = (rec) => openIt(rec, 'manual');
+    EDIT_OVERRIDE_FN = (rec) => openIt(rec, 'override');
+  }
+
+  function setupHitosHiddenControl(){
+    document.getElementById('btn-show-hidden-hitos').addEventListener('click', async () => {
+      const overrides = await getAllOverrides();
+      const hiddenKeys = Object.keys(overrides).filter(k => overrides[k].hidden);
+      for (const k of hiddenKeys){
+        await saveOverride(k, { patch: overrides[k].patch || {}, hidden: false });
+      }
+      await loadAndRender(BASE_RECORDS);
+      showToast(`${hiddenKeys.length} hito(s) restaurado(s) en la línea de tiempo.`);
+    });
+  }
+
+  function populateDatalists(){
+    const source = BASE_RECORDS || [];
+    const refLists = (typeof LISTAS_REFERENCIA !== 'undefined') ? LISTAS_REFERENCIA : {};
+    NE_FIELD_MAP.forEach(([, dlId, field]) => {
+      const dl = document.getElementById(dlId);
+      const fromData = source.map(r => r[field]).filter(Boolean);
+      const fromRef = refLists[field] || [];
+      const values = [...new Set([...fromRef, ...fromData])].sort();
+      dl.innerHTML = values.map(v => `<option value="${escapeAttr(v)}">`).join('');
+    });
+  }
+
+  async function exportManualCsv(){
+    const manual = await getManualEvents();
+    if (!manual.length){ showToast('No hay eventos manuales todavía.', 'warn'); return; }
+    const cols = ['ID','FECHA','ANIO','TRIMESTRE','NIVEL_RELEVANCIA','EVENTO','CATEGORIA_EVENTO','TIPO_EVENTO','DESCRIPCION','COMPONENTE','TIPO_OBRA','FRENTE','SUBFRENTE','ESTADO','ESTACION'];
+    const rows = [cols];
+    manual.forEach(r => rows.push(cols.map(c => r[c] == null ? '' : r[c])));
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `Bitacora_CMT_eventos_manuales_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // ---------- helpers ----------
+  function normalizeText(s){ return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); }
+  // "Destacado" = cuenta para el KPI y el filtro "Solo destacados". Cubre tanto el vocabulario
+  // de la hoja oficial "Base Dashboard" (RELEVANTE/HITO) como el de la clasificación técnica CMT
+  // (EVENTO RELEVANTE/EVENTO CRÍTICO/HITO).
+  const DESTACADO_VALUES = new Set(['RELEVANTE','HITO','EVENTO RELEVANTE','EVENTO CRÍTICO','EVENTO CRITICO']);
+  function isDestacado(r){ return DESTACADO_VALUES.has(String(r.EVENTO||'').trim().toUpperCase()); }
+  // Huella estable por contenido (fecha + descripcion + tipo de evento) para enlazar fotos.
+  // No usa el ID del Excel porque esa columna es una formula ligada a la posicion de la fila:
+  // al insertar o eliminar registros en otras filas, el ID de un evento existente puede cambiar.
+  function hashStr(s){
+    let h = 2166136261;
+    for (let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return (h >>> 0).toString(16);
+  }
+  function evKey(r){
+    const base = (r.FECHA || '') + '|' + normalizeText(r.DESCRIPCION||'').trim() + '|' + normalizeText(r.TIPO_EVENTO||'').trim();
+    return 'k' + hashStr(base);
+  }
+  function countBy(arr, key){ const out={}; arr.forEach(r=>{ const v=r[key]; if(v) out[v]=(out[v]||0)+1; }); return out; }
+  function pct(n,total){ return total ? Math.round(n/total*100)+'%' : '0%'; }
+  function cap(s){ if(!s) return '—'; s=String(s).trim(); return s.charAt(0)+s.slice(1).toLowerCase(); }
+  function fmtDate(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString('es-CO',{year:'numeric',month:'short',day:'2-digit'}); }
+  function fmtDateShort(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString('es-CO',{month:'short',year:'numeric'}).replace('.',''); }
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function escapeAttr(s){ return escapeHtml(s); }
+  function roundedTopRectPath(x,y,w,h,r){
+    if (h<=0) return '';
+    if (r<=0) return `M${x},${y} h${w} v${h} h${-w} Z`;
+    r = Math.min(r, w/2, h);
+    return `M${x},${y+r} a${r},${r} 0 0 1 ${r},${-r} h${w-2*r} a${r},${r} 0 0 1 ${r},${r} v${h-r} h${-w} Z`;
+  }
+})();
+</script>
+</body>
+</html>

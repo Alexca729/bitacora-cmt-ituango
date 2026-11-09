@@ -1,0 +1,10 @@
+# Datos y archivos binarios pesados que NO van en el repositorio.
+# Viajan por USB / ZIP de fotos, no por git.
+*.xlsx
+*.xls
+~$*
+*.jpg
+*.jpeg
+*.png
+*.webp
+PBI/
