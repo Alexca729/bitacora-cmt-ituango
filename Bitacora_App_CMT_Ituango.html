@@ -59,6 +59,34 @@
     background-attachment: fixed, fixed;
   }
   .wrap{ max-width:1180px; margin:0 auto; padding-block: 28px 64px; }
+
+  /* ---- panel lateral de navegacion ---- */
+  .app-sidebar{
+    position:fixed; left:0; top:0; width:205px; height:100vh; z-index:30; overflow-y:auto;
+    background:linear-gradient(180deg, #00a85e 0%, #004b29 100%); color:#fff;
+    display:flex; flex-direction:column; padding-top:env(safe-area-inset-top,0px);
+  }
+  .sb-brand{ padding:22px 20px 16px; border-bottom:1px solid rgba(255,255,255,.18); display:flex; align-items:center; gap:10px; }
+  .sb-brand img{ width:34px; height:34px; object-fit:contain; background:#fff; border-radius:8px; padding:4px; flex:none; }
+  .sb-brand .sb-title{ font-size:13.5px; font-weight:700; line-height:1.25; }
+  .sb-brand .sb-sub{ font-size:10.5px; color:rgba(255,255,255,.72); margin-top:2px; }
+  .sb-menu{ flex:1; padding:14px 0; display:flex; flex-direction:column; gap:2px; }
+  .sb-menu button{
+    font-family:inherit; text-align:left; background:none; border:none; color:rgba(255,255,255,.85);
+    font-size:12.5px; padding:11px 20px; margin:0 8px; border-radius:7px; cursor:pointer; transition:background .15s, color .15s;
+  }
+  .sb-menu button:hover{ background:rgba(255,255,255,.12); color:#fff; }
+  .sb-menu button.active{ background:rgba(255,255,255,.2); color:#fff; font-weight:600; border-left:3px solid #ffffff; padding-left:17px; }
+  .sb-menu button{ display:flex; align-items:center; justify-content:space-between; gap:6px; }
+  .sb-badge{ background:var(--critical); color:#fff; font-size:10px; font-weight:700; border-radius:999px; padding:1px 7px; font-family:"IBM Plex Mono",monospace; }
+  .sb-status{ margin:14px; padding:11px 12px; border:1px solid rgba(255,255,255,.22); border-radius:8px; font-size:10.5px; color:rgba(255,255,255,.85); }
+  .sb-status .sb-status-row{ display:flex; align-items:center; gap:7px; margin-bottom:6px; }
+  .sb-status .sb-dot{ width:9px; height:9px; border-radius:50%; background:#ffffff; flex:none; }
+  body{ padding-left:225px; }
+  @media (max-width:900px){
+    .app-sidebar{ display:none; }
+    body{ padding-left:20px; }
+  }
   h1,h2,h3{ font-family:"IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif; text-wrap:balance; margin:0; }
   .mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
   a{ color: var(--accent); }
@@ -121,45 +149,126 @@
   .axis-line{ stroke:var(--hairline-strong); stroke-width:1; }
   .grid-line{ stroke:var(--hairline); stroke-width:1; }
 
-  /* ---- hitos timeline (zigzag, estilo mural EPM) ---- */
-  .ztl-wrap{ overflow-x:auto; padding:6px 4px 10px; }
-  .ztl-track{ display:flex; position:relative; min-width:max-content; padding:0 28px; height:660px; }
+  /* ---- hitos timeline (agrupada por año, estilo mural EPM) ---- */
+  .panel-hitos{ overflow:auto; min-width:360px; min-height:220px; }
+  /* El redimensionado nativo (resize:both, una sola esquina) se reemplaza por 4 tiradores
+     independientes en cada borde — asi se puede alargar/achatar (arriba/abajo) o
+     ensanchar/angostar (izquierda/derecha) por separado, como ajustar el alto de una fila o
+     el ancho de una columna en Excel, en vez de solo una esquina generica. */
+  .hitos-resize-wrap{ position:relative; }
+  .ztl-edge-resize{ position:absolute; z-index:5; touch-action:none; }
+  .ztl-edge-resize:hover, .ztl-edge-resize.ztl-edge-active{ background:color-mix(in srgb, var(--accent) 45%, transparent); }
+  .ztl-edge-resize.edge-top{ top:-5px; left:18px; right:18px; height:10px; cursor:ns-resize; border-radius:6px; }
+  .ztl-edge-resize.edge-bottom{ bottom:-5px; left:18px; right:18px; height:10px; cursor:ns-resize; border-radius:6px; }
+  .ztl-edge-resize.edge-left{ left:-5px; top:18px; bottom:18px; width:10px; cursor:ew-resize; border-radius:6px; }
+  .ztl-edge-resize.edge-right{ right:-5px; top:18px; bottom:18px; width:10px; cursor:ew-resize; border-radius:6px; }
+  .ztl-scale-box{
+    position:fixed; z-index:50; display:flex; align-items:center; gap:7px;
+    background:var(--surface); border:1px solid var(--accent); border-radius:10px;
+    padding:6px 10px; box-shadow:var(--shadow); font-size:12.5px; color:var(--ink);
+  }
+  .ztl-scale-box.hidden{ display:none; }
+  .ztl-scale-box input{ width:58px; font-size:12.5px; }
+  /* Un solo contenedor con scroll (.panel-hitos, mas abajo) — este ya no scrollea por su
+     cuenta, para que al achicar el recuadro no queden dos barras de desplazamiento anidadas
+     peleando entre si (eso hacia que desaparecieran). */
+  .ztl-wrap{ padding:6px 4px 10px; }
+  /* --ztl-half se recalcula por JS segun lo que realmente ocupan las tarjetas (con su
+     escala actual), para que el recuadro no reserve siempre el peor caso (grupos de 5
+     eventos) cuando todo esta mas pequeño — asi el espacio vacio y la barra de scroll
+     desaparecen cuando se achican los hitos. 430px es solo el valor de respaldo inicial. */
+  .ztl-track{ display:flex; position:relative; min-width:max-content; padding:0 28px; height:calc(var(--ztl-half,430px) * 2); }
   .ztl-line{
-    position:absolute; left:0; right:0; top:325px; height:10px; border-radius:999px; z-index:0;
+    position:absolute; left:0; right:0; top:var(--ztl-half,430px); height:10px; border-radius:999px; z-index:0;
     background:linear-gradient(90deg, var(--accent), var(--s6) 50%, var(--accent));
     box-shadow:0 0 18px color-mix(in srgb, var(--accent) 55%, transparent), inset 0 1px 2px rgba(0,0,0,.18);
   }
-  .ztl-slot{ width:230px; flex:none; position:relative; height:660px; z-index:1; }
-  .ztl-half{ position:absolute; left:0; right:0; display:flex; flex-direction:column; align-items:center; height:330px; overflow:visible; }
+  .ztl-slot{ width:280px; flex:none; position:relative; height:calc(var(--ztl-half,430px) * 2); z-index:1; pointer-events:none; }
+  /* pointer-events:none aqui es clave: cuando una tarjeta se escalona y "invade" visualmente
+     el ancho del slot vecino, el contenedor vacio de ese vecino no debe bloquear el clic/arrastre
+     de la tarjeta que en realidad esta debajo (ver .ztl-ycontent que lo reactiva). */
+  .ztl-half{ position:absolute; left:0; right:0; display:flex; flex-direction:column; align-items:stretch; height:var(--ztl-half,430px); overflow:visible; pointer-events:none; }
   .ztl-top{ top:0; justify-content:flex-end; }
   .ztl-bottom{ bottom:0; justify-content:flex-start; }
-  .ztl-stem{ width:4px; height:18px; flex:none; background:var(--accent); border-radius:2px; }
-  .ztl-dot{
-    position:absolute; top:330px; left:50%; width:26px; height:26px; border-radius:50%; z-index:2;
+  .ztl-stem{ width:4px; height:50px; flex:none; background:var(--accent); border-radius:2px; margin:0 auto; }
+  .ztl-dot-year{
+    position:absolute; top:var(--ztl-half,430px); left:50%; width:72px; height:72px; border-radius:50%; z-index:2;
+    display:flex; align-items:center; justify-content:center;
+    font-family:"IBM Plex Sans Condensed"; font-size:18px; font-weight:700; color:#fff;
     background:radial-gradient(circle at 32% 28%, color-mix(in srgb, var(--accent) 45%, white) 0%, var(--accent) 55%, color-mix(in srgb, var(--accent) 70%, black) 100%);
-    border:2px solid color-mix(in srgb, var(--accent) 55%, black);
-    box-shadow:0 0 0 5px var(--page), 0 0 0 8px color-mix(in srgb, var(--accent) 40%, transparent), 0 3px 7px rgba(0,0,0,.35);
+    border:3px solid color-mix(in srgb, var(--accent) 55%, black);
+    box-shadow:0 0 0 6px var(--page), 0 0 0 9px color-mix(in srgb, var(--accent) 40%, transparent), 0 4px 10px rgba(0,0,0,.35);
     transform:translate(-50%,-50%);
   }
-  .ztl-content{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:7px; }
-  .ztl-top .ztl-content{ margin-bottom:9px; }
-  .ztl-bottom .ztl-content{ margin-top:9px; }
-  .ztl-photo{
-    width:170px; height:170px; border-radius:50%; border:5px solid var(--accent);
-    background:var(--surface-2); overflow:hidden; cursor:pointer; position:relative;
-    display:flex; align-items:center; justify-content:center; flex:none;
+  .ztl-fan-svg{ position:absolute; left:0; top:0; width:100%; height:100%; overflow:visible; pointer-events:none; }
+  .ztl-fan-svg line{ stroke:var(--accent); stroke-width:1.5; opacity:.55; }
+  .ztl-ycontent{ display:flex; flex-direction:column; gap:8px; padding:0 10px; pointer-events:auto; }
+  .ztl-top .ztl-ycontent{ margin-bottom:9px; }
+  .ztl-bottom .ztl-ycontent{ margin-top:9px; }
+  .ztl-yevents{ display:flex; flex-direction:column; gap:10px; }
+  .ztl-yevent{
+    display:flex; align-items:center; gap:10px; position:relative; z-index:1;
+    background:var(--surface-2); border-radius:10px; padding:5px 8px 5px 5px;
+    box-shadow:var(--shadow);
+  }
+  .ztl-draggable.ztl-selected{ outline:3px solid var(--accent); outline-offset:3px; border-radius:12px; }
+  .ztl-draggable{
+    position:relative; cursor:grab; touch-action:none;
+    transform: translate(var(--dx,0px), var(--dy,0px)) scale(var(--scale,1));
+    transform-origin: center center;
+  }
+  .ztl-draggable.dragging{ cursor:grabbing; z-index:6 !important; opacity:.92; }
+  .ztl-card-resize{
+    position:absolute; right:-9px; bottom:-9px; width:18px; height:18px; border-radius:6px;
+    background:var(--surface-2); border:2px solid var(--ink-2); cursor:nwse-resize; touch-action:none;
+    opacity:0; transition:opacity .15s ease; z-index:4; display:flex; align-items:center; justify-content:center;
+    font-size:10px; line-height:1; color:var(--ink-2);
+  }
+  .ztl-draggable:hover .ztl-card-resize{ opacity:.85; }
+  .ztl-card-resize:hover{ opacity:1 !important; color:var(--accent); border-color:var(--accent); }
+  .ztl-photo{ cursor:pointer; position:relative; flex:none; display:flex; align-items:center; justify-content:center; }
+  .ztl-resize-handle{
+    position:absolute; right:-3px; bottom:-3px; width:16px; height:16px; border-radius:50%;
+    background:var(--surface-2); border:2px solid var(--accent); cursor:nwse-resize; touch-action:none;
+    opacity:0; transition:opacity .15s ease; z-index:2;
+  }
+  .ztl-photo:hover .ztl-resize-handle{ opacity:1; }
+  .ztl-photo.ztl-photo-sm{
+    width:62px; height:62px; border-radius:50%; border:3px solid var(--accent);
+    background:var(--surface-2);
+    box-shadow:0 0 0 2px var(--page), 0 0 0 4px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  /* El radio/clip va en la imagen (no en .ztl-photo) para que el tirador de tamaño,
+     que sobresale un poco del circulo, no quede recortado por el overflow del contenedor. */
+  .ztl-photo img{ width:100%; height:100%; object-fit:cover; display:block; border-radius:50%; }
+  .ztl-photo.empty{ color:var(--ink-muted); }
+  .ztl-photo.ztl-photo-sm.empty .plus{ font-size:24px; color:var(--accent); line-height:1; }
+  .ztl-photo .count-badge{ position:absolute; bottom:-2px; right:-2px; background:rgba(0,0,0,.6); color:#fff; font-size:8.5px; padding:0 4px; border-radius:999px; font-family:"IBM Plex Mono",monospace; }
+
+  /* ---- slot de año unico (una sola foto grande + año en texto, como "2017" en el mural) ---- */
+  .ztl-dot{
+    position:absolute; top:var(--ztl-half,430px); left:50%; width:16px; height:16px; border-radius:50%; z-index:2;
+    background:var(--accent); border:3px solid var(--page);
+    box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 55%, black), 0 2px 6px rgba(0,0,0,.3);
+    transform:translate(-50%,-50%);
+  }
+  .ztl-ycontent-single{ align-items:center; text-align:center; gap:9px; }
+  .ztl-photo.ztl-photo-lg{
+    width:150px; height:150px; border-radius:50%; border:5px solid var(--accent);
+    background:var(--surface-2); flex-direction:column; gap:4px; font-size:12px;
     box-shadow:0 0 0 4px var(--page), 0 0 0 7px color-mix(in srgb, var(--accent) 40%, transparent), 0 4px 10px rgba(0,0,0,.25);
   }
-  .ztl-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .ztl-photo.empty{ flex-direction:column; gap:4px; color:var(--ink-muted); font-size:12px; }
-  .ztl-photo.empty .plus{ font-size:32px; color:var(--accent); line-height:1; }
-  .ztl-photo .count-badge{ position:absolute; bottom:2px; right:2px; background:rgba(0,0,0,.6); color:#fff; font-size:10px; padding:1px 5px; border-radius:999px; font-family:"IBM Plex Mono",monospace; }
-  .ztl-date{ font-family:"IBM Plex Sans Condensed"; font-size:17px; font-weight:700; color:var(--accent); line-height:1; }
-  .ztl-title{ font-size:12.5px; font-weight:500; color:var(--ink); line-height:1.35; max-width:205px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; cursor:default; }
-  .ztl-sub{ font-size:10.5px; color:var(--ink-muted); }
-  .ztl-actions{ display:flex; gap:7px; opacity:.25; transition:opacity .15s ease; }
-  .ztl-content:hover .ztl-actions{ opacity:1; }
-  .ztl-action-btn{ background:none; border:none; cursor:pointer; font-size:11px; padding:1px 2px; line-height:1; color:var(--ink-muted); }
+  .ztl-photo.ztl-photo-lg.empty .plus{ font-size:30px; color:var(--accent); line-height:1; }
+  .ztl-photo.ztl-photo-lg .count-badge{ font-size:10px; padding:1px 5px; }
+  .ztl-year-big{ font-family:"IBM Plex Sans Condensed"; font-size:30px; font-weight:700; color:var(--accent); line-height:1; }
+  .ztl-yevent-desc-lg{ font-size:11px; font-weight:500; color:var(--ink); line-height:1.35; max-width:210px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; cursor:default; }
+  .ztl-ycontent-single:hover .ztl-actions{ opacity:1; }
+  .ztl-yevent-text{ flex:1; min-width:0; }
+  .ztl-yevent-date{ display:block; font-family:"IBM Plex Sans Condensed"; font-size:10px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:.03em; }
+  .ztl-yevent-desc{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:10.5px; line-height:1.35; color:var(--ink); cursor:default; }
+  .ztl-actions{ display:flex; gap:6px; flex:none; opacity:.25; transition:opacity .15s ease; padding-top:2px; }
+  .ztl-yevent:hover .ztl-actions{ opacity:1; }
+  .ztl-action-btn{ background:none; border:none; cursor:pointer; font-size:10.5px; padding:1px 2px; line-height:1; color:var(--ink-muted); }
   .ztl-action-btn:hover{ color:var(--accent); }
   .ztl-action-btn.danger:hover{ color:var(--critical-text); }
   .ztl-rel{ display:inline-block; font-size:9.5px; font-weight:600; padding:1px 7px; border-radius:999px; text-transform:uppercase; letter-spacing:.04em; }
@@ -181,6 +290,23 @@
   .row-del-btn{ background:none; border:1px solid var(--hairline-strong); border-radius:7px; padding:3px 7px; cursor:pointer; color:var(--critical-text); font-size:11px; }
   .row-edit-btn{ background:none; border:1px solid var(--hairline-strong); border-radius:7px; padding:3px 7px; cursor:pointer; color:var(--ink-2); font-size:11px; }
   .row-actions-line{ display:flex; align-items:center; gap:6px; }
+
+  /* ---- pendientes por revisar (posibles duplicados) ---- */
+  .pend-card{ background:var(--surface); border:1px solid var(--warning); border-left:4px solid var(--warning); border-radius:10px; padding:16px 18px; box-shadow:var(--shadow); margin-bottom:12px; }
+  .pend-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+  .pend-badge{ display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:#fff; background:var(--warning); border-radius:999px; padding:3px 10px; }
+  .pend-compare{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .pend-col{ font-size:12.5px; }
+  .pend-col .pc-label{ font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-muted); margin-bottom:4px; }
+  .pend-col .pc-date{ font-family:"IBM Plex Mono",monospace; font-weight:600; color:var(--ink-2); margin-bottom:3px; }
+  .pend-col .pc-desc{ color:var(--ink); line-height:1.4; }
+  .pend-actions{ display:flex; gap:10px; margin-top:12px; }
+  .btn-pend{ font-family:inherit; font-size:12px; font-weight:500; border-radius:7px; padding:7px 13px; cursor:pointer; border:1px solid transparent; }
+  .btn-pend.approve{ background:var(--good); color:#fff; }
+  .btn-pend.discard{ background:none; border-color:var(--critical); color:var(--critical-text); }
+  .btn-pend.discard:hover{ background:color-mix(in srgb, var(--critical) 12%, transparent); }
+  .pend-empty{ color:var(--ink-muted); font-size:13px; padding:20px; text-align:center; background:var(--surface); border:1px dashed var(--hairline-strong); border-radius:12px; }
+  @media (max-width:700px){ .pend-compare{ grid-template-columns:1fr; } }
 
   .table-wrap{ margin-top:14px; background:var(--surface); border:1px solid var(--hairline); border-radius:12px; box-shadow:var(--shadow); overflow:auto; max-height:640px; }
   table{ border-collapse:collapse; width:100%; min-width:1040px; font-size:13px; table-layout:fixed; }
@@ -234,9 +360,29 @@
 </style>
 </head>
 <body>
+<aside class="app-sidebar">
+  <div class="sb-brand">
+    <img src="epm-logo.png" alt="Logo EPM">
+    <div>
+      <div class="sb-title">Bitácora CMT</div>
+      <div class="sb-sub">Proyecto Ituango</div>
+    </div>
+  </div>
+  <nav class="sb-menu" id="sb-menu">
+    <button type="button" data-target="sec-resumen">▥ &nbsp;Resumen</button>
+    <button type="button" data-target="sec-hitos">◷ &nbsp;Línea de tiempo</button>
+    <button type="button" data-target="sec-analisis">⌕ &nbsp;Análisis</button>
+    <button type="button" data-target="sec-registro">▤ &nbsp;Registro de eventos</button>
+    <button type="button" data-target="sec-pendientes">⚠ &nbsp;Pendientes por revisar<span class="sb-badge" id="sb-pendientes-badge" hidden>0</span></button>
+  </nav>
+  <div class="sb-status">
+    <div class="sb-status-row"><span class="sb-dot"></span><strong id="sb-status-text">Cargando…</strong></div>
+    <div id="sb-status-sub">—</div>
+  </div>
+</aside>
 <div class="wrap">
 
-  <div class="masthead">
+  <div class="masthead" id="sec-resumen">
     <div class="masthead-brand">
       <img src="epm-logo.png" alt="Logo EPM" class="epm-logo">
       <div>
@@ -261,7 +407,7 @@
 
   <div class="stats" id="stat-strip"></div>
 
-  <div class="section-head">
+  <div class="section-head" id="sec-hitos">
     <h2>Línea de tiempo de hitos</h2>
     <div class="note" id="hitos-note"></div>
   </div>
@@ -269,13 +415,24 @@
     <span class="count-pill" id="hitos-hidden-pill"></span>
     <button class="reset-link push" id="btn-show-hidden-hitos" type="button">Mostrar todos</button>
   </div>
-  <div class="panel">
-    <div class="ztl-wrap">
-      <div class="ztl-track" id="hitos-scroll"><div class="ztl-line"></div></div>
+  <div class="hitos-resize-wrap" id="hitos-resize-wrap">
+    <div class="panel panel-hitos" id="hitos-panel">
+      <div class="ztl-wrap">
+        <div class="ztl-track" id="hitos-scroll"><div class="ztl-line"></div></div>
+      </div>
     </div>
+    <div class="ztl-edge-resize edge-top" data-edge="top" title="Arrastra para alargar/achatar"></div>
+    <div class="ztl-edge-resize edge-bottom" data-edge="bottom" title="Arrastra para alargar/achatar"></div>
+    <div class="ztl-edge-resize edge-left" data-edge="left" title="Arrastra para ensanchar/angostar"></div>
+    <div class="ztl-edge-resize edge-right" data-edge="right" title="Arrastra para ensanchar/angostar"></div>
+  </div>
+  <div class="ztl-scale-box hidden" id="ztl-scale-box">
+    <label for="ztl-scale-input">Zoom %</label>
+    <input type="number" id="ztl-scale-input" min="55" max="220" step="5" />
+    <button type="button" id="ztl-scale-apply" class="reset-link">Aplicar</button>
   </div>
 
-  <div class="section-head">
+  <div class="section-head" id="sec-analisis">
     <h2>Eventos por año y componente</h2>
     <div class="note">2012 – 2023 · apilado por componente responsable</div>
   </div>
@@ -302,7 +459,7 @@
     </div>
   </div>
 
-  <div class="section-head">
+  <div class="section-head" id="sec-registro">
     <h2>Registro de eventos</h2>
     <div class="note" id="total-note"></div>
   </div>
@@ -357,6 +514,12 @@
       <tbody id="table-body"></tbody>
     </table>
   </div>
+
+  <div class="section-head" id="sec-pendientes">
+    <h2>Pendientes por revisar</h2>
+    <div class="note" id="pendientes-note">Posibles eventos duplicados detectados automáticamente (misma fecha ± 2 días y descripción muy parecida a otro ya existente)</div>
+  </div>
+  <div id="pendientes-list"></div>
 
   <footer>
     <span>Bitácora general de Hitos y eventos relevantes CMT — Proyecto Hidroeléctrico Ituango · app local con fotos</span>
@@ -561,6 +724,144 @@ window.addEventListener('unhandledrejection', function(e){
     }));
   }
 
+  // ---- posiciones manuales (arrastrar tarjetas en la linea de tiempo) ----
+  // Guarda el desplazamiento (dx,dy) que el usuario arrastra con el mouse, enlazado
+  // por la huella estable del evento, para que la posicion quede fija entre recargas.
+  const POS_DB_NAME = 'BitacoraCMTHitoPosiciones', POS_DB_VERSION = 1, POS_STORE = 'posiciones';
+  let posDbPromise = new Promise((resolve, reject) => {
+    const req = indexedDB.open(POS_DB_NAME, POS_DB_VERSION);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(POS_STORE)) db.createObjectStore(POS_STORE, { keyPath: 'pkey' });
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  function getAllPositions(){
+    return posDbPromise.then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction(POS_STORE, 'readonly');
+      const req = tx.objectStore(POS_STORE).getAll();
+      req.onsuccess = () => {
+        const out = {};
+        req.result.forEach(r => { out[r.pkey] = r; });
+        resolve(out);
+      };
+      req.onerror = () => reject(req.error);
+    }));
+  }
+  // Mezcla sobre el registro existente (no lo reemplaza) para no perder el tamaño guardado
+  // al mover, ni la posicion guardada al cambiar el tamaño.
+  function updatePosition(pkey, patch){
+    return posDbPromise.then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction(POS_STORE, 'readwrite');
+      const store = tx.objectStore(POS_STORE);
+      const getReq = store.get(pkey);
+      getReq.onsuccess = () => {
+        const current = getReq.result || { pkey };
+        const putReq = store.put(Object.assign({}, current, patch, { pkey }));
+        putReq.onsuccess = () => resolve();
+        putReq.onerror = () => reject(putReq.error);
+      };
+      getReq.onerror = () => reject(getReq.error);
+    }));
+  }
+
+  // ---- posibles duplicados (bandeja "Pendientes por revisar") ----
+  // Se detectan comparando fecha (+/- 2 dias) y similitud de texto de la descripcion contra
+  // eventos ya existentes. La decision del usuario (aprobar/descartar) queda guardada por
+  // huella estable, asi no se vuelve a preguntar lo mismo en cada carga.
+  const DUP_DB_NAME = 'BitacoraCMTDuplicados', DUP_DB_VERSION = 1, DUP_STORE = 'duplicados';
+  let dupDbPromise = new Promise((resolve, reject) => {
+    const req = indexedDB.open(DUP_DB_NAME, DUP_DB_VERSION);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(DUP_STORE)) db.createObjectStore(DUP_STORE, { keyPath: 'pkey' });
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  function getAllDuplicateFlags(){
+    return dupDbPromise.then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction(DUP_STORE, 'readonly');
+      const req = tx.objectStore(DUP_STORE).getAll();
+      req.onsuccess = () => {
+        const out = {};
+        req.result.forEach(r => { out[r.pkey] = r; });
+        resolve(out);
+      };
+      req.onerror = () => reject(req.error);
+    }));
+  }
+  function setDuplicateFlag(pkey, data){
+    return dupDbPromise.then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction(DUP_STORE, 'readwrite');
+      const req = tx.objectStore(DUP_STORE).put(Object.assign({ pkey }, data));
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    }));
+  }
+  function daysBetween(iso1, iso2){
+    if (!iso1 || !iso2) return 999;
+    const d1 = new Date(iso1 + 'T00:00:00'), d2 = new Date(iso2 + 'T00:00:00');
+    return Math.round(Math.abs(d1 - d2) / 86400000);
+  }
+  function bigrams(s){
+    const out = [];
+    for (let i = 0; i < s.length - 1; i++) out.push(s.slice(i, i + 2));
+    return out;
+  }
+  // Similitud de texto (coeficiente de Dice sobre bigramas), 0 a 1. Ignora tildes/mayusculas.
+  function textSimilarity(a, b){
+    a = normalizeText(a || '').replace(/\s+/g, ' ').trim();
+    b = normalizeText(b || '').replace(/\s+/g, ' ').trim();
+    if (!a || !b) return 0;
+    if (a === b) return 1;
+    const ba = bigrams(a), bb = bigrams(b);
+    if (!ba.length || !bb.length) return 0;
+    const counts = {};
+    bb.forEach(g => { counts[g] = (counts[g] || 0) + 1; });
+    let matches = 0;
+    ba.forEach(g => { if (counts[g] > 0){ matches++; counts[g]--; } });
+    return (2 * matches) / (ba.length + bb.length);
+  }
+  const DUP_DATE_WINDOW_DAYS = 2;
+  const DUP_SIMILARITY_THRESHOLD = 0.65;
+  // Revisa los registros SIN bandera guardada todavia contra los demas (fecha cercana +
+  // texto muy parecido) y separa el conjunto en "visibles" (lo normal) y "pendientes"
+  // (posibles duplicados nuevos, para la bandeja de revision). Lo ya decidido antes
+  // (aprobado o descartado) se respeta siempre, sin volver a evaluarlo.
+  async function partitionDuplicates(allRecords){
+    const flags = await getAllDuplicateFlags();
+    const sorted = allRecords.slice().sort((a, b) => (a.FECHA || '').localeCompare(b.FECHA || ''));
+    const newlyFlagged = [];
+    for (let i = 0; i < sorted.length; i++){
+      const r = sorted[i];
+      if (flags[r._pkey]) continue;
+      for (let j = i - 1; j >= 0; j--){
+        const other = sorted[j];
+        if (other._pkey === r._pkey) continue;
+        const dd = daysBetween(r.FECHA, other.FECHA);
+        if (dd > DUP_DATE_WINDOW_DAYS) break;
+        if (textSimilarity(r.DESCRIPCION, other.DESCRIPCION) >= DUP_SIMILARITY_THRESHOLD){
+          newlyFlagged.push({
+            pkey: r._pkey, status: 'pending', matchedPkey: other._pkey,
+            matchedId: other.ID, matchedFecha: other.FECHA, matchedDescripcion: other.DESCRIPCION,
+          });
+          break;
+        }
+      }
+    }
+    for (const f of newlyFlagged){ await setDuplicateFlag(f.pkey, f); flags[f.pkey] = f; }
+    const visible = [], pending = [];
+    allRecords.forEach(r => {
+      const f = flags[r._pkey];
+      if (f && f.status === 'pending') pending.push(Object.assign({}, r, { _dupInfo: f }));
+      else if (f && f.status === 'discarded') { /* oculto en todas partes */ }
+      else visible.push(r);
+    });
+    return { visible, pending };
+  }
+
   const DB_NAME = 'BitacoraCMTFotos', DB_VERSION = 1, STORE = 'fotos';
   let dbPromise = new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
@@ -639,6 +940,32 @@ window.addEventListener('unhandledrejection', function(e){
     }
   }
 
+  // Si el archivo fotos_manifest.json existe junto a la pagina (version publicada en
+  // GitHub Pages, con la carpeta fotos/ incluida), trae esas fotos automaticamente a la
+  // base local la primera vez — asi quien entra por el enlace ve las fotos reales sin
+  // tener que usar "Importar ZIP" a mano. Si el archivo no existe (uso normal en el PC,
+  // sin publicar), el fetch falla en silencio y no cambia nada.
+  async function seedStaticPhotos(){
+    let manifest;
+    try {
+      const res = await fetch('fotos_manifest.json');
+      if (!res.ok) return;
+      manifest = await res.json();
+    } catch(_err){ return; }
+    const existing = await idbAllRecords();
+    const existKeys = new Set(existing.map(r => `${r.eventId}|${r.name}|${r.addedAt}`));
+    for (const entry of manifest){
+      const key = `${entry.eventId}|${entry.name}|${entry.addedAt}`;
+      if (existKeys.has(key)) continue;
+      try {
+        const res = await fetch(entry.path);
+        if (!res.ok) continue;
+        const blob = await res.blob();
+        await idbAdd({ eventId: String(entry.eventId), name: entry.name, blob, thumb: blob, addedAt: entry.addedAt || Date.now() });
+      } catch(_err){ /* una foto que falle no debe bloquear las demas */ }
+    }
+  }
+
   function resizeImage(file, maxDim){
     return new Promise((resolve) => {
       const img = new Image();
@@ -698,6 +1025,11 @@ window.addEventListener('unhandledrejection', function(e){
   let BASE_RECORDS = null;
   let EDIT_EVENT_FN = null;
   let EDIT_OVERRIDE_FN = null;
+  // Tarjetas de la linea de tiempo seleccionadas (Ctrl/Cmd+clic) para mover/escalar en bloque,
+  // igual que seleccionar varias celdas en Excel antes de redimensionar.
+  const SELECTED_PKEYS = new Set();
+  let HITOS_PANEL_HAS_SAVED_SIZE = false;
+  let GLOBAL_DESELECT_BOUND = false;
 
   setupThemeSwitch();
   setupPhotoModal();
@@ -705,6 +1037,11 @@ window.addEventListener('unhandledrejection', function(e){
   setupExcelReload();
   setupNewEventForm();
   setupHitosHiddenControl();
+  setupSidebarNav();
+  setupHitosPanelResize();
+  setupHitosEdgeResize();
+  setupGlobalDeselect();
+  setupScaleBox();
 
   if (typeof RECORDS_DATA === 'undefined'){
     document.getElementById('table-body').innerHTML = '<tr class="empty-row"><td colspan="9">No se encontró bitacora_data.js — debe estar en la misma carpeta.</td></tr>';
@@ -731,10 +1068,16 @@ window.addEventListener('unhandledrejection', function(e){
         r._hiddenFromTimeline = !!ov.hidden;
       }
     });
+    const { visible, pending } = await partitionDuplicates(records);
+    records = visible;
+    renderPendientes(pending);
+
+    await seedStaticPhotos();
     await migratePhotoKeys(records);
     PHOTO_COUNTS = await idbCountByEvent();
 
     const total = records.length;
+    updateSidebarStatus(total, document.getElementById('source-name').textContent);
     const dates = records.map(r => r.FECHA).filter(Boolean).sort();
     const first = dates[0], last = dates[dates.length-1];
     const compCounts = countBy(records, 'COMPONENTE');
@@ -779,7 +1122,64 @@ window.addEventListener('unhandledrejection', function(e){
     setupFilters(records);
   }
 
-  // ============ hitos timeline (zigzag) ============
+  // ============ pendientes por revisar (posibles duplicados) ============
+  function renderPendientes(pending){
+    const badge = document.getElementById('sb-pendientes-badge');
+    const note = document.getElementById('pendientes-note');
+    const list = document.getElementById('pendientes-list');
+    if (pending.length){
+      badge.hidden = false; badge.textContent = pending.length;
+      note.textContent = `${pending.length} posible${pending.length===1?'':'s'} duplicado${pending.length===1?'':'s'} detectado${pending.length===1?'':'s'} (misma fecha ± 2 días y descripción muy parecida a otro ya existente)`;
+    } else {
+      badge.hidden = true;
+      note.textContent = 'No hay eventos pendientes de revisión por ahora.';
+    }
+    if (!pending.length){
+      list.innerHTML = `<div class="pend-empty">Sin duplicados pendientes. Cuando se detecte uno, aparecerá aquí para que lo apruebes o lo descartes.</div>`;
+      return;
+    }
+    list.innerHTML = pending.map(r => `
+      <div class="pend-card">
+        <div class="pend-head">
+          <span class="pend-badge">Duplicado</span>
+          <span style="font-size:12px; color:var(--ink-muted);">ID ${escapeAttr(r.ID)} se parece a ID ${escapeAttr(r._dupInfo.matchedId)}</span>
+        </div>
+        <div class="pend-compare">
+          <div class="pend-col">
+            <div class="pc-label">Evento nuevo</div>
+            <div class="pc-date">${fmtDate(r.FECHA)}</div>
+            <div class="pc-desc">${escapeHtml(r.DESCRIPCION || r.TIPO_EVENTO || '—')}</div>
+          </div>
+          <div class="pend-col">
+            <div class="pc-label">Ya existente</div>
+            <div class="pc-date">${fmtDate(r._dupInfo.matchedFecha)}</div>
+            <div class="pc-desc">${escapeHtml(r._dupInfo.matchedDescripcion || '—')}</div>
+          </div>
+        </div>
+        <div class="pend-actions">
+          <button class="btn-pend approve" data-approve-pkey="${escapeAttr(r._pkey)}" type="button">No es duplicado, mostrarlo</button>
+          <button class="btn-pend discard" data-discard-pkey="${escapeAttr(r._pkey)}" type="button">Eliminarlo</button>
+        </div>
+      </div>
+    `).join('');
+    list.querySelectorAll('[data-approve-pkey]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        await setDuplicateFlag(btn.dataset.approvePkey, { status: 'approved' });
+        await loadAndRender(BASE_RECORDS);
+        showToast('Marcado como evento real: ya aparece en el registro y la línea de tiempo.');
+      });
+    });
+    list.querySelectorAll('[data-discard-pkey]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('¿Eliminar este evento por ser duplicado? No volverá a aparecer en la app, ni aunque recargues el Excel con este mismo evento.')) return;
+        await setDuplicateFlag(btn.dataset.discardPkey, { status: 'discarded' });
+        await loadAndRender(BASE_RECORDS);
+        showToast('Eliminado: no volverá a aparecer, ni aunque recargues el Excel con este mismo evento. Si hace falta, reestructura la descripción del evento existente.', 'warn');
+      });
+    });
+  }
+
+  // ============ hitos timeline (agrupada por año) ============
   async function renderHitos(records){
     const allHitoRecords = records.filter(r => r.EVENTO === 'HITO');
     const hitos = allHitoRecords.filter(r => !r._hiddenFromTimeline).sort((a,b)=>a.FECHA.localeCompare(b.FECHA));
@@ -791,14 +1191,27 @@ window.addEventListener('unhandledrejection', function(e){
     } else {
       hiddenBar.style.display = 'none';
     }
-    document.getElementById('hitos-note').textContent = `${hitos.length} hitos del proyecto · clic en la foto para ver o subir evidencia`;
+    document.getElementById('hitos-note').textContent = `${hitos.length} hitos del proyecto · clic en la foto para ver o subir evidencia · Ctrl+clic para seleccionar varias tarjetas y moverlas/escalarlas juntas`;
     const trackEl = document.getElementById('hitos-scroll');
     if (!hitos.length){
       trackEl.innerHTML = `<div class="ztl-line"></div><div style="color:var(--ink-muted); font-size:13px; padding:20px;">No hay eventos marcados como "Hito" todavía.</div>`;
       return;
     }
-    trackEl.innerHTML = `<div class="ztl-line"></div>` + hitos.map((h, i) => hitoSlotHtml(h, i % 2 === 0)).join('');
+
+    const byYear = {};
+    hitos.forEach(h => { const y = h.FECHA.slice(0,4); (byYear[y] = byYear[y] || []).push(h); });
+    const years = Object.keys(byYear).sort();
+    const positions = await getAllPositions();
+
+    trackEl.innerHTML = `<div class="ztl-line"></div>` + years.map((y, i) => yearSlotHtml(y, byYear[y], i % 2 === 0, positions)).join('');
     await Promise.all(hitos.map(h => refreshHitoPhoto(h._pkey)));
+    computeAndApplyTrackHalfHeight(trackEl);
+    drawFanLines(trackEl);
+    enableDragging(trackEl);
+    enableResizing(trackEl);
+    enableCardScale(trackEl);
+    enableCardSelection(trackEl);
+    if (!HITOS_PANEL_HAS_SAVED_SIZE) autoFitHitosPanelHeight();
     trackEl.querySelectorAll('.ztl-photo').forEach(el => {
       el.addEventListener('click', () => openPhotoModal(el.dataset.eventId, el.dataset.title, el.dataset.displayId));
     });
@@ -831,19 +1244,260 @@ window.addEventListener('unhandledrejection', function(e){
     });
   }
 
-  function hitoSlotHtml(h, up){
+  function yearEventHtml(h, i, positions){
+    // Escalona cada fila a izquierda/derecha alternando, para que las lineas del abanico
+    // se separen visualmente en vez de quedar casi paralelas una encima de otra.
+    const step = Math.ceil(i/2) * 22 * (i % 2 === 0 ? 1 : -1);
+    const pos = (positions && positions[h._pkey]) || { dx:0, dy:0 };
+    const sizeStyle = pos.size ? `width:${pos.size}px; height:${pos.size}px;` : '';
+    const cardStyle = `margin-left:${step}px; --dx:${pos.dx}px; --dy:${pos.dy}px; --scale:${pos.scale||1};`;
+    return `
+    <div class="ztl-yevent ztl-draggable" data-pkey="${escapeAttr(h._pkey)}" style="${cardStyle}">
+      <div class="ztl-photo ztl-photo-sm empty" id="hito-photo-${cssSafe(h._pkey)}" data-event-id="${escapeAttr(h._pkey)}" data-display-id="${escapeAttr(h.ID)}" data-title="${escapeAttr(h.TIPO_EVENTO||'')}" style="${sizeStyle}">
+        <span class="plus">＋</span>
+        <span class="ztl-resize-handle" data-pkey="${escapeAttr(h._pkey)}" title="Arrastrar para cambiar el tamaño de la foto"></span>
+      </div>
+      <div class="ztl-yevent-text">
+        <span class="ztl-yevent-date">${fmtMonthDay(h.FECHA)} · ${cap(h.FRENTE)}</span>
+        <span class="ztl-yevent-desc" title="${escapeAttr(h.DESCRIPCION || h.TIPO_EVENTO || '')}">${escapeHtml(h.DESCRIPCION || cap(h.TIPO_EVENTO) || '')}</span>
+      </div>
+      <div class="ztl-actions">
+        <button class="ztl-action-btn" data-hito-edit-pkey="${escapeAttr(h._pkey)}" data-hito-edit-ismanual="${h._manual?'1':'0'}" data-hito-edit-id="${escapeAttr(h.ID)}" type="button" title="Editar hito">✏️</button>
+        <button class="ztl-action-btn danger" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="${h._manual?'1':'0'}" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="${h._manual ? 'Eliminar hito' : 'Quitar de la línea de tiempo'}">🗑</button>
+      </div>
+      <span class="ztl-card-resize" data-pkey="${escapeAttr(h._pkey)}" title="Arrastrar para agrandar/achicar toda la tarjeta">↘</span>
+    </div>`;
+  }
+
+  function yearSlotHtml(year, items, up, positions){
+    if (items.length === 1) return singleYearSlotHtml(year, items[0], up, positions);
+    const content = `<div class="ztl-ycontent"><div class="ztl-yevents">${items.map((h,i) => yearEventHtml(h,i,positions)).join('')}</div></div>`;
+    return `
+    <div class="ztl-slot">
+      <svg class="ztl-fan-svg"></svg>
+      <div class="ztl-half ztl-top">${up ? content : ''}</div>
+      <div class="ztl-dot-year">${year}</div>
+      <div class="ztl-half ztl-bottom">${!up ? content : ''}</div>
+    </div>`;
+  }
+
+  // Dibuja una linea delgada desde cada circulo-año hasta la foto de cada hito listado
+  // debajo/encima, estilo "abanico" como en el mural fisico.
+  function drawFanLines(trackEl){
+    trackEl.querySelectorAll('.ztl-slot').forEach(slot => {
+      const svg = slot.querySelector('.ztl-fan-svg');
+      const circle = slot.querySelector('.ztl-dot-year');
+      if (!svg || !circle) return;
+      const slotRect = slot.getBoundingClientRect();
+      const circleRect = circle.getBoundingClientRect();
+      const cx = circleRect.left + circleRect.width/2 - slotRect.left;
+      const cy = circleRect.top + circleRect.height/2 - slotRect.top;
+      const photos = slot.querySelectorAll('.ztl-yevent .ztl-photo');
+      svg.innerHTML = [...photos].map(photo => {
+        const r = photo.getBoundingClientRect();
+        const x = r.left + r.width/2 - slotRect.left;
+        const y = r.top + r.height/2 - slotRect.top;
+        return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}"></line>`;
+      }).join('');
+    });
+  }
+
+  // Permite arrastrar con el mouse cada tarjeta (.ztl-draggable) para reposicionarla
+  // libremente; la posicion final se guarda por huella estable y se reaplica siempre.
+  function numProp(el, name, fallback){
+    const v = parseFloat(el.style.getPropertyValue(name));
+    return Number.isFinite(v) ? v : fallback;
+  }
+  // Si la tarjeta que se esta arrastrando/escalando pertenece a una seleccion de 2 o mas
+  // (Ctrl/Cmd+clic), devuelve TODAS las tarjetas seleccionadas para moverlas/escalarlas en
+  // bloque — igual que seleccionar varias celdas en Excel antes de redimensionar. Si no hay
+  // seleccion multiple, devuelve lista vacia (se opera solo sobre esa tarjeta).
+  function groupFor(trackEl, pkey){
+    if (!SELECTED_PKEYS.has(pkey) || SELECTED_PKEYS.size < 2) return [];
+    return [...trackEl.querySelectorAll('.ztl-draggable')].filter(el => SELECTED_PKEYS.has(el.dataset.pkey));
+  }
+  // Ctrl/Cmd+clic en una tarjeta la marca como seleccionada (resaltada); vuelve a hacerlo
+  // para quitarla de la seleccion. No interfiere con el clic normal (abrir foto, arrastrar).
+  function enableCardSelection(trackEl){
+    trackEl.querySelectorAll('.ztl-draggable').forEach(el => {
+      const pkey = el.dataset.pkey;
+      el.classList.toggle('ztl-selected', SELECTED_PKEYS.has(pkey));
+      el.addEventListener('click', (e) => {
+        if (!(e.ctrlKey || e.metaKey)) return;
+        if (e.target.closest('.ztl-action-btn') || e.target.closest('.ztl-photo') || e.target.closest('.ztl-card-resize')) return;
+        e.stopPropagation(); e.preventDefault();
+        if (SELECTED_PKEYS.has(pkey)){ SELECTED_PKEYS.delete(pkey); el.classList.remove('ztl-selected'); }
+        else { SELECTED_PKEYS.add(pkey); el.classList.add('ztl-selected'); }
+        if (window.ztlUpdateScaleBox) window.ztlUpdateScaleBox();
+      });
+    });
+  }
+  // Un clic normal (sin Ctrl/Cmd) en cualquier parte de la pagina limpia toda la seleccion
+  // de tarjetas — asi no hay que ir Ctrl+clic una por una para soltarlas.
+  function setupGlobalDeselect(){
+    if (GLOBAL_DESELECT_BOUND) return;
+    GLOBAL_DESELECT_BOUND = true;
+    document.addEventListener('click', (e) => {
+      if (e.ctrlKey || e.metaKey) return;
+      if (!SELECTED_PKEYS.size) return;
+      SELECTED_PKEYS.clear();
+      document.querySelectorAll('.ztl-selected').forEach(el => el.classList.remove('ztl-selected'));
+      if (window.ztlUpdateScaleBox) window.ztlUpdateScaleBox();
+    });
+  }
+  function enableDragging(trackEl){
+    trackEl.querySelectorAll('.ztl-draggable').forEach(el => {
+      let startX = 0, startY = 0, dragging = false, moved = false, members = [];
+      el.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('.ztl-action-btn') || e.target.closest('.ztl-photo') || e.target.closest('.ztl-card-resize')) return;
+        if (e.ctrlKey || e.metaKey) return; // eso es para seleccionar, no para arrastrar
+        const group = groupFor(trackEl, el.dataset.pkey);
+        members = (group.length ? group : [el]).map(m => ({ el: m, baseDx: numProp(m,'--dx',0), baseDy: numProp(m,'--dy',0) }));
+        startX = e.clientX; startY = e.clientY;
+        dragging = true; moved = false;
+        try { el.setPointerCapture(e.pointerId); } catch(_err){}
+        el.classList.add('dragging');
+      });
+      el.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        const ddx = e.clientX - startX, ddy = e.clientY - startY;
+        if (Math.abs(ddx) > 3 || Math.abs(ddy) > 3) moved = true;
+        members.forEach(m => {
+          m.el.style.setProperty('--dx', (m.baseDx + ddx) + 'px');
+          m.el.style.setProperty('--dy', (m.baseDy + ddy) + 'px');
+        });
+        drawFanLines(trackEl);
+      });
+      const finishDrag = async () => {
+        if (!dragging) return;
+        dragging = false;
+        el.classList.remove('dragging');
+        if (moved){
+          el.dataset.justDragged = '1';
+          for (const m of members){
+            await updatePosition(m.el.dataset.pkey, { dx: numProp(m.el,'--dx',0), dy: numProp(m.el,'--dy',0) });
+          }
+          drawFanLines(trackEl);
+        }
+        members = [];
+      };
+      el.addEventListener('pointerup', finishDrag);
+      el.addEventListener('pointercancel', finishDrag);
+      el.addEventListener('click', (e) => {
+        if (el.dataset.justDragged === '1'){
+          e.stopPropagation(); e.preventDefault();
+          delete el.dataset.justDragged;
+        }
+      }, true);
+    });
+  }
+
+  // Permite agrandar/achicar la tarjeta COMPLETA (foto + texto juntos) arrastrando el
+  // tirador de su esquina, escalando todo el contenido de manera proporcional. Si la tarjeta
+  // forma parte de una seleccion multiple, todas las seleccionadas escalan juntas.
+  function enableCardScale(trackEl){
+    trackEl.querySelectorAll('.ztl-card-resize').forEach(handle => {
+      if (handle.dataset.scaleBound) return;
+      handle.dataset.scaleBound = '1';
+      const card = handle.closest('.ztl-draggable');
+      let startX = 0, resizing = false, members = [];
+      const MIN_SCALE = 0.55, MAX_SCALE = 2.2;
+      handle.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        const group = groupFor(trackEl, card.dataset.pkey);
+        members = (group.length ? group : [card]).map(m => ({ el: m, baseScale: numProp(m, '--scale', 1) }));
+        startX = e.clientX;
+        resizing = true;
+        try { handle.setPointerCapture(e.pointerId); } catch(_err){}
+      });
+      handle.addEventListener('pointermove', (e) => {
+        if (!resizing) return;
+        e.stopPropagation();
+        const delta = (e.clientX - startX) / 140;
+        members.forEach(m => {
+          const scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, m.baseScale + delta));
+          m.el.style.setProperty('--scale', scale.toFixed(3));
+        });
+        computeAndApplyTrackHalfHeight(trackEl);
+        drawFanLines(trackEl);
+        autoFitHitosPanelHeight();
+      });
+      const finishScale = async (e) => {
+        if (!resizing) return;
+        e.stopPropagation();
+        resizing = false;
+        computeAndApplyTrackHalfHeight(trackEl);
+        autoFitHitosPanelHeight();
+        for (const m of members){
+          await updatePosition(m.el.dataset.pkey, { scale: numProp(m.el, '--scale', 1) });
+        }
+        drawFanLines(trackEl);
+        members = [];
+      };
+      handle.addEventListener('pointerup', finishScale);
+      handle.addEventListener('pointercancel', finishScale);
+      handle.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); });
+    });
+  }
+
+  // Permite agrandar/achicar la foto de cada hito arrastrando el tirador en su esquina.
+  function bindResizeHandle(handle, trackEl){
+    if (handle.dataset.resizeBound) return; // evita doble-enlace si se llama mas de una vez sobre el mismo nodo
+    handle.dataset.resizeBound = '1';
+    const photo = handle.parentElement;
+    let startX = 0, baseSize = 0, resizing = false;
+    const MIN_SIZE = 28, MAX_SIZE = 240;
+    handle.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      baseSize = photo.getBoundingClientRect().width;
+      startX = e.clientX;
+      resizing = true;
+      try { handle.setPointerCapture(e.pointerId); } catch(_err){}
+    });
+    handle.addEventListener('pointermove', (e) => {
+      if (!resizing) return;
+      e.stopPropagation();
+      const size = Math.max(MIN_SIZE, Math.min(MAX_SIZE, Math.round(baseSize + (e.clientX - startX))));
+      photo.style.width = size + 'px';
+      photo.style.height = size + 'px';
+      drawFanLines(trackEl);
+    });
+    const finishResize = async (e) => {
+      if (!resizing) return;
+      e.stopPropagation();
+      resizing = false;
+      const size = Math.round(photo.getBoundingClientRect().width);
+      await updatePosition(handle.dataset.pkey, { size });
+      drawFanLines(trackEl);
+    };
+    handle.addEventListener('pointerup', finishResize);
+    handle.addEventListener('pointercancel', finishResize);
+    handle.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); });
+  }
+  function enableResizing(trackEl){
+    trackEl.querySelectorAll('.ztl-resize-handle').forEach(handle => bindResizeHandle(handle, trackEl));
+  }
+
+  // Año con un unico hito: se muestra como en el mural (foto grande + año grande en texto),
+  // en vez del circulo-con-numero reservado para años con varios hitos agrupados.
+  function singleYearSlotHtml(year, h, up, positions){
+    const pos = (positions && positions[h._pkey]) || { dx:0, dy:0 };
+    const sizeStyle = pos.size ? `width:${pos.size}px; height:${pos.size}px;` : '';
+    const cardStyle = `--dx:${pos.dx}px; --dy:${pos.dy}px; --scale:${pos.scale||1};`;
     const content = `
-      <div class="ztl-content">
-        <div class="ztl-photo empty" id="hito-photo-${cssSafe(h._pkey)}" data-event-id="${escapeAttr(h._pkey)}" data-display-id="${escapeAttr(h.ID)}" data-title="${escapeAttr(h.TIPO_EVENTO||'')}">
+      <div class="ztl-ycontent ztl-ycontent-single ztl-draggable" data-pkey="${escapeAttr(h._pkey)}" style="${cardStyle}">
+        <div class="ztl-photo ztl-photo-lg empty" id="hito-photo-${cssSafe(h._pkey)}" data-event-id="${escapeAttr(h._pkey)}" data-display-id="${escapeAttr(h.ID)}" data-title="${escapeAttr(h.TIPO_EVENTO||'')}" style="${sizeStyle}">
           <span class="plus">＋</span><span>Foto</span>
+          <span class="ztl-resize-handle" data-pkey="${escapeAttr(h._pkey)}" title="Arrastrar para cambiar el tamaño de la foto"></span>
         </div>
-        <div class="ztl-date">${fmtDateShort(h.FECHA)}</div>
-        <div class="ztl-title" title="${escapeAttr(h.DESCRIPCION || h.TIPO_EVENTO || '')}">${escapeHtml(h.DESCRIPCION || cap(h.TIPO_EVENTO) || '')}</div>
+        <div class="ztl-year-big">${year}</div>
+        <div class="ztl-yevent-desc-lg" title="${escapeAttr(h.DESCRIPCION || h.TIPO_EVENTO || '')}">${escapeHtml(h.DESCRIPCION || cap(h.TIPO_EVENTO) || '')}</div>
         <div class="ztl-sub">${cap(h.FRENTE)}</div>
-        <div class="ztl-actions">
+        <div class="ztl-actions" style="opacity:.35;">
           <button class="ztl-action-btn" data-hito-edit-pkey="${escapeAttr(h._pkey)}" data-hito-edit-ismanual="${h._manual?'1':'0'}" data-hito-edit-id="${escapeAttr(h.ID)}" type="button" title="Editar hito">✏️</button>
           <button class="ztl-action-btn danger" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="${h._manual?'1':'0'}" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="${h._manual ? 'Eliminar hito' : 'Quitar de la línea de tiempo'}">🗑</button>
         </div>
+        <span class="ztl-card-resize" data-pkey="${escapeAttr(h._pkey)}" title="Arrastrar para agrandar/achicar toda la tarjeta">↘</span>
       </div>`;
     return `
     <div class="ztl-slot">
@@ -857,14 +1511,15 @@ window.addEventListener('unhandledrejection', function(e){
     const el = document.getElementById('hito-photo-' + cssSafe(eventId));
     if (!el) return;
     const photos = await idbAll(eventId);
+    const handleHtml = `<span class="ztl-resize-handle" data-pkey="${escapeAttr(eventId)}" title="Arrastrar para cambiar el tamaño"></span>`;
     if (photos.length){
       const cover = photos[0];
       const url = URL.createObjectURL(cover.thumb || cover.blob);
       el.classList.remove('empty');
-      el.innerHTML = `<img src="${url}" alt="Foto del hito"><span class="count-badge">${photos.length}</span>`;
+      el.innerHTML = `<img src="${url}" alt="Foto del hito"><span class="count-badge">${photos.length}</span>` + handleHtml;
     } else {
       el.classList.add('empty');
-      el.innerHTML = `<span class="plus">＋</span><span>Agregar foto</span>`;
+      el.innerHTML = (el.classList.contains('ztl-photo-sm') ? `<span class="plus">＋</span>` : `<span class="plus">＋</span><span>Agregar foto</span>`) + handleHtml;
     }
   }
 
@@ -1132,7 +1787,17 @@ window.addEventListener('unhandledrejection', function(e){
   function closePhotoModal(){
     document.getElementById('photo-modal').hidden = true;
     PHOTO_COUNTS[currentEventId] = undefined;
-    idbCountByEvent().then(c => { PHOTO_COUNTS = c; if (RENDER_FN) RENDER_FN(); refreshHitoPhoto(currentEventId); });
+    idbCountByEvent().then(c => {
+      PHOTO_COUNTS = c;
+      if (RENDER_FN) RENDER_FN();
+      refreshHitoPhoto(currentEventId).then(() => {
+        const trackEl = document.getElementById('hitos-scroll');
+        const el = document.getElementById('hito-photo-' + cssSafe(currentEventId));
+        const handle = el && el.querySelector('.ztl-resize-handle');
+        if (handle && trackEl) bindResizeHandle(handle, trackEl);
+        drawFanLines(trackEl);
+      });
+    });
   }
   async function refreshModalGrid(){
     const grid = document.getElementById('pm-grid');
@@ -1274,7 +1939,33 @@ window.addEventListener('unhandledrejection', function(e){
       if (rec.TRIMESTRE == null) rec.TRIMESTRE = 'T' + (Math.floor(fecha.getMonth()/3)+1);
       out.push(rec);
     }
-    return out;
+    return normalizeFieldCasing(out);
+  }
+
+  // Si el mismo valor aparece escrito con may/min distintas entre filas (ej. "VERTEDERO"
+  // y "vertedero", seguramente porque lo cargaron estaciones distintas), se unifican todas
+  // bajo la forma mas frecuente, para que no se vean como categorias separadas.
+  const CASING_FIELDS = ['NIVEL_RELEVANCIA','COMPONENTE','TIPO_OBRA','FRENTE','SUBFRENTE','ESTADO','ESTACION','TIPO_EVENTO','CATEGORIA_EVENTO'];
+  function normalizeFieldCasing(records){
+    CASING_FIELDS.forEach(field => {
+      const variantsByKey = {};
+      records.forEach(r => {
+        const v = r[field];
+        if (!v) return;
+        const key = v.toLowerCase();
+        (variantsByKey[key] = variantsByKey[key] || {})[v] = (variantsByKey[key][v] || 0) + 1;
+      });
+      const canonical = {};
+      Object.keys(variantsByKey).forEach(key => {
+        const variants = variantsByKey[key];
+        canonical[key] = Object.keys(variants).sort((a,b) => variants[b] - variants[a])[0];
+      });
+      records.forEach(r => {
+        const v = r[field];
+        if (v) r[field] = canonical[v.toLowerCase()];
+      });
+    });
+    return records;
   }
 
   // ============ formulario de nuevo evento (manual) ============
@@ -1341,7 +2032,7 @@ window.addEventListener('unhandledrejection', function(e){
       };
       NE_FIELD_MAP.forEach(([inputId,,field]) => {
         const v = document.getElementById(inputId).value.trim();
-        fields[field] = v || null;
+        fields[field] = v ? normalizeCasing(field, v) : null;
       });
 
       if (editMode.kind === 'override'){
@@ -1380,6 +2071,245 @@ window.addEventListener('unhandledrejection', function(e){
       await loadAndRender(BASE_RECORDS);
       showToast(`${hiddenKeys.length} hito(s) restaurado(s) en la línea de tiempo.`);
     });
+  }
+
+  // ============ panel lateral de navegacion ============
+  function setupSidebarNav(){
+    const buttons = [...document.querySelectorAll('#sb-menu button')];
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = document.getElementById(btn.dataset.target);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    const sections = buttons.map(btn => document.getElementById(btn.dataset.target)).filter(Boolean);
+    if (!sections.length || typeof IntersectionObserver === 'undefined') return;
+    const setActive = (id) => {
+      buttons.forEach(btn => btn.classList.toggle('active', btn.dataset.target === id));
+    };
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter(e => e.isIntersecting).sort((a,b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (visible.length) setActive(visible[0].target.id);
+    }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+    sections.forEach(sec => observer.observe(sec));
+  }
+
+  // Recuerda el tamaño que el usuario le dio al recuadro completo de la línea de tiempo
+  // (arrastrando su esquina, tiron nativo del navegador, o por el auto-ajuste de abajo)
+  // entre una visita y otra.
+  function setupHitosPanelResize(){
+    const panel = document.getElementById('hitos-panel');
+    if (!panel) return;
+    const KEY = 'bitacora_hitos_panel_size';
+    try {
+      const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (saved && saved.width && saved.height){
+        panel.style.width = saved.width + 'px';
+        panel.style.height = saved.height + 'px';
+        HITOS_PANEL_HAS_SAVED_SIZE = true;
+      }
+    } catch(_err){}
+    let timer = null;
+    new ResizeObserver(() => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        try {
+          localStorage.setItem(KEY, JSON.stringify({ width: Math.round(panel.offsetWidth), height: Math.round(panel.offsetHeight) }));
+        } catch(_err){}
+      }, 300);
+    }).observe(panel);
+  }
+
+  // Reemplaza el resize nativo (una sola esquina, ancho+alto a la vez) por 4 tiradores en
+  // los bordes del recuadro: arriba/abajo alargan o achatan (alto), izquierda/derecha
+  // ensanchan o angostan (ancho) — cada uno por separado, como en Excel. El tamaño final
+  // se guarda solo con reutilizar el ResizeObserver de setupHitosPanelResize (ya observa
+  // #hitos-panel), porque estos tiradores tambien cambian panel.style.width/height.
+  function setupHitosEdgeResize(){
+    const panel = document.getElementById('hitos-panel');
+    const wrap = document.getElementById('hitos-resize-wrap');
+    if (!panel || !wrap) return;
+    const MIN_W = 360, MIN_H = 220;
+    wrap.querySelectorAll('.ztl-edge-resize').forEach(handle => {
+      const edge = handle.dataset.edge;
+      let startX = 0, startY = 0, startW = 0, startH = 0, resizing = false;
+      handle.addEventListener('pointerdown', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        startX = e.clientX; startY = e.clientY;
+        startW = panel.offsetWidth; startH = panel.offsetHeight;
+        resizing = true;
+        handle.classList.add('ztl-edge-active');
+        try { handle.setPointerCapture(e.pointerId); } catch(_err){}
+      });
+      handle.addEventListener('pointermove', (e) => {
+        if (!resizing) return;
+        const dx = e.clientX - startX, dy = e.clientY - startY;
+        if (edge === 'right') panel.style.width = Math.max(MIN_W, Math.round(startW + dx)) + 'px';
+        if (edge === 'left') panel.style.width = Math.max(MIN_W, Math.round(startW - dx)) + 'px';
+        if (edge === 'bottom') panel.style.height = Math.max(MIN_H, Math.round(startH + dy)) + 'px';
+        if (edge === 'top') panel.style.height = Math.max(MIN_H, Math.round(startH - dy)) + 'px';
+      });
+      const finish = (e) => {
+        if (!resizing) return;
+        resizing = false;
+        handle.classList.remove('ztl-edge-active');
+        try { handle.releasePointerCapture(e.pointerId); } catch(_err){}
+      };
+      handle.addEventListener('pointerup', finish);
+      handle.addEventListener('pointercancel', finish);
+      handle.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); });
+    });
+  }
+
+  // Cajita flotante para fijar el zoom exacto (en %) de todas las tarjetas seleccionadas a
+  // la vez — igual que escribir un alto/ancho exacto para varias celdas de Excel en vez de
+  // arrastrar a ojo. Aparece junto a la seleccion y desaparece cuando no hay nada
+  // seleccionado (la deselección global ya la oculta).
+  function setupScaleBox(){
+    const box = document.getElementById('ztl-scale-box');
+    const input = document.getElementById('ztl-scale-input');
+    const btn = document.getElementById('ztl-scale-apply');
+    if (!box || !input || !btn) return;
+    const MIN_PCT = 55, MAX_PCT = 220;
+    function selectedEls(){
+      return [...document.querySelectorAll('.ztl-draggable.ztl-selected')];
+    }
+    function updateVisibility(){
+      const els = selectedEls();
+      if (!els.length){ box.classList.add('hidden'); return; }
+      let minLeft = Infinity, minTop = Infinity, maxRight = -Infinity;
+      els.forEach(el => {
+        const r = el.getBoundingClientRect();
+        minLeft = Math.min(minLeft, r.left);
+        minTop = Math.min(minTop, r.top);
+        maxRight = Math.max(maxRight, r.right);
+      });
+      box.classList.remove('hidden');
+      const boxRect = box.getBoundingClientRect();
+      let left = (minLeft + maxRight) / 2 - boxRect.width / 2;
+      left = Math.max(8, Math.min(left, window.innerWidth - boxRect.width - 8));
+      let top = minTop - boxRect.height - 10;
+      if (top < 8) top = Math.min(window.innerHeight - boxRect.height - 8, minTop + 10);
+      box.style.left = Math.round(left) + 'px';
+      box.style.top = Math.round(top) + 'px';
+      input.value = Math.round(numProp(els[0], '--scale', 1) * 100);
+    }
+    async function applyScale(){
+      const els = selectedEls();
+      if (!els.length) return;
+      let pct = parseFloat(input.value);
+      if (!Number.isFinite(pct)) return;
+      pct = Math.max(MIN_PCT, Math.min(MAX_PCT, pct));
+      input.value = Math.round(pct);
+      const scale = pct / 100;
+      const trackEl = document.getElementById('hitos-scroll');
+      els.forEach(el => el.style.setProperty('--scale', scale.toFixed(3)));
+      if (trackEl){
+        computeAndApplyTrackHalfHeight(trackEl);
+        drawFanLines(trackEl);
+        autoFitHitosPanelHeight();
+      }
+      for (const el of els){
+        await updatePosition(el.dataset.pkey, { scale });
+      }
+    }
+    btn.addEventListener('click', applyScale);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter'){ e.preventDefault(); applyScale(); } });
+    [box, input, btn].forEach(el => {
+      el.addEventListener('click', (e) => e.stopPropagation());
+      el.addEventListener('pointerdown', (e) => e.stopPropagation());
+    });
+    window.addEventListener('resize', () => { if (!box.classList.contains('hidden')) updateVisibility(); });
+    window.ztlUpdateScaleBox = updateVisibility;
+  }
+
+  // El alto de .ztl-half/.ztl-track estaba fijo en CSS (pensado para el peor caso: un año
+  // con 5 eventos), asi que aunque las tarjetas se vean mas chicas, el recuadro de atras no
+  // se achicaba — quedaba espacio vacio y la barra de scroll no se iba. Esta funcion mide
+  // cuanto ocupan realmente las tarjetas (ya con su escala actual) respecto a la linea, y
+  // ajusta --ztl-half a ese tamaño real en vez del fijo.
+  function computeAndApplyTrackHalfHeight(trackEl){
+    const line = trackEl.querySelector('.ztl-line');
+    if (!line) return;
+    const lineRect = line.getBoundingClientRect();
+    const lineMid = lineRect.top + lineRect.height / 2;
+    let maxAbove = 0, maxBelow = 0;
+    trackEl.querySelectorAll('.ztl-draggable, .ztl-dot-year, .ztl-dot, .ztl-card-resize, .ztl-resize-handle').forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (!r.width && !r.height) return;
+      maxAbove = Math.max(maxAbove, lineMid - r.top);
+      maxBelow = Math.max(maxBelow, r.bottom - lineMid);
+    });
+    const need = Math.max(maxAbove, maxBelow, 90) + 14;
+    trackEl.style.setProperty('--ztl-half', Math.round(need) + 'px');
+  }
+
+  // Ajusta la altura del recuadro visible de la línea de tiempo al tamaño real de las
+  // tarjetas en ese momento: si se achican los hitos, el recuadro se achica con ellas en
+  // vez de dejar un espacio vacío grande (y la barra de scroll desaparece si ya no hace falta).
+  function autoFitHitosPanelHeight(){
+    const panel = document.getElementById('hitos-panel');
+    const track = document.getElementById('hitos-scroll');
+    if (!panel || !track) return;
+    const wrap = track.parentElement;
+    const panelCs = getComputedStyle(panel);
+    const wrapCs = wrap ? getComputedStyle(wrap) : null;
+    const panelVPad = (parseFloat(panelCs.paddingTop) || 0) + (parseFloat(panelCs.paddingBottom) || 0);
+    const wrapVPad = wrapCs ? (parseFloat(wrapCs.paddingTop) || 0) + (parseFloat(wrapCs.paddingBottom) || 0) : 0;
+    // +20 deja espacio para la barra de scroll horizontal (el track suele ser mas ancho
+    // que el panel): si no se reserva, su alto le resta espacio vertical disponible y
+    // fuerza una barra vertical que no hace falta.
+    const fit = Math.max(200, Math.round(track.scrollHeight + wrapVPad + panelVPad) + 20);
+    panel.style.height = fit + 'px';
+  }
+
+  function updateSidebarStatus(total, sourceName){
+    const statusText = document.getElementById('sb-status-text');
+    const statusSub = document.getElementById('sb-status-sub');
+    if (!statusText || !statusSub) return;
+    statusText.textContent = `${total} eventos cargados`;
+    statusSub.textContent = sourceName || '—';
+  }
+
+  // Distancia de edicion (Levenshtein), para detectar errores de ortografia leves
+  // (una letra de mas/menos/cambiada) contra el listado oficial de un campo cerrado.
+  function levenshtein(a, b){
+    if (a === b) return 0;
+    const m = a.length, n = b.length;
+    if (!m) return n; if (!n) return m;
+    let prev = Array.from({length:n+1}, (_,i)=>i);
+    for (let i=1;i<=m;i++){
+      const cur = [i];
+      for (let j=1;j<=n;j++){
+        cur[j] = a[i-1] === b[j-1] ? prev[j-1] : 1 + Math.min(prev[j-1], prev[j], cur[j-1]);
+      }
+      prev = cur;
+    }
+    return prev[n];
+  }
+  // Corrige mayusculas/minusculas y pequeños errores de ortografia: si lo que se escribio
+  // coincide (sin importar may/min) con un valor que ya existe en el listado oficial o en los
+  // datos cargados, se guarda con esa misma forma "canonica" en vez de la que se tipeo. Si no
+  // coincide exacto pero esta muy cerca (1-2 letras de diferencia, p.ej. "Vertedro"), tambien
+  // se corrige al nombre oficial — solo para campos de catalogo cerrado, nunca en la descripcion.
+  function normalizeCasing(field, value){
+    if (!value) return value;
+    const refLists = (typeof LISTAS_REFERENCIA !== 'undefined') ? LISTAS_REFERENCIA : {};
+    const pool = (refLists[field] || []).concat((BASE_RECORDS || []).map(r => r[field]).filter(Boolean));
+    const low = normalizeText(value);
+    const exact = pool.find(v => v && normalizeText(v) === low);
+    if (exact) return exact;
+    if (value.length < 4) return value; // muy corto, arriesgado corregir por distancia
+    let best = null, bestDist = Infinity;
+    const seen = new Set();
+    pool.forEach(v => {
+      if (!v || seen.has(v)) return;
+      seen.add(v);
+      const d = levenshtein(low, normalizeText(v));
+      if (d < bestDist){ bestDist = d; best = v; }
+    });
+    const maxAllowed = value.length <= 8 ? 1 : 2;
+    return (best && bestDist <= maxAllowed) ? best : value;
   }
 
   function populateDatalists(){
@@ -1433,6 +2363,7 @@ window.addEventListener('unhandledrejection', function(e){
   function cap(s){ if(!s) return '—'; s=String(s).trim(); return s.charAt(0)+s.slice(1).toLowerCase(); }
   function fmtDate(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString('es-CO',{year:'numeric',month:'short',day:'2-digit'}); }
   function fmtDateShort(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString('es-CO',{month:'short',year:'numeric'}).replace('.',''); }
+  function fmtMonthDay(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString('es-CO',{day:'2-digit',month:'short'}).replace('.',''); }
   function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function escapeAttr(s){ return escapeHtml(s); }
   function roundedTopRectPath(x,y,w,h,r){

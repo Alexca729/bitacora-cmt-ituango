@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "eventId": "kff27f052",
+    "name": "ITUANGO_023 Mirador Presidencial (10-10-2026_16-26-44.963).jpg",
+    "addedAt": 1794089774711,
+    "path": "fotos/kff27f052/1.jpg"
+  },
+  {
+    "id": 2,
+    "eventId": "k821646",
+    "name": "ITUANGO_087 Unidad 6 – Sala de Montajes CM (07-11-2026_09-39-05.806).jpg",
+    "addedAt": 1794091872145,
+    "path": "fotos/k821646/2.jpg"
+  },
+  {
+    "id": 3,
+    "eventId": "ka8218135",
+    "name": "hidrotunago_41161894_20221130071330.webp",
+    "addedAt": 1794098493301,
+    "path": "fotos/ka8218135/3.jpg"
+  },
+  {
+    "id": 4,
+    "eventId": "ka97b29c1",
+    "name": "hidroituango1.jpg",
+    "addedAt": 1794100016986,
+    "path": "fotos/ka97b29c1/4.jpg"
+  },
+  {
+    "id": 6,
+    "eventId": "k1a0cf117",
+    "name": "Captura de pantalla 2026-11-07 212154.png",
+    "addedAt": 1794104547966,
+    "path": "fotos/k1a0cf117/6.jpg"
+  }
+]

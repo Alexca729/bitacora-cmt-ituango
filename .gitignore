@@ -7,4 +7,8 @@
 *.jpeg
 *.png
 *.webp
+# Excepciones: estas SI se publican (version publica en GitHub Pages), para que la
+# bitacora se vea completa sin que cada quien tenga que cargar fotos/Excel a mano.
+!fotos/**
+!fondo-marca-agua.jpg
 PBI/
