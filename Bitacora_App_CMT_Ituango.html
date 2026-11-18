@@ -400,7 +400,8 @@
         Responsable: <b>Alexander Castillo Gudiño</b><br>
         <label class="reset-link sync-btn" style="cursor:pointer; color:var(--accent); font-weight:600;">⟳ Cargar Excel actualizado<input type="file" id="excel-reload-input" accept=".xlsx" style="display:none;"></label> ·
         <button class="reset-link sync-btn" id="btn-export-zip" type="button">⇩ Exportar fotos (ZIP)</button> ·
-        <label class="reset-link" style="cursor:pointer;">⇧ Importar ZIP<input type="file" id="import-zip-input" accept=".zip" style="display:none;"></label>
+        <label class="reset-link" style="cursor:pointer;">⇧ Importar ZIP<input type="file" id="import-zip-input" accept=".zip" style="display:none;"></label> ·
+        <button class="reset-link sync-btn" id="btn-export-data" type="button" title="Genera bitacora_data.js con el Excel que tengas cargado ahora, para subirlo a GitHub">⇩ Generar bitacora_data.js</button>
       </div>
     </div>
   </div>
@@ -1821,8 +1822,35 @@ window.addEventListener('unhandledrejection', function(e){
   }
 
   // ============ ZIP sync ============
+  // Genera un bitacora_data.js nuevo a partir del Excel que este cargado en este momento
+  // (el que se ve en "Fuente:" arriba), para que el usuario lo suba el mismo a GitHub y
+  // la version publicada quede actualizada sin que nadie tenga que tocar codigo. Se limpian
+  // los campos que el programa agrega en memoria (_pkey, _manual, _hiddenFromTimeline, etc.)
+  // para no publicar por accidente ediciones/ocultamientos que son solo locales.
+  function cleanRecordForExport(r){
+    const out = {};
+    Object.keys(r).forEach(k => { if (!k.startsWith('_')) out[k] = r[k]; });
+    return out;
+  }
+  function exportDataJs(){
+    if (!BASE_RECORDS || !BASE_RECORDS.length){
+      showToast('Primero carga un Excel con "Cargar Excel actualizado".', 'error');
+      return;
+    }
+    const clean = BASE_RECORDS.map(cleanRecordForExport);
+    const out = 'const RECORDS_DATA = ' + JSON.stringify(clean, null, 2) + ';\n';
+    const blob = new Blob([out], { type: 'text/javascript' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'bitacora_data.js';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    showToast('bitacora_data.js descargado. Súbelo a GitHub reemplazando el archivo del mismo nombre.');
+  }
+
   function setupZipSync(){
     document.getElementById('btn-export-zip').addEventListener('click', exportZip);
+    document.getElementById('btn-export-data').addEventListener('click', exportDataJs);
     document.getElementById('import-zip-input').addEventListener('change', (e) => {
       const f = e.target.files[0]; if (f) importZip(f);
       e.target.value = '';
