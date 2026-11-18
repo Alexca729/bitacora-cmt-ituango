@@ -1053,7 +1053,12 @@ window.addEventListener('unhandledrejection', function(e){
   async function loadAndRender(base){
     BASE_RECORDS = base;
     const manual = await getManualEvents();
-    const merged = base.concat(manual.map(m => Object.assign({}, m, { _manual: true })));
+    // Si un evento manual ya quedo incluido en el Excel/base (porque se publico con
+    // "Generar bitacora_data.js" y luego se volvio a cargar ese mismo archivo), no se
+    // repite — se prefiere la version que viene del archivo.
+    const baseIds = new Set(base.map(r => String(r.ID)));
+    const manualNotYetInBase = manual.filter(m => !baseIds.has(String(m.ID)));
+    const merged = base.concat(manualNotYetInBase.map(m => Object.assign({}, m, { _manual: true })));
     await init(merged);
   }
 
@@ -1823,21 +1828,24 @@ window.addEventListener('unhandledrejection', function(e){
 
   // ============ ZIP sync ============
   // Genera un bitacora_data.js nuevo a partir del Excel que este cargado en este momento
-  // (el que se ve en "Fuente:" arriba), para que el usuario lo suba el mismo a GitHub y
-  // la version publicada quede actualizada sin que nadie tenga que tocar codigo. Se limpian
-  // los campos que el programa agrega en memoria (_pkey, _manual, _hiddenFromTimeline, etc.)
-  // para no publicar por accidente ediciones/ocultamientos que son solo locales.
+  // (el que se ve en "Fuente:" arriba) MAS los eventos/hitos manuales agregados con
+  // "+Nuevo evento" en este navegador, para que el usuario lo suba el mismo a GitHub y la
+  // version publicada quede completa de una sola vez (nada de montar manuales aparte).
+  // Se limpian los campos que el programa agrega en memoria (_pkey, _manual,
+  // _hiddenFromTimeline, etc.) y no se incluyen los ajustes locales de "ocultar del mural"
+  // (eso es a proposito solo de este navegador, no se publica).
   function cleanRecordForExport(r){
     const out = {};
     Object.keys(r).forEach(k => { if (!k.startsWith('_')) out[k] = r[k]; });
     return out;
   }
-  function exportDataJs(){
+  async function exportDataJs(){
     if (!BASE_RECORDS || !BASE_RECORDS.length){
       showToast('Primero carga un Excel con "Cargar Excel actualizado".', 'error');
       return;
     }
-    const clean = BASE_RECORDS.map(cleanRecordForExport);
+    const manual = await getManualEvents();
+    const clean = BASE_RECORDS.concat(manual).map(cleanRecordForExport);
     const out = 'const RECORDS_DATA = ' + JSON.stringify(clean, null, 2) + ';\n';
     const blob = new Blob([out], { type: 'text/javascript' });
     const a = document.createElement('a');
@@ -1845,7 +1853,7 @@ window.addEventListener('unhandledrejection', function(e){
     a.download = 'bitacora_data.js';
     a.click();
     URL.revokeObjectURL(a.href);
-    showToast('bitacora_data.js descargado. Súbelo a GitHub reemplazando el archivo del mismo nombre.');
+    showToast(`bitacora_data.js descargado con ${BASE_RECORDS.length} eventos del Excel + ${manual.length} evento(s) manual(es). Súbelo a GitHub reemplazando el archivo del mismo nombre.`);
   }
 
   function setupZipSync(){
