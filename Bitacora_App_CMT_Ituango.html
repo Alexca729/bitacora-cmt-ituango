@@ -212,8 +212,18 @@
   .ztl-yevent{
     display:flex; align-items:center; gap:10px; position:relative; z-index:1;
     background:var(--surface-2); border:var(--box-border); border-radius:10px; padding:5px 8px 5px 5px;
-    box-shadow:var(--shadow);
+    box-shadow:var(--shadow); width:var(--card-w,100%); align-self:flex-start; box-sizing:border-box;
   }
+  .ztl-card-resize-x{
+    position:absolute; top:50%; margin-top:-15px; width:12px; height:30px; border-radius:6px;
+    background:var(--surface-2); border:2px solid var(--ink-2); cursor:ew-resize; touch-action:none;
+    opacity:0; transition:opacity .15s ease; z-index:4; display:flex; align-items:center; justify-content:center;
+    font-size:9px; line-height:1; color:var(--ink-2);
+  }
+  .ztl-card-resize-x.edge-l{ left:-8px; }
+  .ztl-card-resize-x.edge-r{ right:-8px; }
+  .ztl-draggable:hover .ztl-card-resize-x{ opacity:.85; }
+  .ztl-card-resize-x:hover{ opacity:1 !important; color:var(--accent); border-color:var(--accent); }
   .ztl-draggable.ztl-selected{ outline:3px solid var(--accent); outline-offset:3px; border-radius:12px; }
   .ztl-draggable{
     position:relative; cursor:grab; touch-action:none;
@@ -264,7 +274,7 @@
   .ztl-photo.ztl-photo-lg.empty .plus{ font-size:30px; color:var(--accent); line-height:1; }
   .ztl-photo.ztl-photo-lg .count-badge{ font-size:10px; padding:1px 5px; }
   .ztl-year-big{ font-family:"IBM Plex Sans Condensed"; font-size:30px; font-weight:700; color:var(--accent); line-height:1; }
-  .ztl-yevent-desc-lg{ font-size:11px; font-weight:500; color:var(--ink); line-height:1.35; max-width:210px; max-height:120px; overflow-y:auto; cursor:default; }
+  .ztl-yevent-desc-lg{ font-size:11px; font-weight:500; color:var(--ink); line-height:1.35; max-width:var(--card-w,210px); max-height:120px; overflow-y:auto; cursor:default; }
   .ztl-ycontent-single:hover .ztl-actions{ opacity:1; }
   .ztl-yevent-text{ flex:1; min-width:0; }
   .ztl-yevent-date{ display:block; font-family:"IBM Plex Sans Condensed"; font-size:10px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:.03em; }
@@ -1256,6 +1266,7 @@ window.addEventListener('unhandledrejection', function(e){
     enableDragging(trackEl);
     enableResizing(trackEl);
     enableCardScale(trackEl);
+    enableCardWidthResize(trackEl);
     enableCardSelection(trackEl);
     if (!HITOS_PANEL_HAS_SAVED_SIZE) autoFitHitosPanelHeight();
     // Las fuentes (Google Fonts, display:swap) a veces terminan de cargar despues de esta
@@ -1306,7 +1317,7 @@ window.addEventListener('unhandledrejection', function(e){
     const step = Math.ceil(i/2) * 22 * (i % 2 === 0 ? 1 : -1);
     const pos = (positions && positions[h._pkey]) || { dx:0, dy:0 };
     const sizeStyle = pos.size ? `width:${pos.size}px; height:${pos.size}px;` : '';
-    const cardStyle = `margin-left:${step}px; --dx:${pos.dx}px; --dy:${pos.dy}px; --scale:${pos.scale||1};`;
+    const cardStyle = `margin-left:${step}px; --dx:${pos.dx}px; --dy:${pos.dy}px; --scale:${pos.scale||1}; --card-w:${pos.width ? pos.width+'px' : '100%'};`;
     return `
     <div class="ztl-yevent ztl-draggable" data-pkey="${escapeAttr(h._pkey)}" style="${cardStyle}">
       <div class="ztl-photo ztl-photo-sm empty" id="hito-photo-${cssSafe(h._pkey)}" data-event-id="${escapeAttr(h._pkey)}" data-display-id="${escapeAttr(h.ID)}" data-title="${escapeAttr(h.TIPO_EVENTO||'')}" style="${sizeStyle}">
@@ -1321,6 +1332,8 @@ window.addEventListener('unhandledrejection', function(e){
         <button class="ztl-action-btn" data-hito-edit-pkey="${escapeAttr(h._pkey)}" data-hito-edit-ismanual="${h._manual?'1':'0'}" data-hito-edit-id="${escapeAttr(h.ID)}" type="button" title="Editar hito">✏️</button>
         <button class="ztl-action-btn danger" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="${h._manual?'1':'0'}" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="${h._manual ? 'Eliminar hito' : 'Quitar de la línea de tiempo'}">🗑</button>
       </div>
+      <span class="ztl-card-resize-x edge-l" data-pkey="${escapeAttr(h._pkey)}" data-edge="left" title="Arrastrar para angostar/ensanchar la tarjeta"></span>
+      <span class="ztl-card-resize-x edge-r" data-pkey="${escapeAttr(h._pkey)}" data-edge="right" title="Arrastrar para angostar/ensanchar la tarjeta"></span>
       <span class="ztl-card-resize" data-pkey="${escapeAttr(h._pkey)}" title="Arrastrar para agrandar/achicar toda la tarjeta">↘</span>
     </div>`;
   }
@@ -1496,6 +1509,50 @@ window.addEventListener('unhandledrejection', function(e){
     });
   }
 
+  // Tiradores a los lados de cada tarjeta para angostarla/ensancharla (cambia el ancho real
+  // en el que el texto hace salto de linea), por separado del tiron de la esquina que solo
+  // hace zoom proporcional. Igual que ajustar el ancho de una columna de Excel.
+  function enableCardWidthResize(trackEl){
+    trackEl.querySelectorAll('.ztl-card-resize-x').forEach(handle => {
+      if (handle.dataset.wBound) return;
+      handle.dataset.wBound = '1';
+      const card = handle.closest('.ztl-draggable');
+      const edge = handle.dataset.edge;
+      const MIN_W = 140, MAX_W = 620;
+      let startX = 0, startW = 0, resizing = false;
+      handle.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        startX = e.clientX;
+        startW = card.getBoundingClientRect().width;
+        resizing = true;
+        try { handle.setPointerCapture(e.pointerId); } catch(_err){}
+      });
+      handle.addEventListener('pointermove', (e) => {
+        if (!resizing) return;
+        e.stopPropagation();
+        const dx = e.clientX - startX;
+        const delta = edge === 'left' ? -dx : dx;
+        const w = Math.max(MIN_W, Math.min(MAX_W, Math.round(startW + delta)));
+        card.style.setProperty('--card-w', w + 'px');
+        computeAndApplyTrackHalfHeight(trackEl);
+        drawFanLines(trackEl);
+        autoFitHitosPanelHeight();
+      });
+      const finishWidth = async (e) => {
+        if (!resizing) return;
+        e.stopPropagation();
+        resizing = false;
+        computeAndApplyTrackHalfHeight(trackEl);
+        autoFitHitosPanelHeight();
+        await updatePosition(card.dataset.pkey, { width: numProp(card, '--card-w', null) });
+        drawFanLines(trackEl);
+      };
+      handle.addEventListener('pointerup', finishWidth);
+      handle.addEventListener('pointercancel', finishWidth);
+      handle.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); });
+    });
+  }
+
   // Permite agrandar/achicar la foto de cada hito arrastrando el tirador en su esquina.
   function bindResizeHandle(handle, trackEl){
     if (handle.dataset.resizeBound) return; // evita doble-enlace si se llama mas de una vez sobre el mismo nodo
@@ -1539,7 +1596,7 @@ window.addEventListener('unhandledrejection', function(e){
   function singleYearSlotHtml(year, h, up, positions){
     const pos = (positions && positions[h._pkey]) || { dx:0, dy:0 };
     const sizeStyle = pos.size ? `width:${pos.size}px; height:${pos.size}px;` : '';
-    const cardStyle = `--dx:${pos.dx}px; --dy:${pos.dy}px; --scale:${pos.scale||1};`;
+    const cardStyle = `--dx:${pos.dx}px; --dy:${pos.dy}px; --scale:${pos.scale||1}; --card-w:${pos.width ? pos.width+'px' : '210px'};`;
     const content = `
       <div class="ztl-ycontent ztl-ycontent-single ztl-draggable" data-pkey="${escapeAttr(h._pkey)}" style="${cardStyle}">
         <div class="ztl-photo ztl-photo-lg empty" id="hito-photo-${cssSafe(h._pkey)}" data-event-id="${escapeAttr(h._pkey)}" data-display-id="${escapeAttr(h.ID)}" data-title="${escapeAttr(h.TIPO_EVENTO||'')}" style="${sizeStyle}">
@@ -1553,6 +1610,8 @@ window.addEventListener('unhandledrejection', function(e){
           <button class="ztl-action-btn" data-hito-edit-pkey="${escapeAttr(h._pkey)}" data-hito-edit-ismanual="${h._manual?'1':'0'}" data-hito-edit-id="${escapeAttr(h.ID)}" type="button" title="Editar hito">✏️</button>
           <button class="ztl-action-btn danger" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="${h._manual?'1':'0'}" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="${h._manual ? 'Eliminar hito' : 'Quitar de la línea de tiempo'}">🗑</button>
         </div>
+        <span class="ztl-card-resize-x edge-l" data-pkey="${escapeAttr(h._pkey)}" data-edge="left" title="Arrastrar para angostar/ensanchar el texto"></span>
+        <span class="ztl-card-resize-x edge-r" data-pkey="${escapeAttr(h._pkey)}" data-edge="right" title="Arrastrar para angostar/ensanchar el texto"></span>
         <span class="ztl-card-resize" data-pkey="${escapeAttr(h._pkey)}" title="Arrastrar para agrandar/achicar toda la tarjeta">↘</span>
       </div>`;
     return `
