@@ -403,6 +403,17 @@
         <label class="reset-link" style="cursor:pointer;">⇧ Importar ZIP<input type="file" id="import-zip-input" accept=".zip" style="display:none;"></label> ·
         <button class="reset-link sync-btn" id="btn-export-data" type="button" title="Genera bitacora_data.js con el Excel que tengas cargado ahora, para subirlo a GitHub">⇩ Generar bitacora_data.js</button>
       </div>
+      <div style="margin-top:8px;">
+        <button class="reset-link sync-btn" id="btn-publish-github" type="button" style="color:var(--accent); font-weight:700;" title="Sube los datos y las fotos directo a GitHub, sin descargar ni arrastrar archivos">🚀 Publicar a GitHub</button> ·
+        <button class="reset-link" id="btn-gh-config-toggle" type="button">⚙ Configurar clave de acceso</button>
+        <span id="gh-publish-status" style="margin-left:8px; font-size:12px; color:var(--ink-muted);"></span>
+        <div id="gh-config-box" style="display:none; margin-top:8px; padding:10px; border:1px solid var(--hairline); border-radius:8px; max-width:480px;">
+          <div style="font-size:12.5px; margin-bottom:6px;">Pega aquí tu clave de acceso personal de GitHub (solo se guarda en este navegador; se usa únicamente para hablar directo con GitHub, nunca se envía a ningún otro lado):</div>
+          <input type="password" id="gh-token-input" placeholder="github_pat_..." style="width:100%; max-width:320px;">
+          <button class="reset-link" id="btn-gh-token-save" type="button" style="margin-left:6px;">Guardar</button>
+          <span id="gh-token-status" style="margin-left:6px; font-size:12px;"></span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1043,6 +1054,7 @@ window.addEventListener('unhandledrejection', function(e){
   setupHitosEdgeResize();
   setupGlobalDeselect();
   setupScaleBox();
+  setupGithubPublish();
 
   if (typeof RECORDS_DATA === 'undefined'){
     document.getElementById('table-body').innerHTML = '<tr class="empty-row"><td colspan="9">No se encontró bitacora_data.js — debe estar en la misma carpeta.</td></tr>';
@@ -1854,6 +1866,142 @@ window.addEventListener('unhandledrejection', function(e){
     a.click();
     URL.revokeObjectURL(a.href);
     showToast(`bitacora_data.js descargado con ${BASE_RECORDS.length} eventos del Excel + ${manual.length} evento(s) manual(es). Súbelo a GitHub reemplazando el archivo del mismo nombre.`);
+  }
+
+  // ============ publicar directo a GitHub (sin descargar/arrastrar archivos) ============
+  // Usa la API de GitHub con una clave de acceso personal que el usuario pega el mismo en
+  // este navegador (se guarda solo en localStorage, nunca viaja a ningun otro lado). Sube
+  // bitacora_data.js + fotos_manifest.json + todas las fotos en UN SOLO commit atomico
+  // (API de "git data": blobs -> tree -> commit -> mover la rama), para evitar justo los
+  // errores manuales de ayer (nombres de archivo equivocados, carpetas mal arrastradas,
+  // JSON traducido por el navegador).
+  const GH_OWNER = 'Alexca729', GH_REPO = 'bitacora-cmt-ituango', GH_BRANCH = 'main';
+  const GH_TOKEN_KEY = 'bitacora_gh_token';
+  function getGhToken(){ try { return localStorage.getItem(GH_TOKEN_KEY) || ''; } catch(_err){ return ''; } }
+  function setGhToken(t){ try { localStorage.setItem(GH_TOKEN_KEY, t); } catch(_err){} }
+
+  async function ghApi(path, options){
+    const token = getGhToken();
+    if (!token) throw new Error('Falta configurar la clave de acceso de GitHub.');
+    const res = await fetch('https://api.github.com' + path, Object.assign({}, options, {
+      headers: Object.assign({
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+      }, (options && options.headers) || {}),
+    }));
+    if (!res.ok){
+      let detail = '';
+      try { detail = (await res.json()).message || ''; } catch(_err){}
+      throw new Error('GitHub respondió ' + res.status + (detail ? ': ' + detail : ''));
+    }
+    return res.json();
+  }
+  function bytesToBase64(bytes){
+    let binary = '';
+    const chunk = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunk){
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+    }
+    return btoa(binary);
+  }
+  function utf8ToBase64(str){ return bytesToBase64(new TextEncoder().encode(str)); }
+
+  async function publishToGitHub(){
+    const btn = document.getElementById('btn-publish-github');
+    const statusEl = document.getElementById('gh-publish-status');
+    const setStatus = (t) => { statusEl.textContent = t; };
+    if (!getGhToken()){
+      showToast('Primero configura tu clave de acceso de GitHub (botón "Configurar clave de acceso").', 'error');
+      return;
+    }
+    if (!BASE_RECORDS || !BASE_RECORDS.length){
+      showToast('Primero carga un Excel con "Cargar Excel actualizado".', 'error');
+      return;
+    }
+    btn.disabled = true;
+    try {
+      setStatus('Preparando datos…');
+      const manual = await getManualEvents();
+      const cleanData = BASE_RECORDS.concat(manual).map(cleanRecordForExport);
+      const dataJsText = 'const RECORDS_DATA = ' + JSON.stringify(cleanData, null, 2) + ';\n';
+
+      const fotos = await idbAllRecords();
+      const manifest = fotos.map(f => ({ id: f.id, eventId: f.eventId, name: f.name, addedAt: f.addedAt, path: `fotos/${f.eventId}/${f.id}.jpg` }));
+      const manifestText = JSON.stringify(manifest, null, 2);
+
+      setStatus('Conectando con GitHub…');
+      const ref = await ghApi(`/repos/${GH_OWNER}/${GH_REPO}/git/refs/heads/${GH_BRANCH}`);
+      const baseCommitSha = ref.object.sha;
+      const baseCommit = await ghApi(`/repos/${GH_OWNER}/${GH_REPO}/git/commits/${baseCommitSha}`);
+      const baseTreeSha = baseCommit.tree.sha;
+
+      const treeEntries = [];
+
+      setStatus('Subiendo bitacora_data.js…');
+      const dataBlob = await ghApi(`/repos/${GH_OWNER}/${GH_REPO}/git/blobs`, {
+        method: 'POST', body: JSON.stringify({ content: utf8ToBase64(dataJsText), encoding: 'base64' }),
+      });
+      treeEntries.push({ path: 'bitacora_data.js', mode: '100644', type: 'blob', sha: dataBlob.sha });
+
+      setStatus('Subiendo fotos_manifest.json…');
+      const manifestBlob = await ghApi(`/repos/${GH_OWNER}/${GH_REPO}/git/blobs`, {
+        method: 'POST', body: JSON.stringify({ content: utf8ToBase64(manifestText), encoding: 'base64' }),
+      });
+      treeEntries.push({ path: 'fotos_manifest.json', mode: '100644', type: 'blob', sha: manifestBlob.sha });
+
+      for (let i = 0; i < fotos.length; i++){
+        const f = fotos[i];
+        setStatus(`Subiendo foto ${i + 1} de ${fotos.length}…`);
+        const buf = new Uint8Array(await f.blob.arrayBuffer());
+        const blob = await ghApi(`/repos/${GH_OWNER}/${GH_REPO}/git/blobs`, {
+          method: 'POST', body: JSON.stringify({ content: bytesToBase64(buf), encoding: 'base64' }),
+        });
+        treeEntries.push({ path: `fotos/${f.eventId}/${f.id}.jpg`, mode: '100644', type: 'blob', sha: blob.sha });
+      }
+
+      setStatus('Creando el commit…');
+      const newTree = await ghApi(`/repos/${GH_OWNER}/${GH_REPO}/git/trees`, {
+        method: 'POST', body: JSON.stringify({ base_tree: baseTreeSha, tree: treeEntries }),
+      });
+      const newCommit = await ghApi(`/repos/${GH_OWNER}/${GH_REPO}/git/commits`, {
+        method: 'POST', body: JSON.stringify({
+          message: `Publicado desde la app (${new Date().toLocaleString('es-CO')})`,
+          tree: newTree.sha, parents: [baseCommitSha],
+        }),
+      });
+      await ghApi(`/repos/${GH_OWNER}/${GH_REPO}/git/refs/heads/${GH_BRANCH}`, {
+        method: 'PATCH', body: JSON.stringify({ sha: newCommit.sha }),
+      });
+
+      setStatus('');
+      showToast(`Publicado en GitHub: ${cleanData.length} eventos y ${fotos.length} foto(s). La página publicada se actualiza sola en 1-2 minutos.`);
+    } catch (err){
+      setStatus('');
+      showToast('No se pudo publicar: ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function setupGithubPublish(){
+    const toggle = document.getElementById('btn-gh-config-toggle');
+    const box = document.getElementById('gh-config-box');
+    const input = document.getElementById('gh-token-input');
+    const saveBtn = document.getElementById('btn-gh-token-save');
+    const tokenStatus = document.getElementById('gh-token-status');
+    const publishBtn = document.getElementById('btn-publish-github');
+    if (!toggle || !box || !publishBtn) return;
+    input.value = getGhToken();
+    toggle.addEventListener('click', () => {
+      box.style.display = (box.style.display === 'none' || !box.style.display) ? 'block' : 'none';
+    });
+    saveBtn.addEventListener('click', () => {
+      setGhToken(input.value.trim());
+      tokenStatus.textContent = 'Guardada ✓';
+      setTimeout(() => { tokenStatus.textContent = ''; }, 2500);
+    });
+    publishBtn.addEventListener('click', publishToGitHub);
   }
 
   function setupZipSync(){
