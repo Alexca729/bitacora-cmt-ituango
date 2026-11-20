@@ -419,6 +419,12 @@
 
   <div class="stats" id="stat-strip"></div>
 
+  <div class="section-head">
+    <h2>Indicadores por estación CMT</h2>
+    <div class="note">Eventos monitoreados por cada estación de instrumentación</div>
+  </div>
+  <div class="stats" id="stat-strip-estaciones" style="grid-template-columns:repeat(5,1fr);"></div>
+
   <div class="section-head" id="sec-hitos">
     <h2>Línea de tiempo de hitos</h2>
     <div class="note" id="hitos-note"></div>
@@ -1119,6 +1125,24 @@ window.addEventListener('unhandledrejection', function(e){
         <div class="value" style="${s.mono===false?'font-family:\'IBM Plex Sans Condensed\';font-size:18px;':''}">${s.value}${s.unit?` <small>${s.unit}</small>`:''}</div>
         <div class="foot${s.critical?' critical':''}">${s.foot}</div>
       </div>`).join('');
+
+    const estCounts = countBy(records, 'ESTACION');
+    const estaciones = [
+      {key:'SISMOLOGÍA', label:'Sismología'},
+      {key:'INTERFEROMETRÍA', label:'Interferometría'},
+      {key:'GEODESÍA', label:'Geodesia'},
+      {key:'CCTV', label:'CCTV'},
+      {key:'HIDROMETRÍA', label:'Hidrometría'},
+    ];
+    document.getElementById('stat-strip-estaciones').innerHTML = estaciones.map(e => {
+      const val = estCounts[e.key] || 0;
+      return `
+      <div class="stat">
+        <div class="label">${e.label}</div>
+        <div class="value">${val}</div>
+        <div class="foot">${pct(val, total)} del total</div>
+      </div>`;
+    }).join('');
 
     document.getElementById('total-note').textContent = `${total} registros · filtra y busca en la bitácora completa`;
     document.getElementById('footer-count').textContent = `${total} eventos · ${first.slice(0,4)}–${last.slice(0,4)}`;
