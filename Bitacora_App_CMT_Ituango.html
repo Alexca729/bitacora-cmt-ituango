@@ -122,6 +122,14 @@
   .stat .foot{ font-size:11.5px; color:var(--ink-2); }
   .stat .foot.critical{ color:var(--critical-text); }
 
+  .stats-est{ display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-top:22px; }
+  .stats-est .stat{ background:var(--surface); border:2px solid var(--accent); border-radius:14px; padding:22px 20px; box-shadow:var(--shadow); gap:8px; }
+  .stats-est .stat .label{ color:var(--accent); font-size:12px; font-weight:700; letter-spacing:.08em; }
+  .stats-est .stat .value{ color:var(--accent); font-size:34px; font-weight:700; }
+  .stats-est .stat .foot{ color:var(--ink-2); }
+  @media (max-width:900px){ .stats-est{ grid-template-columns:repeat(3,1fr); } }
+  @media (max-width:620px){ .stats-est{ grid-template-columns:repeat(2,1fr); } }
+
   .section-head{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin:40px 0 14px; flex-wrap:wrap;}
   .section-head h2{ font-size:19px; font-weight:600; }
   .section-head .note{ font-size:12.5px; color:var(--ink-muted); }
@@ -423,7 +431,7 @@
     <h2>Indicadores por estación CMT</h2>
     <div class="note">Eventos monitoreados por cada estación de instrumentación</div>
   </div>
-  <div class="stats" id="stat-strip-estaciones" style="grid-template-columns:repeat(5,1fr);"></div>
+  <div class="stats-est" id="stat-strip-estaciones"></div>
 
   <div class="section-head" id="sec-hitos">
     <h2>Línea de tiempo de hitos</h2>
