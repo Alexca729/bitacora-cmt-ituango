@@ -353,6 +353,9 @@
 
   /* ---- modal (photo viewer/uploader) ---- */
   .modal-backdrop{ position:fixed; inset:0; background:rgba(8,10,16,.55); display:flex; align-items:center; justify-content:center; z-index:1000; padding:20px; }
+  #card-modal{ background:rgba(8,10,16,.3); }
+  #card-modal.cm-anchor-left{ justify-content:flex-start; }
+  #card-modal.cm-anchor-right{ justify-content:flex-end; }
   .modal-backdrop[hidden]{ display:none; }
   .modal{ background:var(--surface-2); border-radius:14px; max-width:720px; width:100%; max-height:88vh; overflow:auto; box-shadow:0 30px 60px -20px rgba(0,0,0,.5); }
   .modal-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:18px 20px; border-bottom:1px solid var(--hairline); position:sticky; top:0; background:var(--surface-2); }
@@ -1473,9 +1476,16 @@ window.addEventListener('unhandledrejection', function(e){
   async function openCardModal(h, mode, cardEl){
     if (CARD_MODAL_SOURCE_EL) CARD_MODAL_SOURCE_EL.classList.remove('ztl-source-highlight');
     CARD_MODAL_SOURCE_EL = cardEl || null;
+    const modal = document.getElementById('card-modal');
+    modal.classList.remove('cm-anchor-left','cm-anchor-right');
     if (CARD_MODAL_SOURCE_EL){
       CARD_MODAL_SOURCE_EL.classList.add('ztl-source-highlight');
-      CARD_MODAL_SOURCE_EL.scrollIntoView({ behavior:'smooth', block:'center', inline:'center' });
+      CARD_MODAL_SOURCE_EL.scrollIntoView({ behavior:'auto', block:'center', inline:'center' });
+      // La ventana se abre al lado CONTRARIO de donde quedo la tarjeta (no encima), para que
+      // el brillo de la tarjeta se siga viendo mientras la ventana esta abierta.
+      const rect = CARD_MODAL_SOURCE_EL.getBoundingClientRect();
+      const onLeft = (rect.left + rect.width/2) < window.innerWidth/2;
+      modal.classList.add(onLeft ? 'cm-anchor-right' : 'cm-anchor-left');
     }
     document.getElementById('cm-title').textContent = h.TIPO_EVENTO ? cap(h.TIPO_EVENTO) : (h.EVENTO || 'Evento');
     document.getElementById('cm-sub').textContent = `${fmtDate(h.FECHA)} · ID ${h.ID}`;
