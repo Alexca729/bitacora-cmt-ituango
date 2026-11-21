@@ -59,7 +59,7 @@
     background-size: auto, cover;
     background-attachment: fixed, fixed;
   }
-  .wrap{ max-width:1180px; margin:0 auto; padding-block: 28px 64px; }
+  .wrap{ max-width:1600px; margin:0 auto; padding-block: 28px 64px; }
 
   /* ---- panel lateral de navegacion ---- */
   .app-sidebar{
@@ -280,11 +280,11 @@
   .ztl-photo.ztl-photo-lg.empty .plus{ font-size:30px; color:var(--accent); line-height:1; }
   .ztl-photo.ztl-photo-lg .count-badge{ font-size:10px; padding:1px 5px; }
   .ztl-year-big{ font-family:"IBM Plex Sans Condensed"; font-size:30px; font-weight:700; color:var(--accent); line-height:1; }
-  .ztl-yevent-desc-lg{ font-size:11px; font-weight:500; color:var(--ink); line-height:1.35; max-width:var(--card-w,210px); max-height:120px; overflow-y:auto; cursor:default; }
+  .ztl-yevent-desc-lg{ font-size:11px; font-weight:500; color:var(--ink); line-height:1.35; max-width:var(--card-w,210px); max-height:120px; overflow-y:auto; cursor:zoom-in; }
   .ztl-ycontent-single:hover .ztl-actions{ opacity:1; }
   .ztl-yevent-text{ flex:1; min-width:0; }
   .ztl-yevent-date{ display:block; font-family:"IBM Plex Sans Condensed"; font-size:10px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:.03em; }
-  .ztl-yevent-desc{ display:block; font-size:10.5px; line-height:1.35; color:var(--ink); cursor:default; max-height:84px; overflow-y:auto; }
+  .ztl-yevent-desc{ display:block; font-size:10.5px; line-height:1.35; color:var(--ink); cursor:zoom-in; max-height:84px; overflow-y:auto; }
   .ztl-actions{ display:flex; gap:6px; flex:none; opacity:.25; transition:opacity .15s ease; padding-top:2px; }
   .ztl-yevent:hover .ztl-actions{ opacity:1; }
   .ztl-action-btn{ background:none; border:none; cursor:pointer; font-size:10.5px; padding:1px 2px; line-height:1; color:var(--ink-muted); }
@@ -593,6 +593,26 @@
 <!-- Lightbox -->
 <div class="modal-backdrop" id="lightbox" hidden>
   <img id="lightbox-img" style="max-width:100%; max-height:85vh; border-radius:10px;" alt="Foto ampliada">
+</div>
+
+<!-- Tarjeta ampliada (texto solo, o texto + foto) -->
+<div class="modal-backdrop" id="card-modal" hidden>
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-head">
+      <div>
+        <h3 id="cm-title">Evento</h3>
+        <div class="mh-sub" id="cm-sub"></div>
+      </div>
+      <button class="modal-close" id="cm-close" type="button">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="cm-photo-wrap" style="text-align:center; margin-bottom:16px;">
+        <img id="cm-photo-img" style="max-width:100%; max-height:50vh; border-radius:10px;" alt="Foto del evento">
+        <div id="cm-photo-empty" class="note" style="margin-top:6px;">Sin foto todavía.</div>
+      </div>
+      <div id="cm-text" style="font-size:15px; line-height:1.55; white-space:pre-wrap;"></div>
+    </div>
+  </div>
 </div>
 
 <!-- Nuevo evento -->
@@ -1074,6 +1094,7 @@ window.addEventListener('unhandledrejection', function(e){
 
   setupThemeSwitch();
   setupPhotoModal();
+  setupCardModalClose();
   setupZipSync();
   setupExcelReload();
   setupNewEventForm();
@@ -1281,6 +1302,7 @@ window.addEventListener('unhandledrejection', function(e){
     enableCardScale(trackEl);
     enableCardWidthResize(trackEl);
     enableCardSelection(trackEl);
+    setupCardModalTriggers(trackEl, hitos);
     if (!HITOS_PANEL_HAS_SAVED_SIZE) autoFitHitosPanelHeight();
     // Las fuentes (Google Fonts, display:swap) a veces terminan de cargar despues de esta
     // primera medicion: el texto se mide con la fuente de reserva, cambia de ancho/alto al
@@ -1342,6 +1364,7 @@ window.addEventListener('unhandledrejection', function(e){
         <span class="ztl-yevent-desc" title="${escapeAttr(h.DESCRIPCION || h.TIPO_EVENTO || '')}">${escapeHtml(h.DESCRIPCION || cap(h.TIPO_EVENTO) || '')}</span>
       </div>
       <div class="ztl-actions">
+        <button class="ztl-action-btn" data-hito-expand-pkey="${escapeAttr(h._pkey)}" type="button" title="Ver foto y texto en grande">🔍</button>
         <button class="ztl-action-btn" data-hito-edit-pkey="${escapeAttr(h._pkey)}" data-hito-edit-ismanual="${h._manual?'1':'0'}" data-hito-edit-id="${escapeAttr(h.ID)}" type="button" title="Editar hito">✏️</button>
         <button class="ztl-action-btn danger" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="${h._manual?'1':'0'}" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="${h._manual ? 'Eliminar hito' : 'Quitar de la línea de tiempo'}">🗑</button>
       </div>
@@ -1406,13 +1429,66 @@ window.addEventListener('unhandledrejection', function(e){
       el.classList.toggle('ztl-selected', SELECTED_PKEYS.has(pkey));
       el.addEventListener('click', (e) => {
         if (!(e.ctrlKey || e.metaKey)) return;
-        if (e.target.closest('.ztl-action-btn') || e.target.closest('.ztl-photo') || e.target.closest('.ztl-card-resize')) return;
+        if (e.target.closest('.ztl-action-btn') || e.target.closest('.ztl-photo') || e.target.closest('.ztl-card-resize') || e.target.closest('.ztl-yevent-desc') || e.target.closest('.ztl-yevent-desc-lg')) return;
         e.stopPropagation(); e.preventDefault();
         if (SELECTED_PKEYS.has(pkey)){ SELECTED_PKEYS.delete(pkey); el.classList.remove('ztl-selected'); }
         else { SELECTED_PKEYS.add(pkey); el.classList.add('ztl-selected'); }
         if (window.ztlUpdateScaleBox) window.ztlUpdateScaleBox();
       });
     });
+  }
+  // Clic en el texto de una tarjeta = ampliar solo el texto. Clic en la lupa 🔍 = ampliar
+  // foto + texto juntos. La foto sola sigue abriendo su propio modal, sin cambios (eso ya
+  // existia). Ninguno de los tres mueve ni cambia la tarjeta en la espina de pescado: son
+  // ventanas flotantes aparte que simplemente se cierran y listo.
+  function setupCardModalTriggers(trackEl, hitos){
+    const byPkey = {};
+    hitos.forEach(h => { byPkey[h._pkey] = h; });
+    trackEl.querySelectorAll('.ztl-yevent-desc, .ztl-yevent-desc-lg').forEach(el => {
+      const card = el.closest('.ztl-draggable');
+      if (!card) return;
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const h = byPkey[card.dataset.pkey];
+        if (h) openCardModal(h, 'text');
+      });
+    });
+    trackEl.querySelectorAll('[data-hito-expand-pkey]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const h = byPkey[btn.dataset.hitoExpandPkey];
+        if (h) openCardModal(h, 'full');
+      });
+    });
+  }
+  async function openCardModal(h, mode){
+    document.getElementById('cm-title').textContent = h.TIPO_EVENTO ? cap(h.TIPO_EVENTO) : (h.EVENTO || 'Evento');
+    document.getElementById('cm-sub').textContent = `${fmtDate(h.FECHA)} · ID ${h.ID}`;
+    document.getElementById('cm-text').textContent = h.DESCRIPCION || h.TIPO_EVENTO || '';
+    const photoWrap = document.getElementById('cm-photo-wrap');
+    const img = document.getElementById('cm-photo-img');
+    const empty = document.getElementById('cm-photo-empty');
+    if (mode === 'full'){
+      photoWrap.hidden = false;
+      img.hidden = true; empty.hidden = true;
+      const photos = await idbAll(h._pkey);
+      if (photos.length){
+        img.src = URL.createObjectURL(photos[0].blob);
+        img.hidden = false;
+      } else {
+        empty.hidden = false;
+      }
+    } else {
+      photoWrap.hidden = true;
+    }
+    document.getElementById('card-modal').hidden = false;
+  }
+  function closeCardModal(){ document.getElementById('card-modal').hidden = true; }
+  function setupCardModalClose(){
+    const modal = document.getElementById('card-modal');
+    document.getElementById('cm-close').addEventListener('click', closeCardModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeCardModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeCardModal(); });
   }
   // Un clic normal (sin Ctrl/Cmd) en cualquier parte de la pagina limpia toda la seleccion
   // de tarjetas — asi no hay que ir Ctrl+clic una por una para soltarlas.
@@ -1431,7 +1507,7 @@ window.addEventListener('unhandledrejection', function(e){
     trackEl.querySelectorAll('.ztl-draggable').forEach(el => {
       let startX = 0, startY = 0, dragging = false, moved = false, members = [];
       el.addEventListener('pointerdown', (e) => {
-        if (e.target.closest('.ztl-action-btn') || e.target.closest('.ztl-photo') || e.target.closest('.ztl-card-resize')) return;
+        if (e.target.closest('.ztl-action-btn') || e.target.closest('.ztl-photo') || e.target.closest('.ztl-card-resize') || e.target.closest('.ztl-yevent-desc') || e.target.closest('.ztl-yevent-desc-lg')) return;
         if (e.ctrlKey || e.metaKey) return; // eso es para seleccionar, no para arrastrar
         const group = groupFor(trackEl, el.dataset.pkey);
         members = (group.length ? group : [el]).map(m => ({ el: m, baseDx: numProp(m,'--dx',0), baseDy: numProp(m,'--dy',0) }));
@@ -1620,6 +1696,7 @@ window.addEventListener('unhandledrejection', function(e){
         <div class="ztl-yevent-desc-lg" title="${escapeAttr(h.DESCRIPCION || h.TIPO_EVENTO || '')}">${escapeHtml(h.DESCRIPCION || cap(h.TIPO_EVENTO) || '')}</div>
         <div class="ztl-sub">${cap(h.FRENTE)}</div>
         <div class="ztl-actions" style="opacity:.35;">
+          <button class="ztl-action-btn" data-hito-expand-pkey="${escapeAttr(h._pkey)}" type="button" title="Ver foto y texto en grande">🔍</button>
           <button class="ztl-action-btn" data-hito-edit-pkey="${escapeAttr(h._pkey)}" data-hito-edit-ismanual="${h._manual?'1':'0'}" data-hito-edit-id="${escapeAttr(h.ID)}" type="button" title="Editar hito">✏️</button>
           <button class="ztl-action-btn danger" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="${h._manual?'1':'0'}" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="${h._manual ? 'Eliminar hito' : 'Quitar de la línea de tiempo'}">🗑</button>
         </div>
