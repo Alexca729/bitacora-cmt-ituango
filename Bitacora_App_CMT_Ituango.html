@@ -1087,10 +1087,14 @@ window.addEventListener('unhandledrejection', function(e){
     const manual = await getManualEvents();
     // Si un evento manual ya quedo incluido en el Excel/base (porque se publico con
     // "Generar bitacora_data.js" y luego se volvio a cargar ese mismo archivo), no se
-    // repite — se prefiere la version que viene del archivo.
+    // repite — se prefiere la version que viene del archivo. Pero SIGUE marcado como
+    // manual (_manual:true), para que conserve su boton de eliminar y se pueda identificar
+    // y quitar en cualquier momento, publicado o no.
     const baseIds = new Set(base.map(r => String(r.ID)));
+    const manualIds = new Set(manual.map(m => String(m.ID)));
     const manualNotYetInBase = manual.filter(m => !baseIds.has(String(m.ID)));
-    const merged = base.concat(manualNotYetInBase.map(m => Object.assign({}, m, { _manual: true })));
+    const taggedBase = base.map(r => manualIds.has(String(r.ID)) ? Object.assign({}, r, { _manual: true }) : r);
+    const merged = taggedBase.concat(manualNotYetInBase.map(m => Object.assign({}, m, { _manual: true })));
     await init(merged);
   }
 
