@@ -116,7 +116,7 @@
   .theme-switch[aria-checked="true"] .ts-knob{ transform:translateX(30px); }
 
   .stats{ display:grid; grid-template-columns:repeat(6,1fr); gap:16px; margin-top:22px; }
-  .stat{ background:var(--surface); border:var(--box-border); border-radius:14px; padding:22px 20px; display:flex; flex-direction:column; gap:8px; min-width:0; box-shadow:var(--shadow); }
+  .stat{ background:var(--surface); border:var(--box-border); border-radius:14px; padding:22px 20px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px; min-width:0; box-shadow:var(--shadow); }
   .stat .label{ font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); font-weight:700; }
   .stat .value{ font-family:"IBM Plex Mono",monospace; font-size:34px; font-weight:700; letter-spacing:-.01em; color:var(--accent); }
   .stat .value small{ font-size:14px; font-weight:500; color:var(--ink-2); }
@@ -430,13 +430,16 @@
     </div>
   </div>
 
-  <div class="stats" id="stat-strip"></div>
-
   <div class="section-head">
     <h2>Indicadores por estación CMT</h2>
     <div class="note">Eventos monitoreados por cada estación de instrumentación</div>
   </div>
   <div class="stats-est" id="stat-strip-estaciones"></div>
+
+  <div class="section-head">
+    <h2>Indicadores generales</h2>
+  </div>
+  <div class="stats" id="stat-strip"></div>
 
   <div class="section-head" id="sec-hitos">
     <h2>Línea de tiempo de hitos</h2>
@@ -1146,11 +1149,11 @@ window.addEventListener('unhandledrejection', function(e){
 
     const estCounts = countBy(records, 'ESTACION');
     const estaciones = [
-      {key:'SISMOLOGÍA', label:'Sismología'},
-      {key:'INTERFEROMETRÍA', label:'Interferometría'},
-      {key:'GEODESÍA', label:'Geodesia'},
       {key:'CCTV', label:'CCTV'},
+      {key:'GEODESÍA', label:'Geodesia'},
       {key:'HIDROMETRÍA', label:'Hidrometría'},
+      {key:'INTERFEROMETRÍA', label:'Interferometría'},
+      {key:'SISMOLOGÍA', label:'Sismología'},
     ];
     document.getElementById('stat-strip-estaciones').innerHTML = estaciones.map(e => {
       const val = estCounts[e.key] || 0;
