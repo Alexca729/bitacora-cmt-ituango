@@ -440,7 +440,7 @@ const RECORDS_DATA = [
     "EVENTO": "HITO",
     "CATEGORIA_EVENTO": "OPERACIÓN HIDRÁULICA",
     "TIPO_EVENTO": "Aumento de caudales",
-    "DESCRIPCION": "Desde el Centro de monitoreo Técnico CMT, se reporta incremento de caudales en la descarga 1.718,52 m3/s, debido a las crecientes registradas en La Pintada y Olaya.\nSe realiza apertura de las 4 compuertas del vertedero a 3,0 mt",
+    "DESCRIPCION": "Desde el Centro de monitoreo Técnico CMT, se reporta incremento de caudales en la descarga 1.718,52 m3/s, debido a las crecientes registradas en La Pintada y Olaya.\r\nSe realiza apertura de las 4 compuertas del vertedero a 3,0 mt",
     "COMPONENTE": "CMT",
     "TIPO_OBRA": "SUPERFICIAL",
     "FRENTE": "OBRAS DE DESCARGAS",
@@ -584,7 +584,7 @@ const RECORDS_DATA = [
     "EVENTO": "RELEVANTE",
     "CATEGORIA_EVENTO": "GESTIÓN, SOCIAL Y EXTERNOS",
     "TIPO_EVENTO": "Alerta y emergencia",
-    "DESCRIPCION": "EPM manifiesta que hasta nueva orden, la alerta roja se mantiene en la zona de Puerto Valdivia (Valdivia) y Puerto Antioquia (Tarazá); y amarilla para los municipios de Tarazá y vecinos, ubicados aguas abajo del proyecto.\nSe realiza simulacro de evacuación en las obras Principales, como medida de contingencia para el cierre de la compuerta 2.",
+    "DESCRIPCION": "EPM manifiesta que hasta nueva orden, la alerta roja se mantiene en la zona de Puerto Valdivia (Valdivia) y Puerto Antioquia (Tarazá); y amarilla para los municipios de Tarazá y vecinos, ubicados aguas abajo del proyecto.\r\nSe realiza simulacro de evacuación en las obras Principales, como medida de contingencia para el cierre de la compuerta 2.",
     "COMPONENTE": "SOCIO-AMBIENTAL",
     "TIPO_OBRA": "SUPERFICIAL",
     "FRENTE": "AREA DE INFLUENCIA",
@@ -602,7 +602,7 @@ const RECORDS_DATA = [
     "EVENTO": "RELEVANTE",
     "CATEGORIA_EVENTO": "OBRA CIVIL",
     "TIPO_EVENTO": "Recuperación de oquedad",
-    "DESCRIPCION": "EPM informó, que durante los trabajos de perforación que permitirán cerrar la casa de máquinas del proyecto Hidroituango, se encontró entre las captaciones 1 y 2 a 40 m de profundidad un vacío de 60 m de altura y contiene agua. Esta situación puede acelerar el cierre de compuertas de las captaciones.\nEPM solicitó a la firma Integral y al Board de Asesores realizar el análisis del vacío encontrado entre las captaciones 1 y 2.",
+    "DESCRIPCION": "EPM informó, que durante los trabajos de perforación que permitirán cerrar la casa de máquinas del proyecto Hidroituango, se encontró entre las captaciones 1 y 2 a 40 m de profundidad un vacío de 60 m de altura y contiene agua. Esta situación puede acelerar el cierre de compuertas de las captaciones.\r\nEPM solicitó a la firma Integral y al Board de Asesores realizar el análisis del vacío encontrado entre las captaciones 1 y 2.",
     "COMPONENTE": "COMPUESTO",
     "TIPO_OBRA": "SUBTERRÁNEA",
     "FRENTE": "CAVERNAS",
@@ -656,7 +656,7 @@ const RECORDS_DATA = [
     "EVENTO": "RELEVANTE",
     "CATEGORIA_EVENTO": "GESTIÓN, SOCIAL Y EXTERNOS",
     "TIPO_EVENTO": "Gestión social y comunicados",
-    "DESCRIPCION": "Con acompañamiento del gobernador de Antioquia, Luis Pérez Gutiérrez, el alcalde de Medellín, Federico Gutiérrez y el gerente general de EPM Jorge Londoño De La Cuesta. Del cual manifiestan que estiman que el cierre de la compuerta 2 sea el 16 de enero de 2019.\nadicoinalemnte el Consejo Departamental del Riesgo solicitó un plan de contingencia específico para proteger a las comunidades agua abajo desde el 11 de enero y hasta el día del cierre de la compuerta número 2.",
+    "DESCRIPCION": "Con acompañamiento del gobernador de Antioquia, Luis Pérez Gutiérrez, el alcalde de Medellín, Federico Gutiérrez y el gerente general de EPM Jorge Londoño De La Cuesta. Del cual manifiestan que estiman que el cierre de la compuerta 2 sea el 16 de enero de 2019.\r\nadicoinalemnte el Consejo Departamental del Riesgo solicitó un plan de contingencia específico para proteger a las comunidades agua abajo desde el 11 de enero y hasta el día del cierre de la compuerta número 2.",
     "COMPONENTE": "SOCIO-AMBIENTAL",
     "TIPO_OBRA": "SUPERFICIAL",
     "FRENTE": "AREA DE INFLUENCIA",
@@ -710,7 +710,7 @@ const RECORDS_DATA = [
     "EVENTO": "HITO",
     "CATEGORIA_EVENTO": "OPERACIÓN HIDRÁULICA",
     "TIPO_EVENTO": "Cierre de la compuerta 2",
-    "DESCRIPCION": "Desde las 2:00 a.m. se suspendieron todas las actividades de la obra y se realizó evacuación del personal. \nEntre las 6:30 y las 6:59 a.m. se realizó el cierre de la compuerta principal del pozo 2. La operación estuvo a cargo de 7 personas autorizadas por EPM.",
+    "DESCRIPCION": "Desde las 2:00 a.m. se suspendieron todas las actividades de la obra y se realizó evacuación del personal. \r\nEntre las 6:30 y las 6:59 a.m. se realizó el cierre de la compuerta principal del pozo 2. La operación estuvo a cargo de 7 personas autorizadas por EPM.",
     "COMPONENTE": "ELECTROMECÁNICA",
     "TIPO_OBRA": "SUBTERRÁNEA",
     "FRENTE": "POZOS DE COMPUERTAS",
@@ -746,7 +746,7 @@ const RECORDS_DATA = [
     "EVENTO": "RELEVANTE",
     "CATEGORIA_EVENTO": "GESTIÓN, SOCIAL Y EXTERNOS",
     "TIPO_EVENTO": "Reinicio de actividades",
-    "DESCRIPCION": "EPM informa que luego de las inspecciones realizadas, posteriores al cierre de la compuerta número dos, se detectó una corriente de aire que fluye entre el túnel uno y dos de la captación.\nEn horas de la mañana, se evidenció que la expulsión de aire/agua a través del pozo de compuertas 2 es constante y no muestra variaciones significativas.\nA las 3:30 p.m., la Asesoría del proyecto avala el ingreso a los frentes de obra del proyecto, exceptuando los frentes de descarga intermedia, la galería 252, el túnel de acceso a casa de máquinas y la zona donde están instaladas las compuertas 1 y 2 de aducción.",
+    "DESCRIPCION": "EPM informa que luego de las inspecciones realizadas, posteriores al cierre de la compuerta número dos, se detectó una corriente de aire que fluye entre el túnel uno y dos de la captación.\r\nEn horas de la mañana, se evidenció que la expulsión de aire/agua a través del pozo de compuertas 2 es constante y no muestra variaciones significativas.\r\nA las 3:30 p.m., la Asesoría del proyecto avala el ingreso a los frentes de obra del proyecto, exceptuando los frentes de descarga intermedia, la galería 252, el túnel de acceso a casa de máquinas y la zona donde están instaladas las compuertas 1 y 2 de aducción.",
     "COMPONENTE": "COMPUESTO",
     "TIPO_OBRA": "SUPERFICIAL",
     "FRENTE": "POZOS DE COMPUERTAS",
@@ -764,7 +764,7 @@ const RECORDS_DATA = [
     "EVENTO": "RELEVANTE",
     "CATEGORIA_EVENTO": "MONITOREO E INSTRUMENTACIÓN",
     "TIPO_EVENTO": "Inspección",
-    "DESCRIPCION": "Inspección de la Armada Nacional a la parte inferior de la cámara de compuertas del SAD, con fin de verificar la profundidad y las condiciones para el dragado.\nEn la cámara de compuertas del SAD, se realiza inspección bajo el agua con “el sonar” para determinar por medio del sonido la presencia, localización o naturaleza de objetos presentes en la parte inferior de la cámara.",
+    "DESCRIPCION": "Inspección de la Armada Nacional a la parte inferior de la cámara de compuertas del SAD, con fin de verificar la profundidad y las condiciones para el dragado.\r\nEn la cámara de compuertas del SAD, se realiza inspección bajo el agua con “el sonar” para determinar por medio del sonido la presencia, localización o naturaleza de objetos presentes en la parte inferior de la cámara.",
     "COMPONENTE": "CIVIL",
     "TIPO_OBRA": "SUBTERRÁNEA",
     "FRENTE": "GALERÍA AUXILIAR DE DESVIACIÓN",
@@ -800,7 +800,7 @@ const RECORDS_DATA = [
     "EVENTO": "RELEVANTE",
     "CATEGORIA_EVENTO": "OPERACIÓN HIDRÁULICA",
     "TIPO_EVENTO": "Cierre de compuerta",
-    "DESCRIPCION": "EPM comunicó la decisión del cierre de la segunda compuerta de aducción No.1, al Puesto de Mando Unificado (PMU) que viene operando a nivel nacional, al tiempo que informó a los organismos y autoridades competentes, lo mismo que a las comunidades y a las administraciones de los municipios del área de influencia del proyecto, principalmente en las zonas ribereñas del río Cauca.\nSe observa que la salida de agua-aire del pozo de compuertas 2 se mantiene hasta el cierre total de la compuerta 1.",
+    "DESCRIPCION": "EPM comunicó la decisión del cierre de la segunda compuerta de aducción No.1, al Puesto de Mando Unificado (PMU) que viene operando a nivel nacional, al tiempo que informó a los organismos y autoridades competentes, lo mismo que a las comunidades y a las administraciones de los municipios del área de influencia del proyecto, principalmente en las zonas ribereñas del río Cauca.\r\nSe observa que la salida de agua-aire del pozo de compuertas 2 se mantiene hasta el cierre total de la compuerta 1.",
     "COMPONENTE": "ELECTROMECÁNICA",
     "TIPO_OBRA": "SUPERFICIAL",
     "FRENTE": "POZOS DE COMPUERTAS",
@@ -836,7 +836,7 @@ const RECORDS_DATA = [
     "EVENTO": "RELEVANTE",
     "CATEGORIA_EVENTO": "GESTIÓN, SOCIAL Y EXTERNOS",
     "TIPO_EVENTO": "Gestión social y comunicados",
-    "DESCRIPCION": "EPM informó que todos los frentes de trabajo se encuentran activos y laborando desde la madrugada, con excepción de las cuadrillas de casa de máquinas.\nEPM comunicó que hay despliegue de brigadas, conformadas por biólogos, técnicos y pescadores locales, para rescatar los individuos –fauna– que se encuentren atrapados por el descenso de las aguas",
+    "DESCRIPCION": "EPM informó que todos los frentes de trabajo se encuentran activos y laborando desde la madrugada, con excepción de las cuadrillas de casa de máquinas.\r\nEPM comunicó que hay despliegue de brigadas, conformadas por biólogos, técnicos y pescadores locales, para rescatar los individuos –fauna– que se encuentren atrapados por el descenso de las aguas",
     "COMPONENTE": "SOCIO-AMBIENTAL",
     "TIPO_OBRA": "SUPERFICIAL",
     "FRENTE": "DESCARGAS",
@@ -1548,7 +1548,7 @@ const RECORDS_DATA = [
     "YEAR": 2022
   },
   {
-    "ID": 87,
+    "ID": 88,
     "FECHA": "2022-12-14",
     "ANIO": 2022,
     "TRIMESTRE": "T4",
@@ -1566,7 +1566,7 @@ const RECORDS_DATA = [
     "YEAR": 2022
   },
   {
-    "ID": 88,
+    "ID": 89,
     "FECHA": "2022-12-14",
     "ANIO": 2022,
     "TRIMESTRE": "T4",
@@ -1584,7 +1584,7 @@ const RECORDS_DATA = [
     "YEAR": 2022
   },
   {
-    "ID": 89,
+    "ID": 90,
     "FECHA": "2023-04-01",
     "ANIO": 2023,
     "TRIMESTRE": "T2",
@@ -1602,7 +1602,7 @@ const RECORDS_DATA = [
     "YEAR": 2023
   },
   {
-    "ID": 90,
+    "ID": 91,
     "FECHA": "2023-05-08",
     "ANIO": 2023,
     "TRIMESTRE": "T2",
@@ -1620,7 +1620,7 @@ const RECORDS_DATA = [
     "YEAR": 2023
   },
   {
-    "ID": 91,
+    "ID": 92,
     "FECHA": "2023-05-12",
     "ANIO": 2023,
     "TRIMESTRE": "T2",
@@ -1638,7 +1638,7 @@ const RECORDS_DATA = [
     "YEAR": 2023
   },
   {
-    "ID": 92,
+    "ID": 93,
     "FECHA": "2023-05-24",
     "ANIO": 2023,
     "TRIMESTRE": "T2",
@@ -1656,7 +1656,7 @@ const RECORDS_DATA = [
     "YEAR": 2023
   },
   {
-    "ID": 93,
+    "ID": 94,
     "FECHA": "2023-05-28",
     "ANIO": 2023,
     "TRIMESTRE": "T2",
@@ -1674,7 +1674,7 @@ const RECORDS_DATA = [
     "YEAR": 2023
   },
   {
-    "ID": 94,
+    "ID": 95,
     "FECHA": "2024-07-09",
     "ANIO": 2024,
     "TRIMESTRE": "T3",
@@ -1692,7 +1692,7 @@ const RECORDS_DATA = [
     "YEAR": 2024
   },
   {
-    "ID": 95,
+    "ID": 96,
     "FECHA": "2024-07-25",
     "ANIO": 2024,
     "TRIMESTRE": "T3",
@@ -1710,7 +1710,7 @@ const RECORDS_DATA = [
     "YEAR": 2024
   },
   {
-    "ID": 96,
+    "ID": 97,
     "FECHA": "2024-07-26",
     "ANIO": 2024,
     "TRIMESTRE": "T3",
@@ -1728,7 +1728,7 @@ const RECORDS_DATA = [
     "YEAR": 2024
   },
   {
-    "ID": 97,
+    "ID": 99,
     "FECHA": "2024-07-29",
     "ANIO": 2024,
     "TRIMESTRE": "T3",
@@ -1746,7 +1746,7 @@ const RECORDS_DATA = [
     "YEAR": 2024
   },
   {
-    "ID": 98,
+    "ID": 100,
     "FECHA": "2024-09-12",
     "ANIO": 2024,
     "TRIMESTRE": "T3",
@@ -1764,7 +1764,7 @@ const RECORDS_DATA = [
     "YEAR": 2024
   },
   {
-    "ID": 99,
+    "ID": 101,
     "FECHA": "2024-09-15",
     "ANIO": 2024,
     "TRIMESTRE": "T3",
@@ -1772,7 +1772,7 @@ const RECORDS_DATA = [
     "EVENTO": "RELEVANTE",
     "CATEGORIA_EVENTO": "OBRA CIVIL",
     "TIPO_EVENTO": "Vaciado de concreto",
-    "DESCRIPCION": "Túnel de Desvío Derecho (TDD) - Tapón No.10 - Tapón definitivo (22,0 m) - Vaciado de \nconcreto de la camada No. 9.",
+    "DESCRIPCION": "Túnel de Desvío Derecho (TDD) - Tapón No.10 - Tapón definitivo (22,0 m) - Vaciado de \r\nconcreto de la camada No. 9.",
     "COMPONENTE": "CIVIL",
     "TIPO_OBRA": "SUBTERRÁNEA",
     "FRENTE": "TÚNELES DE DESVIACIONES",
@@ -1782,7 +1782,7 @@ const RECORDS_DATA = [
     "YEAR": 2024
   },
   {
-    "ID": 100,
+    "ID": 102,
     "FECHA": "2026-04-25",
     "ANIO": 2026,
     "TRIMESTRE": "T2",
@@ -1800,7 +1800,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 101,
+    "ID": 103,
     "FECHA": "2026-04-27",
     "ANIO": 2026,
     "TRIMESTRE": "T2",
@@ -1818,7 +1818,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 102,
+    "ID": 104,
     "FECHA": "2026-05-04",
     "ANIO": 2026,
     "TRIMESTRE": "T2",
@@ -1836,7 +1836,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 103,
+    "ID": 105,
     "FECHA": "2026-06-01",
     "ANIO": 2026,
     "TRIMESTRE": "T2",
@@ -1854,7 +1854,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 104,
+    "ID": 106,
     "FECHA": "2026-06-02",
     "ANIO": 2026,
     "TRIMESTRE": "T2",
@@ -1872,7 +1872,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 105,
+    "ID": 107,
     "FECHA": "2026-06-08",
     "ANIO": 2026,
     "TRIMESTRE": "T2",
@@ -1890,7 +1890,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 106,
+    "ID": 108,
     "FECHA": "2026-06-08",
     "ANIO": 2026,
     "TRIMESTRE": "T2",
@@ -1908,7 +1908,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 107,
+    "ID": 109,
     "FECHA": "2026-06-21",
     "ANIO": 2026,
     "TRIMESTRE": "T2",
@@ -1926,7 +1926,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 108,
+    "ID": 110,
     "FECHA": "2026-07-08",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -1944,7 +1944,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 109,
+    "ID": 111,
     "FECHA": "2026-07-13",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -1962,7 +1962,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 110,
+    "ID": 112,
     "FECHA": "2026-07-13",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -1980,7 +1980,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 111,
+    "ID": 113,
     "FECHA": "2026-07-19",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -1998,7 +1998,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 112,
+    "ID": 114,
     "FECHA": "2026-08-05",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2016,7 +2016,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 113,
+    "ID": 115,
     "FECHA": "2026-08-17",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2034,7 +2034,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 114,
+    "ID": 116,
     "FECHA": "2026-08-20",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2052,7 +2052,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 115,
+    "ID": 117,
     "FECHA": "2026-08-20",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2070,7 +2070,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 116,
+    "ID": 118,
     "FECHA": "2026-08-25",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2088,7 +2088,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 117,
+    "ID": 119,
     "FECHA": "2026-09-10",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2106,7 +2106,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 118,
+    "ID": 120,
     "FECHA": "2026-09-11",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2124,7 +2124,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 119,
+    "ID": 121,
     "FECHA": "2026-09-11",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2142,7 +2142,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 120,
+    "ID": 122,
     "FECHA": "2026-09-25",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2160,7 +2160,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 121,
+    "ID": 123,
     "FECHA": "2026-09-25",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2178,7 +2178,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 122,
+    "ID": 124,
     "FECHA": "2026-09-26",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2196,7 +2196,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 123,
+    "ID": 125,
     "FECHA": "2026-09-27",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2214,7 +2214,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 124,
+    "ID": 126,
     "FECHA": "2026-09-30",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2232,7 +2232,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 125,
+    "ID": 127,
     "FECHA": "2026-10-02",
     "ANIO": 2026,
     "TRIMESTRE": "T4",
@@ -2250,7 +2250,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 126,
+    "ID": 128,
     "FECHA": "2026-10-06",
     "ANIO": 2026,
     "TRIMESTRE": "T4",
@@ -2268,7 +2268,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 127,
+    "ID": 129,
     "FECHA": "2026-10-10",
     "ANIO": 2026,
     "TRIMESTRE": "T4",
@@ -2286,7 +2286,25 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 128,
+    "ID": 130,
+    "FECHA": "2026-11-09",
+    "ANIO": 2026,
+    "TRIMESTRE": "T4",
+    "NIVEL_RELEVANCIA": "Alta",
+    "EVENTO": "RELEVANTE",
+    "CATEGORIA_EVENTO": "OPERACIÓN HIDRÁULICA",
+    "TIPO_EVENTO": "Ascenso",
+    "DESCRIPCION": "Se realiza apertura compuerta # 1 del canal izquierdo por aumento en los caudales aguas arriba, esto se debe a que la tasa de aumento se debe mantener en 0.40 m",
+    "COMPONENTE": "CMT",
+    "TIPO_OBRA": "SUPERFICIAL",
+    "FRENTE": "VERTEDERO",
+    "SUBFRENTE": "CANAL IZQUIERDO DE DESCARGA DEL VERTEDERO",
+    "ESTADO": "En ejecución",
+    "ESTACION": "CCTV",
+    "YEAR": 2026
+  },
+  {
+    "ID": 131,
     "FECHA": "2026-09-16",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
