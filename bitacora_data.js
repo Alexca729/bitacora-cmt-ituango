@@ -677,10 +677,10 @@ const RECORDS_DATA = [
     "DESCRIPCION": "Se confirmó que el próximo 16 de enero de 2019, a las 6:00 a.m., se dará inicio al cierre de las compuertas de la casa de máquinas de la central hidroeléctrica Ituango.",
     "COMPONENTE": "ELECTROMECÁNICA",
     "TIPO_OBRA": "SUBTERRÁNEA",
-    "FRENTE": "CAMPAMENTO TACUÍ-CUNÍ",
-    "SUBFRENTE": "OFICINAS PRINCIPALES",
-    "ESTADO": "Operativo",
-    "ESTACION": "HIDROMETRÍA",
+    "FRENTE": "CAPTACIÓN",
+    "SUBFRENTE": "CAPTACIÓN 2",
+    "ESTADO": "N/A",
+    "ESTACION": "N/A",
     "YEAR": 2019
   },
   {
