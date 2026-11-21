@@ -238,8 +238,12 @@
   .ztl-draggable.ztl-selected{ outline:3px solid var(--accent); outline-offset:3px; border-radius:12px; }
   .ztl-draggable{
     position:relative; cursor:grab; touch-action:none;
-    transform: translate(var(--dx,0px), var(--dy,0px)) scale(var(--scale,1));
-    transform-origin: center center;
+    transform: translate(var(--dx,0px), var(--dy,0px));
+    /* El tamaño se aplica con "zoom", no con transform:scale(). transform:scale() solo
+       estira los pixeles ya dibujados (el texto queda borroso, sobre todo en modo claro);
+       zoom hace que el navegador vuelva a dibujar todo (texto, fotos, bordes) nitido al
+       nuevo tamaño, como si la tarjeta de verdad fuera mas grande o mas chica. */
+    zoom: var(--scale, 1);
   }
   .ztl-draggable.dragging{ cursor:grabbing; z-index:6 !important; opacity:.92; }
   .ztl-card-resize{
