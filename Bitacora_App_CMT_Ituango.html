@@ -133,7 +133,7 @@
   .panel{ background:var(--surface); border:var(--box-border); border-radius:12px; padding:20px 22px; box-shadow:var(--shadow); }
   .panel h3{ font-size:14px; font-weight:600; color:var(--ink); }
   .panel .panel-sub{ font-size:12px; color:var(--ink-muted); margin-top:2px; }
-  .grid-secondary{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:16px; }
+  .grid-secondary{ display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:16px; }
 
   .legend{ display:flex; flex-wrap:wrap; gap:12px 18px; margin-top:14px; padding-top:14px; border-top:1px solid var(--hairline); }
   .legend-item{ display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--ink-2); }
@@ -157,7 +157,7 @@
   .grid-line{ stroke:var(--hairline); stroke-width:1; }
 
   /* ---- hitos timeline (agrupada por año, estilo mural EPM) ---- */
-  .panel-hitos{ overflow:auto; min-width:360px; min-height:220px; width:1140px; max-width:100%; }
+  .panel-hitos{ overflow:auto; min-width:360px; min-height:220px; }
   /* El redimensionado nativo (resize:both, una sola esquina) se reemplaza por 4 tiradores
      independientes en cada borde — asi se puede alargar/achatar (arriba/abajo) o
      ensanchar/angostar (izquierda/derecha) por separado, como ajustar el alto de una fila o
@@ -482,15 +482,15 @@
   </div>
 
   <div class="section-head" id="sec-analisis">
-    <h2>Eventos por año y componente</h2>
-    <div class="note">2012 – 2023 · apilado por componente responsable</div>
+    <h2>Análisis</h2>
   </div>
-  <div class="panel">
-    <svg id="chart-timeline" width="100%" viewBox="0 0 1120 340" preserveAspectRatio="xMidYMid meet"></svg>
-    <div class="legend" id="legend-componente"></div>
-  </div>
-
   <div class="grid-secondary">
+    <div class="panel">
+      <h3>Eventos por año y componente</h3>
+      <div class="panel-sub">2012 – 2023 · apilado por componente responsable</div>
+      <svg id="chart-timeline" width="100%" viewBox="0 0 1120 340" preserveAspectRatio="xMidYMid meet" style="margin-top:14px;"></svg>
+      <div class="legend" id="legend-componente"></div>
+    </div>
     <div class="panel">
       <h3>Tipo de obra</h3>
       <div class="panel-sub">Subterránea vs. superficial</div>
