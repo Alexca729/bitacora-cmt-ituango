@@ -117,7 +117,7 @@
 
   .stats{ display:grid; grid-template-columns:repeat(6,1fr); gap:16px; margin-top:22px; }
   .stat{ background:var(--surface); border:var(--box-border); border-radius:14px; padding:22px 20px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px; min-width:0; box-shadow:var(--shadow); transition:box-shadow .15s ease, transform .15s ease, border-color .15s ease, background .15s ease; }
-  .stat:hover{ border-color:var(--accent); box-shadow:0 8px 20px rgba(0,0,0,.14); transform:translateY(-3px); background:color-mix(in srgb, var(--accent) 5%, var(--surface)); }
+  .stat:hover{ border-color:var(--accent); border-width:2px; box-shadow:0 10px 26px rgba(0,0,0,.22), 0 0 0 1px var(--accent); transform:translateY(-3px); background:var(--accent-wash); }
   .stat .label{ font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); font-weight:700; }
   .stat .value{ font-family:"IBM Plex Mono",monospace; font-size:34px; font-weight:700; letter-spacing:-.01em; color:var(--accent); }
   .stat .value small{ font-size:14px; font-weight:500; color:var(--ink-2); }
@@ -140,8 +140,8 @@
   .legend-swatch{ width:10px; height:10px; border-radius:2.5px; flex:none; }
 
   .rank-row{ display:grid; grid-template-columns: 120px 1fr 40px; align-items:center; gap:10px; padding:5px 6px; border-radius:7px; transition:background .15s ease; }
-  .rank-row:hover{ background:color-mix(in srgb, var(--accent) 9%, transparent); }
-  .rank-row:hover .rank-fill{ filter:brightness(1.2); }
+  .rank-row:hover{ background:var(--accent-wash); }
+  .rank-row:hover .rank-fill{ filter:brightness(1.35) saturate(1.2); box-shadow:0 0 8px color-mix(in srgb, var(--accent) 70%, transparent); }
   .rank-row .rname{ font-size:12.5px; color:var(--ink-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .rank-track{ height:14px; background:var(--hairline); border-radius:3px; overflow:hidden; }
   .rank-fill{ height:100%; border-radius:3px; transition:filter .15s ease; }
@@ -152,7 +152,7 @@
   .viz-tooltip .tt-title{ font-weight:600; font-family:"IBM Plex Mono",monospace; margin-bottom:2px; }
   svg text{ font-family:"IBM Plex Mono", monospace; fill:var(--ink-muted); }
   .bar-seg{ cursor:pointer; transition:filter .15s ease; }
-  .bar-seg:hover{ filter:brightness(1.2); }
+  .bar-seg:hover{ filter:brightness(1.35) saturate(1.2) drop-shadow(0 0 5px rgba(0,0,0,.35)); }
   .axis-line{ stroke:var(--hairline-strong); stroke-width:1; }
   .grid-line{ stroke:var(--hairline); stroke-width:1; }
 
@@ -219,7 +219,7 @@
     box-shadow:var(--shadow); width:var(--card-w,100%); align-self:flex-start; box-sizing:border-box;
     transition:box-shadow .15s ease, border-color .15s ease, background .15s ease;
   }
-  .ztl-yevent:hover{ border-color:var(--accent); box-shadow:0 8px 18px rgba(0,0,0,.18); background:color-mix(in srgb, var(--accent) 7%, var(--surface-2)); }
+  .ztl-yevent:hover{ border-color:var(--accent); box-shadow:0 10px 24px rgba(0,0,0,.28), 0 0 0 1px var(--accent); background:var(--accent-wash); }
   .ztl-card-resize-x{
     position:absolute; top:50%; margin-top:-15px; width:12px; height:30px; border-radius:6px;
     background:var(--surface-2); border:2px solid var(--ink-2); cursor:ew-resize; touch-action:none;
