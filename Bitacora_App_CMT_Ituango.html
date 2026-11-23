@@ -157,7 +157,7 @@
   .grid-line{ stroke:var(--hairline); stroke-width:1; }
 
   /* ---- hitos timeline (agrupada por año, estilo mural EPM) ---- */
-  .panel-hitos{ overflow:auto; min-width:360px; min-height:220px; }
+  .panel-hitos{ overflow:auto; min-width:360px; min-height:220px; height:640px; }
   /* El redimensionado nativo (resize:both, una sola esquina) se reemplaza por 4 tiradores
      independientes en cada borde — asi se puede alargar/achatar (arriba/abajo) o
      ensanchar/angostar (izquierda/derecha) por separado, como ajustar el alto de una fila o
@@ -1315,16 +1315,17 @@ window.addEventListener('unhandledrejection', function(e){
     enableCardWidthResize(trackEl);
     enableCardSelection(trackEl);
     setupCardModalTriggers(trackEl, hitos);
-    if (!HITOS_PANEL_HAS_SAVED_SIZE) autoFitHitosPanelHeight();
+    // El recuadro de la linea de tiempo YA NO se agranda solo con el contenido: se queda
+    // con el tamano fijo (de fabrica o el que la usuaria haya dejado a mano), y si hay mas
+    // tarjetas de las que caben, se ve con la barra de scroll propia del recuadro en vez de
+    // forzar a reducirlo cada vez. El boton "Ajustar tamaño automático" sigue disponible
+    // para quien SI quiera ajustarlo al contenido, pero ya no pasa solo.
     // Las fuentes (Google Fonts, display:swap) a veces terminan de cargar despues de esta
     // primera medicion: el texto se mide con la fuente de reserva, cambia de ancho/alto al
-    // llegar la fuente real, y el panel queda con un tamano que ya no corresponde al
-    // contenido. Se vuelve a medir cuando las fuentes esten listas, por si acaso.
+    // llegar la fuente real. Se vuelve a medir el alto interno del abanico cuando las fuentes
+    // esten listas, por si acaso (esto no cambia el tamano del recuadro, solo el de adentro).
     if (document.fonts && document.fonts.ready){
-      document.fonts.ready.then(() => {
-        computeAndApplyTrackHalfHeight(trackEl);
-        if (!HITOS_PANEL_HAS_SAVED_SIZE) autoFitHitosPanelHeight();
-      });
+      document.fonts.ready.then(() => { computeAndApplyTrackHalfHeight(trackEl); });
     }
     trackEl.querySelectorAll('.ztl-photo').forEach(el => {
       el.addEventListener('click', () => openPhotoModal(el.dataset.eventId, el.dataset.title, el.dataset.displayId));
@@ -1610,14 +1611,12 @@ window.addEventListener('unhandledrejection', function(e){
         });
         computeAndApplyTrackHalfHeight(trackEl);
         drawFanLines(trackEl);
-        autoFitHitosPanelHeight();
       });
       const finishScale = async (e) => {
         if (!resizing) return;
         e.stopPropagation();
         resizing = false;
         computeAndApplyTrackHalfHeight(trackEl);
-        autoFitHitosPanelHeight();
         for (const m of members){
           await updatePosition(m.el.dataset.pkey, { scale: numProp(m.el, '--scale', 1) });
         }
@@ -1657,14 +1656,12 @@ window.addEventListener('unhandledrejection', function(e){
         card.style.setProperty('--card-w', w + 'px');
         computeAndApplyTrackHalfHeight(trackEl);
         drawFanLines(trackEl);
-        autoFitHitosPanelHeight();
       });
       const finishWidth = async (e) => {
         if (!resizing) return;
         e.stopPropagation();
         resizing = false;
         computeAndApplyTrackHalfHeight(trackEl);
-        autoFitHitosPanelHeight();
         await updatePosition(card.dataset.pkey, { width: numProp(card, '--card-w', null) });
         drawFanLines(trackEl);
       };
@@ -2622,7 +2619,6 @@ window.addEventListener('unhandledrejection', function(e){
       if (trackEl){
         computeAndApplyTrackHalfHeight(trackEl);
         drawFanLines(trackEl);
-        autoFitHitosPanelHeight();
       }
       for (const el of els){
         await updatePosition(el.dataset.pkey, { scale });
