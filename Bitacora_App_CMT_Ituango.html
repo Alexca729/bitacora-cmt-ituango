@@ -1217,9 +1217,9 @@ window.addEventListener('unhandledrejection', function(e){
       <div class="legend-item"><span class="legend-swatch" style="background:${tok(COMPONENTE_SLOT[c])}"></span>${cap(c)} · ${compCounts[c]}</div>
     `).join('');
 
-    drawRanking('rank-tipo-obra', countBy(records,'TIPO_OBRA'), tok('--accent'), 3);
-    drawRanking('rank-frente', countBy(records,'FRENTE'), tok('--accent'), 8);
-    drawRanking('rank-tipo-evento', countBy(records,'TIPO_EVENTO'), tok('--accent'), 8);
+    drawRanking('rank-tipo-obra', countBy(records,'TIPO_OBRA'), '#009653', 3);
+    drawRanking('rank-frente', countBy(records,'FRENTE'), '#b45309', 8);
+    drawRanking('rank-tipo-evento', countBy(records,'TIPO_EVENTO'), '#0d9488', 8);
 
     setupFilters(records);
   }
