@@ -477,6 +477,17 @@
       <span class="fg-label">Frente</span>
       <select id="hitos-f-frente"><option value="">Todos</option></select>
     </div>
+    <div class="filter-group">
+      <span class="fg-label">Subfrente</span>
+      <select id="hitos-f-subfrente"><option value="">Todos</option></select>
+    </div>
+    <div class="filter-group">
+      <span class="fg-label">Tipo de evento</span>
+      <select id="hitos-f-tipo-evento"><option value="">Todos</option></select>
+    </div>
+    <div class="filter-group" style="flex:1; min-width:200px;">
+      <input type="search" id="hitos-f-search" placeholder="Buscar en la descripción…">
+    </div>
     <button class="reset-link push" id="hitos-f-reset">Limpiar filtros</button>
   </div>
   <div class="chips-row" id="hitos-chips-componente" style="margin-bottom:10px;"></div>
@@ -1300,11 +1311,14 @@ window.addEventListener('unhandledrejection', function(e){
   // ============ hitos timeline (agrupada por año) ============
   // Filtro propio de la linea de tiempo (por año y por componente/frente), separado del
   // filtro de Registro de eventos: no afecta la tabla, solo que hitos se ven en el mural.
-  let hitosFilterState = { yFrom: null, yTo: null, componentes: new Set(), frente: '' };
+  let hitosFilterState = { yFrom: null, yTo: null, componentes: new Set(), frente: '', subfrente: '', tipoEvento: '', search: '' };
   async function renderHitosFiltered(records){
     const selFrom = freshEl('hitos-f-year-from');
     const selTo = freshEl('hitos-f-year-to');
     const selFrente = freshEl('hitos-f-frente');
+    const selSubfrente = freshEl('hitos-f-subfrente');
+    const selTipoEvento = freshEl('hitos-f-tipo-evento');
+    const inputSearch = freshEl('hitos-f-search');
     const btnReset = freshEl('hitos-f-reset');
 
     const allHitos = records.filter(r => r.EVENTO === 'HITO');
@@ -1313,9 +1327,15 @@ window.addEventListener('unhandledrejection', function(e){
     [selFrom, selTo].forEach(sel => { sel.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join(''); });
     selFrom.value = minYear; selTo.value = maxYear;
 
-    selFrente.innerHTML = '<option value="">Todos</option>';
-    const frentes = [...new Set(allHitos.map(r => r.FRENTE).filter(Boolean))].sort();
-    frentes.forEach(f => selFrente.insertAdjacentHTML('beforeend', `<option value="${escapeAttr(f)}">${cap(f)}</option>`));
+    const fillSelect = (sel, field) => {
+      sel.innerHTML = '<option value="">Todos</option>';
+      const values = [...new Set(allHitos.map(r => r[field]).filter(Boolean))].sort();
+      values.forEach(v => sel.insertAdjacentHTML('beforeend', `<option value="${escapeAttr(v)}">${cap(v)}</option>`));
+    };
+    fillSelect(selFrente, 'FRENTE');
+    fillSelect(selSubfrente, 'SUBFRENTE');
+    fillSelect(selTipoEvento, 'TIPO_EVENTO');
+    inputSearch.value = '';
 
     const compCounts = countBy(allHitos, 'COMPONENTE');
     const chipsEl = document.getElementById('hitos-chips-componente');
@@ -1324,7 +1344,7 @@ window.addEventListener('unhandledrejection', function(e){
         <span class="sw" style="background:${tok(COMPONENTE_SLOT[c])}"></span>${cap(c)} <span class="mono">(${compCounts[c]})</span>
       </button>`).join('');
 
-    hitosFilterState = { yFrom: minYear, yTo: maxYear, componentes: new Set(COMPONENTE_ORDER), frente: '' };
+    hitosFilterState = { yFrom: minYear, yTo: maxYear, componentes: new Set(COMPONENTE_ORDER), frente: '', subfrente: '', tipoEvento: '', search: '' };
 
     async function apply(){
       const filtered = records.filter(r => {
@@ -1333,6 +1353,9 @@ window.addEventListener('unhandledrejection', function(e){
         if (y < hitosFilterState.yFrom || y > hitosFilterState.yTo) return false;
         if (!hitosFilterState.componentes.has(r.COMPONENTE)) return false;
         if (hitosFilterState.frente && r.FRENTE !== hitosFilterState.frente) return false;
+        if (hitosFilterState.subfrente && r.SUBFRENTE !== hitosFilterState.subfrente) return false;
+        if (hitosFilterState.tipoEvento && r.TIPO_EVENTO !== hitosFilterState.tipoEvento) return false;
+        if (hitosFilterState.search && !normalizeText(r.DESCRIPCION || '').includes(hitosFilterState.search)) return false;
         return true;
       });
       await renderHitos(filtered);
@@ -1341,6 +1364,9 @@ window.addEventListener('unhandledrejection', function(e){
     selFrom.addEventListener('change', () => { hitosFilterState.yFrom = +selFrom.value; apply(); });
     selTo.addEventListener('change', () => { hitosFilterState.yTo = +selTo.value; apply(); });
     selFrente.addEventListener('change', () => { hitosFilterState.frente = selFrente.value; apply(); });
+    selSubfrente.addEventListener('change', () => { hitosFilterState.subfrente = selSubfrente.value; apply(); });
+    selTipoEvento.addEventListener('change', () => { hitosFilterState.tipoEvento = selTipoEvento.value; apply(); });
+    inputSearch.addEventListener('input', () => { hitosFilterState.search = normalizeText(inputSearch.value.trim()); apply(); });
     chipsEl.querySelectorAll('.chip').forEach(chip => {
       chip.addEventListener('click', () => {
         const c = chip.getAttribute('data-comp');
@@ -1351,8 +1377,8 @@ window.addEventListener('unhandledrejection', function(e){
       });
     });
     btnReset.addEventListener('click', () => {
-      hitosFilterState = { yFrom: minYear, yTo: maxYear, componentes: new Set(COMPONENTE_ORDER), frente: '' };
-      selFrom.value = minYear; selTo.value = maxYear; selFrente.value = '';
+      hitosFilterState = { yFrom: minYear, yTo: maxYear, componentes: new Set(COMPONENTE_ORDER), frente: '', subfrente: '', tipoEvento: '', search: '' };
+      selFrom.value = minYear; selTo.value = maxYear; selFrente.value = ''; selSubfrente.value = ''; selTipoEvento.value = ''; inputSearch.value = '';
       chipsEl.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed','true'));
       apply();
     });
