@@ -299,6 +299,13 @@
   .ztl-action-btn{ background:none; border:none; cursor:pointer; font-size:10.5px; padding:1px 2px; line-height:1; color:var(--ink-muted); }
   .ztl-action-btn:hover{ color:var(--accent); }
   .ztl-action-btn.danger:hover{ color:var(--critical-text); }
+  .ztl-action-btn.ztl-off{ color:var(--warning); }
+  .ztl-action-btn.ztl-off:hover{ color:var(--good); }
+  /* Tarjeta "apagada": se queda en su lugar en el mural (no se elimina ni se mueve),
+     pero atenuada, para que se note que esta apagada y se pueda prender de nuevo ahi mismo. */
+  .ztl-draggable.ztl-hito-off{ opacity:.4; filter:grayscale(.6); }
+  .ztl-draggable.ztl-hito-off:hover{ opacity:.7; }
+  .ztl-draggable.ztl-hito-off .ztl-actions{ opacity:.6; }
   .ztl-rel{ display:inline-block; font-size:9.5px; font-weight:600; padding:1px 7px; border-radius:999px; text-transform:uppercase; letter-spacing:.04em; }
 
   .filter-bar{ display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; background:var(--surface); border:var(--box-border); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow); }
@@ -496,7 +503,7 @@
   <div class="chips-row" id="hitos-chips-componente" style="margin-bottom:10px;"></div>
   <div class="filter-bar" id="hitos-hidden-bar" style="margin-bottom:10px; display:none;">
     <span class="count-pill" id="hitos-hidden-pill"></span>
-    <button class="reset-link push" id="btn-show-hidden-hitos" type="button">Mostrar todos</button>
+    <button class="reset-link push" id="btn-show-hidden-hitos" type="button">Encender todos</button>
   </div>
   <div class="hitos-resize-wrap" id="hitos-resize-wrap">
     <div class="panel panel-hitos" id="hitos-panel">
@@ -1389,17 +1396,19 @@ window.addEventListener('unhandledrejection', function(e){
     await apply();
   }
   async function renderHitos(records){
-    const allHitoRecords = records.filter(r => r.EVENTO === 'HITO');
-    const hitos = allHitoRecords.filter(r => !r._hiddenFromTimeline).sort((a,b)=>a.FECHA.localeCompare(b.FECHA));
-    const hiddenCount = allHitoRecords.length - hitos.length;
+    // Las tarjetas "apagadas" (_hiddenFromTimeline) ya NO se quitan del mural: se quedan en
+    // su lugar pero atenuadas, con su propio boton ⏻ para encenderlas de nuevo una por una.
+    // "Mostrar todos" sigue disponible como atajo para encenderlas todas de una vez.
+    const hitos = records.filter(r => r.EVENTO === 'HITO').sort((a,b)=>a.FECHA.localeCompare(b.FECHA));
+    const hiddenCount = hitos.filter(r => r._hiddenFromTimeline).length;
     const hiddenBar = document.getElementById('hitos-hidden-bar');
     if (hiddenCount > 0){
       hiddenBar.style.display = 'flex';
-      document.getElementById('hitos-hidden-pill').textContent = `${hiddenCount} hito${hiddenCount===1?'':'s'} oculto${hiddenCount===1?'':'s'} de la línea de tiempo`;
+      document.getElementById('hitos-hidden-pill').textContent = `${hiddenCount} hito${hiddenCount===1?'':'s'} apagado${hiddenCount===1?'':'s'} en la línea de tiempo`;
     } else {
       hiddenBar.style.display = 'none';
     }
-    document.getElementById('hitos-note').textContent = `${hitos.length} hitos del proyecto · clic en la foto para ver o subir evidencia · Ctrl+clic para seleccionar varias tarjetas y moverlas/escalarlas juntas`;
+    document.getElementById('hitos-note').textContent = `${hitos.length} hitos del proyecto${hiddenCount ? ` (${hiddenCount} apagado${hiddenCount===1?'':'s'})` : ''} · clic en la foto para ver o subir evidencia · Ctrl+clic para seleccionar varias tarjetas y moverlas/escalarlas juntas`;
     const trackEl = document.getElementById('hitos-scroll');
     if (!hitos.length){
       trackEl.innerHTML = `<div class="ztl-line"></div><div style="color:var(--ink-muted); font-size:13px; padding:20px;">No hay eventos marcados como "Hito" todavía.</div>`;
@@ -1450,17 +1459,20 @@ window.addEventListener('unhandledrejection', function(e){
     });
     trackEl.querySelectorAll('[data-hito-del-pkey]').forEach(btn => {
       btn.addEventListener('click', async () => {
-        if (btn.dataset.hitoDelIsmanual === '1'){
-          if (!confirm(`¿Eliminar el hito manual #${btn.dataset.hitoDelId}? Esta acción no se puede deshacer.`)) return;
-          await deleteManualEvent(+btn.dataset.hitoDelId);
-          await loadAndRender(BASE_RECORDS);
-        } else {
-          if (!confirm('¿Quitar este hito de la línea de tiempo? Sigue existiendo como evento normal en el listado; esto solo lo oculta del mural. Puedes mostrarlo de nuevo con "Mostrar todos".')) return;
-          const pkey = btn.dataset.hitoDelPkey;
-          const existing = (await getAllOverrides())[pkey] || {};
-          await saveOverride(pkey, { patch: existing.patch || {}, hidden: true });
-          await loadAndRender(BASE_RECORDS);
-        }
+        if (!confirm(`¿Eliminar el hito manual #${btn.dataset.hitoDelId}? Esta acción no se puede deshacer.`)) return;
+        await deleteManualEvent(+btn.dataset.hitoDelId);
+        await loadAndRender(BASE_RECORDS);
+      });
+    });
+    // Apagar/encender: a diferencia del boton de arriba (eliminar, solo para hitos
+    // manuales), esto NUNCA borra nada — solo oculta o vuelve a mostrar la tarjeta en el
+    // mural, y se puede alternar las veces que haga falta por cada tarjeta por separado.
+    trackEl.querySelectorAll('[data-hito-toggle-pkey]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const pkey = btn.dataset.hitoTogglePkey;
+        const existing = (await getAllOverrides())[pkey] || {};
+        await saveOverride(pkey, { patch: existing.patch || {}, hidden: !existing.hidden });
+        await loadAndRender(BASE_RECORDS);
       });
     });
   }
@@ -1473,7 +1485,7 @@ window.addEventListener('unhandledrejection', function(e){
     const sizeStyle = pos.size ? `width:${pos.size}px; height:${pos.size}px;` : '';
     const cardStyle = `margin-left:${step}px; --dx:${pos.dx}px; --dy:${pos.dy}px; --scale:${pos.scale||1}; --card-w:${pos.width ? pos.width+'px' : '100%'};`;
     return `
-    <div class="ztl-yevent ztl-draggable" data-pkey="${escapeAttr(h._pkey)}" style="${cardStyle}">
+    <div class="ztl-yevent ztl-draggable${h._hiddenFromTimeline ? ' ztl-hito-off' : ''}" data-pkey="${escapeAttr(h._pkey)}" style="${cardStyle}">
       <div class="ztl-photo ztl-photo-sm empty" id="hito-photo-${cssSafe(h._pkey)}" data-event-id="${escapeAttr(h._pkey)}" data-display-id="${escapeAttr(h.ID)}" data-title="${escapeAttr(h.TIPO_EVENTO||'')}" style="${sizeStyle}">
         <span class="plus">＋</span>
         <span class="ztl-resize-handle" data-pkey="${escapeAttr(h._pkey)}" title="Arrastrar para cambiar el tamaño de la foto"></span>
@@ -1485,7 +1497,9 @@ window.addEventListener('unhandledrejection', function(e){
       <div class="ztl-actions">
         <button class="ztl-action-btn" data-hito-expand-pkey="${escapeAttr(h._pkey)}" type="button" title="Ver foto y texto en grande">🔍</button>
         <button class="ztl-action-btn" data-hito-edit-pkey="${escapeAttr(h._pkey)}" data-hito-edit-ismanual="${h._manual?'1':'0'}" data-hito-edit-id="${escapeAttr(h.ID)}" type="button" title="Editar hito">✏️</button>
-        <button class="ztl-action-btn danger" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="${h._manual?'1':'0'}" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="${h._manual ? 'Eliminar hito' : 'Quitar de la línea de tiempo'}">🗑</button>
+        ${h._manual
+          ? `<button class="ztl-action-btn danger" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="1" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="Eliminar hito">🗑</button>`
+          : `<button class="ztl-action-btn${h._hiddenFromTimeline ? ' ztl-off' : ''}" data-hito-toggle-pkey="${escapeAttr(h._pkey)}" type="button" title="${h._hiddenFromTimeline ? 'Encender (volver a mostrar en la línea de tiempo)' : 'Apagar (ocultar de la línea de tiempo, sin borrarlo)'}">⏻</button>`}
       </div>
       <span class="ztl-card-resize-x edge-l" data-pkey="${escapeAttr(h._pkey)}" data-edge="left" title="Arrastrar para angostar/ensanchar la tarjeta"></span>
       <span class="ztl-card-resize-x edge-r" data-pkey="${escapeAttr(h._pkey)}" data-edge="right" title="Arrastrar para angostar/ensanchar la tarjeta"></span>
@@ -1822,7 +1836,7 @@ window.addEventListener('unhandledrejection', function(e){
     const sizeStyle = pos.size ? `width:${pos.size}px; height:${pos.size}px;` : '';
     const cardStyle = `--dx:${pos.dx}px; --dy:${pos.dy}px; --scale:${pos.scale||1}; --card-w:${pos.width ? pos.width+'px' : '210px'};`;
     const content = `
-      <div class="ztl-ycontent ztl-ycontent-single ztl-draggable" data-pkey="${escapeAttr(h._pkey)}" style="${cardStyle}">
+      <div class="ztl-ycontent ztl-ycontent-single ztl-draggable${h._hiddenFromTimeline ? ' ztl-hito-off' : ''}" data-pkey="${escapeAttr(h._pkey)}" style="${cardStyle}">
         <div class="ztl-photo ztl-photo-lg empty" id="hito-photo-${cssSafe(h._pkey)}" data-event-id="${escapeAttr(h._pkey)}" data-display-id="${escapeAttr(h.ID)}" data-title="${escapeAttr(h.TIPO_EVENTO||'')}" style="${sizeStyle}">
           <span class="plus">＋</span><span>Foto</span>
           <span class="ztl-resize-handle" data-pkey="${escapeAttr(h._pkey)}" title="Arrastrar para cambiar el tamaño de la foto"></span>
@@ -1833,7 +1847,9 @@ window.addEventListener('unhandledrejection', function(e){
         <div class="ztl-actions" style="opacity:.35;">
           <button class="ztl-action-btn" data-hito-expand-pkey="${escapeAttr(h._pkey)}" type="button" title="Ver foto y texto en grande">🔍</button>
           <button class="ztl-action-btn" data-hito-edit-pkey="${escapeAttr(h._pkey)}" data-hito-edit-ismanual="${h._manual?'1':'0'}" data-hito-edit-id="${escapeAttr(h.ID)}" type="button" title="Editar hito">✏️</button>
-          <button class="ztl-action-btn danger" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="${h._manual?'1':'0'}" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="${h._manual ? 'Eliminar hito' : 'Quitar de la línea de tiempo'}">🗑</button>
+          ${h._manual
+            ? `<button class="ztl-action-btn danger" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="1" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="Eliminar hito">🗑</button>`
+            : `<button class="ztl-action-btn${h._hiddenFromTimeline ? ' ztl-off' : ''}" data-hito-toggle-pkey="${escapeAttr(h._pkey)}" type="button" title="${h._hiddenFromTimeline ? 'Encender (volver a mostrar en la línea de tiempo)' : 'Apagar (ocultar de la línea de tiempo, sin borrarlo)'}">⏻</button>`}
         </div>
         <span class="ztl-card-resize-x edge-l" data-pkey="${escapeAttr(h._pkey)}" data-edge="left" title="Arrastrar para angostar/ensanchar el texto"></span>
         <span class="ztl-card-resize-x edge-r" data-pkey="${escapeAttr(h._pkey)}" data-edge="right" title="Arrastrar para angostar/ensanchar el texto"></span>
@@ -2575,7 +2591,7 @@ window.addEventListener('unhandledrejection', function(e){
         await saveOverride(k, { patch: overrides[k].patch || {}, hidden: false });
       }
       await loadAndRender(BASE_RECORDS);
-      showToast(`${hiddenKeys.length} hito(s) restaurado(s) en la línea de tiempo.`);
+      showToast(`${hiddenKeys.length} hito(s) encendido(s) de nuevo en la línea de tiempo.`);
     });
   }
 
