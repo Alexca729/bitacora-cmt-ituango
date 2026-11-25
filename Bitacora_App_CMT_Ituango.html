@@ -302,6 +302,9 @@
   .ztl-rel{ display:inline-block; font-size:9.5px; font-weight:600; padding:1px 7px; border-radius:999px; text-transform:uppercase; letter-spacing:.04em; }
 
   .filter-bar{ display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; background:var(--surface); border:var(--box-border); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow); }
+  .hitos-filter-bar{ flex-wrap:nowrap; overflow-x:auto; }
+  .hitos-filter-bar .filter-group{ flex:none; }
+  .hitos-filter-bar input[type="search"]{ min-width:160px; }
   .filter-group{ display:flex; align-items:center; gap:7px; }
   .filter-group .fg-label{ font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-muted); white-space:nowrap; }
   select, input[type="search"], input[type="text"]{ font-family:inherit; font-size:13px; color:var(--ink); background:var(--surface-2); border:1px solid var(--hairline-strong); border-radius:7px; padding:7px 10px; }
@@ -464,7 +467,7 @@
     <div class="note" id="hitos-note"></div>
     <button class="reset-link" id="btn-hitos-autofit" type="button" title="Vuelve el recuadro al tamaño que se ajusta justo al contenido actual (por si quedó un tamaño guardado de antes)">⤢ Ajustar tamaño automático</button>
   </div>
-  <div class="filter-bar" style="margin-bottom:10px;">
+  <div class="filter-bar hitos-filter-bar" style="margin-bottom:10px;">
     <div class="filter-group">
       <span class="fg-label">Desde</span>
       <select id="hitos-f-year-from"></select>
@@ -485,7 +488,7 @@
       <span class="fg-label">Tipo de evento</span>
       <select id="hitos-f-tipo-evento"><option value="">Todos</option></select>
     </div>
-    <div class="filter-group" style="flex:1; min-width:200px;">
+    <div class="filter-group">
       <input type="search" id="hitos-f-search" placeholder="Buscar en la descripción…">
     </div>
     <button class="reset-link push" id="hitos-f-reset">Limpiar filtros</button>
