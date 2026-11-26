@@ -311,12 +311,13 @@
   .ztl-action-btn{ background:none; border:none; cursor:pointer; font-size:10.5px; padding:1px 2px; line-height:1; color:var(--ink-muted); }
   .ztl-action-btn:hover{ color:var(--accent); }
   .ztl-action-btn.danger:hover{ color:var(--critical-text); }
-  /* La tarjeta muestra por defecto fecha · frente y el subfrente; la descripcion aparece
-     solo al hacer Ctrl+clic sobre la tarjeta (clase ztl-show-desc), y se vuelve a ocultar igual. */
+  /* La tarjeta muestra fecha · frente, el subfrente y la descripcion resumida (3 lineas).
+     Ctrl+clic sobre la tarjeta (clase ztl-show-desc) la despliega completa; otro Ctrl+clic
+     la vuelve a resumir. */
   .ztl-yevent-subfrente{ display:block; font-size:10.5px; line-height:1.35; color:var(--ink); font-weight:600; }
   .ztl-ycontent-single .ztl-yevent-subfrente{ font-size:11px; text-align:center; }
-  .ztl-draggable:not(.ztl-show-desc) .ztl-yevent-desc,
-  .ztl-draggable:not(.ztl-show-desc) .ztl-yevent-desc-lg{ display:none; }
+  .ztl-draggable.ztl-show-desc .ztl-yevent-desc,
+  .ztl-draggable.ztl-show-desc .ztl-yevent-desc-lg{ display:block; -webkit-line-clamp:unset; line-clamp:none; overflow:visible; }
   .ztl-action-btn.ztl-off{ color:var(--warning); }
   .ztl-action-btn.ztl-off:hover{ color:var(--good); }
   /* Tarjeta "apagada": se queda en su lugar en el mural (no se elimina ni se mueve),
@@ -1558,7 +1559,7 @@ window.addEventListener('unhandledrejection', function(e){
     } else {
       hiddenBar.style.display = 'none';
     }
-    document.getElementById('hitos-note').textContent = `${hitos.length} hitos del proyecto${hiddenCount ? ` (${hiddenCount} apagado${hiddenCount===1?'':'s'})` : ''} · clic en la foto para ver o subir evidencia · Ctrl+clic en una tarjeta para ver su descripción · Shift+clic para seleccionar varias y moverlas/escalarlas juntas`;
+    document.getElementById('hitos-note').textContent = `${hitos.length} hitos del proyecto${hiddenCount ? ` (${hiddenCount} apagado${hiddenCount===1?'':'s'})` : ''} · clic en la foto para ver o subir evidencia · Ctrl+clic en una tarjeta para ver su descripción completa · Shift+clic para seleccionar varias y moverlas/escalarlas juntas`;
     const trackEl = document.getElementById('hitos-scroll');
     if (!hitos.length){
       trackEl.innerHTML = `<div class="ztl-line"></div><div style="color:var(--ink-muted); font-size:13px; padding:20px;">No hay eventos marcados como "Hito" todavía.</div>`;
