@@ -2542,6 +2542,19 @@ window.addEventListener('unhandledrejection', function(e){
   }
   function utf8ToBase64(str){ return bytesToBase64(new TextEncoder().encode(str)); }
 
+  // Numero de version de esta pagina. Antes de publicar se compara con la pagina que esta
+  // en GitHub: si alla hay una version mas nueva, se pide recargar primero, para que no se
+  // publique con codigo viejo guardado en el navegador.
+  const APP_BUILD = '1795730131';
+  async function isAppOutdated(){
+    if (location.protocol === 'file:') return false;
+    try {
+      const res = await fetch(location.pathname + '?build=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) return false;
+      const m = (await res.text()).match(/const APP_BUILD = '(\d+)'/);
+      return !!(m && m[1] !== APP_BUILD);
+    } catch(_e){ return false; }
+  }
   async function publishToGitHub(){
     const btn = document.getElementById('btn-publish-github');
     const statusEl = document.getElementById('gh-publish-status');
@@ -2552,6 +2565,10 @@ window.addEventListener('unhandledrejection', function(e){
     }
     if (!BASE_RECORDS || !BASE_RECORDS.length){
       showToast('Primero carga un Excel con "Cargar Excel actualizado".', 'error');
+      return;
+    }
+    if (await isAppOutdated()){
+      alert('Hay una versión más nueva de la aplicación en GitHub.\n\nPresione Ctrl+F5 para recargar la página y luego vuelva a darle Publicar (no se pierde nada de lo que tiene guardado).');
       return;
     }
     btn.disabled = true;
