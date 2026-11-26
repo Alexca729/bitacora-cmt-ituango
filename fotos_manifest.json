@@ -1,72 +1,170 @@
 [
   {
     "id": 1,
-    "eventId": "k797cb344",
-    "name": "hidrotunago_41161894_20221130071330.webp",
-    "addedAt": 1795711579048,
-    "path": "fotos/k797cb344/1.jpg"
+    "eventId": "k10e82c2b",
+    "name": "Cierre 2019.jpg",
+    "addedAt": 1795081360068,
+    "path": "fotos/k10e82c2b/1.jpg"
+  },
+  {
+    "id": 2,
+    "eventId": "kff27f052",
+    "name": "ITUANGO_023 Mirador Presidencial (10-10-2026_16-26-44.963).jpg",
+    "addedAt": 1794089774711,
+    "path": "fotos/kff27f052/2.jpg"
+  },
+  {
+    "id": 3,
+    "eventId": "k821646",
+    "name": "ITUANGO_087 Unidad 6 – Sala de Montajes CM (07-11-2026_09-39-05.806).jpg",
+    "addedAt": 1794091872145,
+    "path": "fotos/k821646/3.jpg"
   },
   {
     "id": 4,
-    "eventId": "kd781b1d7",
-    "name": "WhatsApp-Image-2019-11-08-at-12.38.53-PM.jpeg",
-    "addedAt": 1795721710974,
-    "path": "fotos/kd781b1d7/4.jpg"
+    "eventId": "ka8218135",
+    "name": "hidrotunago_41161894_20221130071330.webp",
+    "addedAt": 1794098493301,
+    "path": "fotos/ka8218135/4.jpg"
   },
   {
     "id": 5,
-    "eventId": "ke5e43959",
-    "name": "Cierre 2019.jpg",
-    "addedAt": 1795721892540,
-    "path": "fotos/ke5e43959/5.jpg"
+    "eventId": "ka97b29c1",
+    "name": "hidroituango1.jpg",
+    "addedAt": 1794100016986,
+    "path": "fotos/ka97b29c1/5.jpg"
   },
   {
     "id": 6,
-    "eventId": "k78f38f3b",
-    "name": "images.jpg",
-    "addedAt": 1795722236700,
-    "path": "fotos/k78f38f3b/6.jpg"
+    "eventId": "k1a0cf117",
+    "name": "Captura de pantalla 2026-11-07 212154.png",
+    "addedAt": 1794104547966,
+    "path": "fotos/k1a0cf117/6.jpg"
   },
   {
     "id": 7,
-    "eventId": "kb6d666ce",
-    "name": "5c24c8646c7e7.jpeg",
-    "addedAt": 1795722270707,
-    "path": "fotos/kb6d666ce/7.jpg"
+    "eventId": "kfac72c15",
+    "name": "imagen (14).png",
+    "addedAt": 1794236479908,
+    "path": "fotos/kfac72c15/7.jpg"
+  },
+  {
+    "id": 8,
+    "eventId": "kfac72c15",
+    "name": "ITUANGO_023 Mirador Presidencial (09-11-2026_07-46-56.133).jpg",
+    "addedAt": 1794236479957,
+    "path": "fotos/kfac72c15/8.jpg"
   },
   {
     "id": 9,
-    "eventId": "ke7cd48fd",
-    "name": "images (1).jpg",
-    "addedAt": 1795722525165,
-    "path": "fotos/ke7cd48fd/9.jpg"
+    "eventId": "kff27f052",
+    "name": "ITUANGO_023 Mirador Presidencial (10-10-2026_16-26-44.963).jpg",
+    "addedAt": 1794236606683,
+    "path": "fotos/kff27f052/9.jpg"
   },
   {
     "id": 10,
-    "eventId": "k4f3c5f3b",
-    "name": "51988-centro2bmonitoreo2bhidroituango.webp",
-    "addedAt": 1795722773823,
-    "path": "fotos/k4f3c5f3b/10.jpg"
+    "eventId": "kca33c138",
+    "name": "ITUANGO_087 Unidad 6 – Sala de Montajes CM (07-11-2026_09-39-05.806).jpg",
+    "addedAt": 1794236626631,
+    "path": "fotos/kca33c138/10.jpg"
   },
   {
     "id": 11,
-    "eventId": "k2110cdbe",
-    "name": "images (3).jpg",
-    "addedAt": 1795722948113,
-    "path": "fotos/k2110cdbe/11.jpg"
+    "eventId": "kf15a4d0",
+    "name": "2.jpg",
+    "addedAt": 1794988559185,
+    "path": "fotos/kf15a4d0/11.jpg"
+  },
+  {
+    "id": 12,
+    "eventId": "kf15a4d0",
+    "name": "1.jpg",
+    "addedAt": 1794988559221,
+    "path": "fotos/kf15a4d0/12.jpg"
+  },
+  {
+    "id": 13,
+    "eventId": "k80e3126e",
+    "name": "1.jpg",
+    "addedAt": 1794988598234,
+    "path": "fotos/k80e3126e/13.jpg"
   },
   {
     "id": 14,
-    "eventId": "k7c1545d",
-    "name": "ituango.jpeg",
-    "addedAt": 1795724562636,
-    "path": "fotos/k7c1545d/14.jpg"
+    "eventId": "ka97b29c1",
+    "name": "hidroituango1.jpg",
+    "addedAt": 1794084380409,
+    "path": "fotos/ka97b29c1/14.jpg"
   },
   {
     "id": 15,
+    "eventId": "k797cb344",
+    "name": "hidrotunago_41161894_20221130071330.webp",
+    "addedAt": 1795711579048,
+    "path": "fotos/k797cb344/15.jpg"
+  },
+  {
+    "id": 16,
+    "eventId": "kd781b1d7",
+    "name": "WhatsApp-Image-2019-11-08-at-12.38.53-PM.jpeg",
+    "addedAt": 1795721710974,
+    "path": "fotos/kd781b1d7/16.jpg"
+  },
+  {
+    "id": 17,
+    "eventId": "ke5e43959",
+    "name": "Cierre 2019.jpg",
+    "addedAt": 1795721892540,
+    "path": "fotos/ke5e43959/17.jpg"
+  },
+  {
+    "id": 18,
+    "eventId": "k78f38f3b",
+    "name": "images.jpg",
+    "addedAt": 1795722236700,
+    "path": "fotos/k78f38f3b/18.jpg"
+  },
+  {
+    "id": 19,
+    "eventId": "kb6d666ce",
+    "name": "5c24c8646c7e7.jpeg",
+    "addedAt": 1795722270707,
+    "path": "fotos/kb6d666ce/19.jpg"
+  },
+  {
+    "id": 20,
+    "eventId": "ke7cd48fd",
+    "name": "images (1).jpg",
+    "addedAt": 1795722525165,
+    "path": "fotos/ke7cd48fd/20.jpg"
+  },
+  {
+    "id": 21,
+    "eventId": "k4f3c5f3b",
+    "name": "51988-centro2bmonitoreo2bhidroituango.webp",
+    "addedAt": 1795722773823,
+    "path": "fotos/k4f3c5f3b/21.jpg"
+  },
+  {
+    "id": 22,
+    "eventId": "k2110cdbe",
+    "name": "images (3).jpg",
+    "addedAt": 1795722948113,
+    "path": "fotos/k2110cdbe/22.jpg"
+  },
+  {
+    "id": 23,
+    "eventId": "k7c1545d",
+    "name": "ituango.jpeg",
+    "addedAt": 1795724562636,
+    "path": "fotos/k7c1545d/23.jpg"
+  },
+  {
+    "id": 24,
     "eventId": "kc246b140",
     "name": "110.JPG",
     "addedAt": 1795724992846,
-    "path": "fotos/kc246b140/15.jpg"
+    "path": "fotos/kc246b140/24.jpg"
   }
 ]
