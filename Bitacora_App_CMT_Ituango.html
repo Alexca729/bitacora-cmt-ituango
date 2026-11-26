@@ -1629,7 +1629,7 @@ window.addEventListener('unhandledrejection', function(e){
     const sizeStyle = pos.size ? `width:${pos.size}px; height:${pos.size}px;` : '';
     const cardStyle = `margin-left:${step}px; --dx:${pos.dx}px; --dy:${pos.dy}px; --scale:${pos.scale||1}; --card-w:${pos.width ? pos.width+'px' : '100%'};`;
     return `
-    <div class="ztl-yevent ztl-draggable${h._hiddenFromTimeline ? ' ztl-hito-off' : ''}" data-pkey="${escapeAttr(h._pkey)}" style="${cardStyle}">
+    <div class="ztl-yevent ztl-draggable${h._hiddenFromTimeline ? ' ztl-hito-off' : ''}${pos.showDesc ? ' ztl-show-desc' : ''}" data-pkey="${escapeAttr(h._pkey)}" style="${cardStyle}">
       <div class="ztl-photo ztl-photo-sm empty" id="hito-photo-${cssSafe(h._pkey)}" data-event-id="${escapeAttr(h._pkey)}" data-display-id="${escapeAttr(h.ID)}" data-title="${escapeAttr(h.TIPO_EVENTO||'')}" style="${sizeStyle}">
         <span class="plus">＋</span>
         <span class="ztl-resize-handle" data-pkey="${escapeAttr(h._pkey)}" title="Arrastrar para cambiar el tamaño de la foto"></span>
@@ -1710,7 +1710,8 @@ window.addEventListener('unhandledrejection', function(e){
         if (e.target.closest('.ztl-action-btn') || e.target.closest('.ztl-photo') || e.target.closest('.ztl-card-resize') || e.target.closest('.ztl-yevent-desc') || e.target.closest('.ztl-yevent-desc-lg')) return;
         if (e.ctrlKey || e.metaKey){
           e.stopPropagation(); e.preventDefault();
-          el.classList.toggle('ztl-show-desc');
+          const on = el.classList.toggle('ztl-show-desc');
+          updatePosition(pkey, { showDesc: on });
           const trk = el.closest('.ztl-track');
           if (trk){ computeAndApplyTrackHalfHeight(trk); drawFanLines(trk); }
           return;
@@ -1989,7 +1990,7 @@ window.addEventListener('unhandledrejection', function(e){
     const sizeStyle = pos.size ? `width:${pos.size}px; height:${pos.size}px;` : '';
     const cardStyle = `--dx:${pos.dx}px; --dy:${pos.dy}px; --scale:${pos.scale||1}; --card-w:${pos.width ? pos.width+'px' : '210px'};`;
     const content = `
-      <div class="ztl-ycontent ztl-ycontent-single ztl-draggable${h._hiddenFromTimeline ? ' ztl-hito-off' : ''}" data-pkey="${escapeAttr(h._pkey)}" style="${cardStyle}">
+      <div class="ztl-ycontent ztl-ycontent-single ztl-draggable${h._hiddenFromTimeline ? ' ztl-hito-off' : ''}${pos.showDesc ? ' ztl-show-desc' : ''}" data-pkey="${escapeAttr(h._pkey)}" style="${cardStyle}">
         <div class="ztl-photo ztl-photo-lg empty" id="hito-photo-${cssSafe(h._pkey)}" data-event-id="${escapeAttr(h._pkey)}" data-display-id="${escapeAttr(h.ID)}" data-title="${escapeAttr(h.TIPO_EVENTO||'')}" style="${sizeStyle}">
           <span class="plus">＋</span><span>Foto</span>
           <span class="ztl-resize-handle" data-pkey="${escapeAttr(h._pkey)}" title="Arrastrar para cambiar el tamaño de la foto"></span>
