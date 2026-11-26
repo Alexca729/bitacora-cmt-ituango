@@ -792,7 +792,10 @@ window.addEventListener('unhandledrejection', function(e){
     (e.reason && (e.reason.message || e.reason) || e.reason) + '\n' + (e.reason && e.reason.stack || '') + '</pre>');
 });
 </script>
-<script src="bitacora_data.js"></script>
+<script>
+  // Pide siempre la version mas reciente de los datos (evita que el navegador use una copia vieja guardada)
+  document.write('<script src="bitacora_data.js?v=' + Date.now() + '"><\/script>');
+</script>
 <script src="bitacora_listas.js"></script>
 <script src="vendor/jszip.min.js"></script>
 <script src="vendor/xlsx.full.min.js"></script>
@@ -1129,7 +1132,7 @@ window.addEventListener('unhandledrejection', function(e){
   async function seedStaticPhotos(){
     let manifest;
     try {
-      const res = await fetch('fotos_manifest.json');
+      const res = await fetch('fotos_manifest.json', { cache: 'no-store' });
       if (!res.ok) return;
       manifest = await res.json();
     } catch(_err){ return; }
@@ -1139,7 +1142,7 @@ window.addEventListener('unhandledrejection', function(e){
       const key = `${entry.eventId}|${entry.name}|${entry.addedAt}`;
       if (existKeys.has(key)) continue;
       try {
-        const res = await fetch(entry.path);
+        const res = await fetch(entry.path, { cache: 'no-cache' });
         if (!res.ok) continue;
         const blob = await res.blob();
         await idbAdd({ eventId: String(entry.eventId), name: entry.name, blob, thumb: blob, addedAt: entry.addedAt || Date.now() });
