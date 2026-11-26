@@ -305,6 +305,12 @@
   .ztl-action-btn{ background:none; border:none; cursor:pointer; font-size:10.5px; padding:1px 2px; line-height:1; color:var(--ink-muted); }
   .ztl-action-btn:hover{ color:var(--accent); }
   .ztl-action-btn.danger:hover{ color:var(--critical-text); }
+  /* La tarjeta muestra por defecto fecha · frente y el subfrente; la descripcion aparece
+     solo al hacer Ctrl+clic sobre la tarjeta (clase ztl-show-desc), y se vuelve a ocultar igual. */
+  .ztl-yevent-subfrente{ display:block; font-size:10.5px; line-height:1.35; color:var(--ink); font-weight:600; }
+  .ztl-ycontent-single .ztl-yevent-subfrente{ font-size:11px; text-align:center; }
+  .ztl-draggable:not(.ztl-show-desc) .ztl-yevent-desc,
+  .ztl-draggable:not(.ztl-show-desc) .ztl-yevent-desc-lg{ display:none; }
   .ztl-action-btn.ztl-off{ color:var(--warning); }
   .ztl-action-btn.ztl-off:hover{ color:var(--good); }
   /* Tarjeta "apagada": se queda en su lugar en el mural (no se elimina ni se mueve),
@@ -1546,7 +1552,7 @@ window.addEventListener('unhandledrejection', function(e){
     } else {
       hiddenBar.style.display = 'none';
     }
-    document.getElementById('hitos-note').textContent = `${hitos.length} hitos del proyecto${hiddenCount ? ` (${hiddenCount} apagado${hiddenCount===1?'':'s'})` : ''} · clic en la foto para ver o subir evidencia · Ctrl+clic para seleccionar varias tarjetas y moverlas/escalarlas juntas`;
+    document.getElementById('hitos-note').textContent = `${hitos.length} hitos del proyecto${hiddenCount ? ` (${hiddenCount} apagado${hiddenCount===1?'':'s'})` : ''} · clic en la foto para ver o subir evidencia · Ctrl+clic en una tarjeta para ver su descripción · Shift+clic para seleccionar varias y moverlas/escalarlas juntas`;
     const trackEl = document.getElementById('hitos-scroll');
     if (!hitos.length){
       trackEl.innerHTML = `<div class="ztl-line"></div><div style="color:var(--ink-muted); font-size:13px; padding:20px;">No hay eventos marcados como "Hito" todavía.</div>`;
@@ -1630,6 +1636,7 @@ window.addEventListener('unhandledrejection', function(e){
       </div>
       <div class="ztl-yevent-text">
         <span class="ztl-yevent-date">${fmtMonthDay(h.FECHA)} · ${cap(h.FRENTE)}</span>
+        <span class="ztl-yevent-subfrente">${escapeHtml(cap(h.SUBFRENTE) || '—')}</span>
         <span class="ztl-yevent-desc" title="${escapeAttr(h.DESCRIPCION || h.TIPO_EVENTO || '')}">${escapeHtml(h.DESCRIPCION || cap(h.TIPO_EVENTO) || '')}</span>
       </div>
       <div class="ztl-actions">
@@ -1692,15 +1699,23 @@ window.addEventListener('unhandledrejection', function(e){
     if (!SELECTED_PKEYS.has(pkey) || SELECTED_PKEYS.size < 2) return [];
     return [...trackEl.querySelectorAll('.ztl-draggable')].filter(el => SELECTED_PKEYS.has(el.dataset.pkey));
   }
-  // Ctrl/Cmd+clic en una tarjeta la marca como seleccionada (resaltada); vuelve a hacerlo
-  // para quitarla de la seleccion. No interfiere con el clic normal (abrir foto, arrastrar).
+  // Shift+clic en una tarjeta la marca como seleccionada (resaltada); vuelve a hacerlo
+  // para quitarla de la seleccion. Ctrl/Cmd+clic despliega u oculta la descripcion de esa
+  // tarjeta (por defecto la tarjeta solo muestra fecha, frente y subfrente).
   function enableCardSelection(trackEl){
     trackEl.querySelectorAll('.ztl-draggable').forEach(el => {
       const pkey = el.dataset.pkey;
       el.classList.toggle('ztl-selected', SELECTED_PKEYS.has(pkey));
       el.addEventListener('click', (e) => {
-        if (!(e.ctrlKey || e.metaKey)) return;
         if (e.target.closest('.ztl-action-btn') || e.target.closest('.ztl-photo') || e.target.closest('.ztl-card-resize') || e.target.closest('.ztl-yevent-desc') || e.target.closest('.ztl-yevent-desc-lg')) return;
+        if (e.ctrlKey || e.metaKey){
+          e.stopPropagation(); e.preventDefault();
+          el.classList.toggle('ztl-show-desc');
+          const trk = el.closest('.ztl-track');
+          if (trk){ computeAndApplyTrackHalfHeight(trk); drawFanLines(trk); }
+          return;
+        }
+        if (!e.shiftKey) return;
         e.stopPropagation(); e.preventDefault();
         if (SELECTED_PKEYS.has(pkey)){ SELECTED_PKEYS.delete(pkey); el.classList.remove('ztl-selected'); }
         else { SELECTED_PKEYS.add(pkey); el.classList.add('ztl-selected'); }
@@ -1781,13 +1796,13 @@ window.addEventListener('unhandledrejection', function(e){
     modal.addEventListener('click', (e) => { if (e.target === modal) closeCardModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeCardModal(); });
   }
-  // Un clic normal (sin Ctrl/Cmd) en cualquier parte de la pagina limpia toda la seleccion
-  // de tarjetas — asi no hay que ir Ctrl+clic una por una para soltarlas.
+  // Un clic normal (sin Shift ni Ctrl) en cualquier parte de la pagina limpia toda la
+  // seleccion de tarjetas — asi no hay que ir Shift+clic una por una para soltarlas.
   function setupGlobalDeselect(){
     if (GLOBAL_DESELECT_BOUND) return;
     GLOBAL_DESELECT_BOUND = true;
     document.addEventListener('click', (e) => {
-      if (e.ctrlKey || e.metaKey) return;
+      if (e.shiftKey || e.ctrlKey || e.metaKey) return;
       if (!SELECTED_PKEYS.size) return;
       SELECTED_PKEYS.clear();
       document.querySelectorAll('.ztl-selected').forEach(el => el.classList.remove('ztl-selected'));
@@ -1799,7 +1814,7 @@ window.addEventListener('unhandledrejection', function(e){
       let startX = 0, startY = 0, dragging = false, moved = false, members = [];
       el.addEventListener('pointerdown', (e) => {
         if (e.target.closest('.ztl-action-btn') || e.target.closest('.ztl-photo') || e.target.closest('.ztl-card-resize') || e.target.closest('.ztl-yevent-desc') || e.target.closest('.ztl-yevent-desc-lg')) return;
-        if (e.ctrlKey || e.metaKey) return; // eso es para seleccionar, no para arrastrar
+        if (e.shiftKey || e.ctrlKey || e.metaKey) return; // Shift = seleccionar, Ctrl = ver descripcion; no arrastrar
         const group = groupFor(trackEl, el.dataset.pkey);
         members = (group.length ? group : [el]).map(m => ({ el: m, baseDx: numProp(m,'--dx',0), baseDy: numProp(m,'--dy',0) }));
         startX = e.clientX; startY = e.clientY;
@@ -1982,6 +1997,7 @@ window.addEventListener('unhandledrejection', function(e){
         <div class="ztl-year-big">${year}</div>
         <div class="ztl-yevent-desc-lg" title="${escapeAttr(h.DESCRIPCION || h.TIPO_EVENTO || '')}">${escapeHtml(h.DESCRIPCION || cap(h.TIPO_EVENTO) || '')}</div>
         <div class="ztl-sub">${cap(h.FRENTE)}</div>
+        <div class="ztl-yevent-subfrente">${escapeHtml(cap(h.SUBFRENTE) || '—')}</div>
         <div class="ztl-actions" style="opacity:.35;">
           <button class="ztl-action-btn" data-hito-expand-pkey="${escapeAttr(h._pkey)}" type="button" title="Ver foto y texto en grande">🔍</button>
           <button class="ztl-action-btn admin-only" data-hito-edit-pkey="${escapeAttr(h._pkey)}" data-hito-edit-ismanual="${h._manual?'1':'0'}" data-hito-edit-id="${escapeAttr(h.ID)}" type="button" title="Editar hito">✏️</button>
