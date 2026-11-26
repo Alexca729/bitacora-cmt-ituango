@@ -2304,3 +2304,5 @@ const RECORDS_DATA = [
     "YEAR": 2026
   }
 ];
+const HIDDEN_HITOS = ["k2a8006c0","k4f3c5f3b","k7c1545d","kb6d666ce","kc246b140","kd781b1d7","ke5e43959"];
+const HIDDEN_HITOS_VER = "1795730347566";
