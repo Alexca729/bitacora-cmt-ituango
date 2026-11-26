@@ -49,6 +49,12 @@
   }
 
   *{box-sizing:border-box;}
+  /* Modo Usuario (por defecto) vs Modo Administrador: lo que solo debe poder tocar quien
+     entro con la clave de administrador lleva esta clase, y se oculta del todo si el body
+     no tiene role-admin. No es seguridad real (es un archivo publico), es un candado simple
+     para que un visitante normal no vea ni toque los botones de editar/publicar. */
+  body:not(.role-admin) .admin-only{ display:none !important; }
+  #btn-role-toggle{ font-weight:600; }
   html,body{ background:var(--page); }
   body{
     margin:0; color:var(--ink); font-family:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; padding:0 20px;
@@ -414,7 +420,7 @@
     <button type="button" data-target="sec-hitos">◷ &nbsp;Línea de tiempo</button>
     <button type="button" data-target="sec-analisis">⌕ &nbsp;Análisis</button>
     <button type="button" data-target="sec-registro">▤ &nbsp;Registro de eventos</button>
-    <button type="button" data-target="sec-pendientes">⚠ &nbsp;Pendientes por revisar<span class="sb-badge" id="sb-pendientes-badge" hidden>0</span></button>
+    <button type="button" data-target="sec-pendientes" class="admin-only">⚠ &nbsp;Pendientes por revisar<span class="sb-badge" id="sb-pendientes-badge" hidden>0</span></button>
   </nav>
   <div class="sb-status">
     <div class="sb-status-row"><span class="sb-dot"></span><strong id="sb-status-text">Cargando…</strong></div>
@@ -439,12 +445,17 @@
       <div style="margin-top:8px;">
         Fuente: <b id="source-name">Bitácora de Hitos y eventos CMT.xlsx</b><br>
         Responsable: <b>Alexander Castillo Gudiño</b><br>
+        <span id="role-indicator" style="font-size:12px; color:var(--ink-muted);"></span>
+        <button class="reset-link" id="btn-role-toggle" type="button" style="margin-left:4px;"></button>
+        <button class="reset-link admin-only" id="btn-role-change-pass" type="button" style="margin-left:6px; font-size:12px;">Cambiar clave de administrador</button>
+      </div>
+      <div class="admin-only" style="margin-top:8px;">
         <label class="reset-link sync-btn" style="cursor:pointer; color:var(--accent); font-weight:600;">⟳ Cargar Excel actualizado<input type="file" id="excel-reload-input" accept=".xlsx" style="display:none;"></label> ·
         <button class="reset-link sync-btn" id="btn-export-zip" type="button">⇩ Exportar fotos (ZIP)</button> ·
         <label class="reset-link" style="cursor:pointer;">⇧ Importar ZIP<input type="file" id="import-zip-input" accept=".zip" style="display:none;"></label> ·
         <button class="reset-link sync-btn" id="btn-export-data" type="button" title="Genera bitacora_data.js con el Excel que tengas cargado ahora, para subirlo a GitHub">⇩ Generar bitacora_data.js</button>
       </div>
-      <div style="margin-top:8px;">
+      <div class="admin-only" style="margin-top:8px;">
         <button class="reset-link sync-btn" id="btn-publish-github" type="button" style="color:var(--accent); font-weight:700;" title="Sube los datos y las fotos directo a GitHub, sin descargar ni arrastrar archivos">🚀 Publicar a GitHub</button> ·
         <button class="reset-link" id="btn-gh-config-toggle" type="button">⚙ Configurar clave de acceso</button>
         <span id="gh-publish-status" style="margin-left:8px; font-size:12px; color:var(--ink-muted);"></span>
@@ -453,6 +464,24 @@
           <input type="password" id="gh-token-input" placeholder="github_pat_..." style="width:100%; max-width:320px;">
           <button class="reset-link" id="btn-gh-token-save" type="button" style="margin-left:6px;">Guardar</button>
           <span id="gh-token-status" style="margin-left:6px; font-size:12px;"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para entrar en modo Administrador -->
+  <div class="modal-backdrop" id="role-modal" hidden>
+    <div class="modal" style="max-width:380px;">
+      <div class="modal-head">
+        <div><h3>Modo Administrador</h3><div class="mh-sub">Escribe la clave para poder editar y publicar</div></div>
+        <button class="modal-close" id="role-modal-close" type="button">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="password" id="role-pass-input" placeholder="Clave de administrador" style="width:100%; padding:8px 10px; border:1px solid var(--hairline-strong); border-radius:7px; background:var(--surface-2); color:var(--ink);">
+        <div id="role-pass-error" style="color:var(--critical-text); font-size:12.5px; margin-top:6px; display:none;">Clave incorrecta.</div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:14px;">
+          <button type="button" class="reset-link" id="role-pass-cancel">Cancelar</button>
+          <button type="button" class="btn-primary" id="role-pass-enter">Entrar</button>
         </div>
       </div>
     </div>
@@ -501,7 +530,7 @@
     <button class="reset-link push" id="hitos-f-reset">Limpiar filtros</button>
   </div>
   <div class="chips-row" id="hitos-chips-componente" style="margin-bottom:10px;"></div>
-  <div class="filter-bar" id="hitos-hidden-bar" style="margin-bottom:10px; display:none;">
+  <div class="filter-bar admin-only" id="hitos-hidden-bar" style="margin-bottom:10px; display:none;">
     <span class="count-pill" id="hitos-hidden-pill"></span>
     <button class="reset-link push" id="btn-show-hidden-hitos" type="button">Encender todos</button>
   </div>
@@ -554,7 +583,7 @@
     <div class="note" id="total-note"></div>
   </div>
 
-  <div class="filter-bar" style="margin-bottom:12px;">
+  <div class="filter-bar admin-only" style="margin-bottom:12px;">
     <button class="btn-primary" id="btn-new-event" type="button">＋ Nuevo evento</button>
     <span class="count-pill" id="manual-count-pill"></span>
     <button class="reset-link push" id="btn-export-manual" type="button">Exportar eventos manuales (CSV)</button>
@@ -605,11 +634,11 @@
     </table>
   </div>
 
-  <div class="section-head" id="sec-pendientes">
+  <div class="section-head admin-only" id="sec-pendientes">
     <h2>Pendientes por revisar</h2>
     <div class="note" id="pendientes-note">Posibles eventos duplicados detectados automáticamente (misma fecha ± 2 días y descripción muy parecida a otro ya existente)</div>
   </div>
-  <div id="pendientes-list"></div>
+  <div id="pendientes-list" class="admin-only"></div>
 
   <footer>
     <span>Bitácora general de Hitos y eventos relevantes CMT — Proyecto Hidroeléctrico Ituango · app local con fotos</span>
@@ -1129,6 +1158,94 @@ window.addEventListener('unhandledrejection', function(e){
     });
   }
 
+  // ============ roles (Administrador / Usuario) ============
+  // Candado simple, no seguridad real (esto es un archivo estatico publico: cualquiera que
+  // mire el codigo puede ver el hash). Sirve para que un colega que solo necesita CONSULTAR
+  // la bitacora no vea ni toque por error los botones de editar/publicar/eliminar; para eso
+  // alcanza con comparar contra un hash SHA-256 en vez de guardar la clave en texto plano.
+  const ROLE_KEY = 'bitacora_role';
+  const ADMIN_HASH_KEY = 'bitacora_admin_hash';
+  // Hash (con hashStr, la misma funcion que usa evKey mas abajo) de la clave por defecto
+  // inicial (se le indico a la responsable de la app por fuera del codigo, nunca se escribe
+  // aqui en texto plano). Para cambiarla: entra como Administrador con la clave actual, usa
+  // "Cambiar clave de administrador" y escribe la nueva — queda guardada (ya como hash) en
+  // este navegador, no hace falta tocar el codigo. No usa Web Crypto (crypto.subtle) a
+  // proposito: asi funciona igual abriendo el archivo local (file://) que publicado (https).
+  const DEFAULT_ADMIN_HASH = '7844e728';
+  function getAdminHash(){ try { return localStorage.getItem(ADMIN_HASH_KEY) || DEFAULT_ADMIN_HASH; } catch(_err){ return DEFAULT_ADMIN_HASH; } }
+  function isAdmin(){ try { return localStorage.getItem(ROLE_KEY) === 'admin'; } catch(_err){ return false; } }
+  function applyRoleVisibility(){
+    document.body.classList.toggle('role-admin', isAdmin());
+    const indicator = document.getElementById('role-indicator');
+    const toggleBtn = document.getElementById('btn-role-toggle');
+    if (isAdmin()){
+      indicator.textContent = '🛠 Modo Administrador';
+      toggleBtn.textContent = 'Salir';
+    } else {
+      indicator.textContent = '👤 Modo Usuario (solo lectura)';
+      toggleBtn.textContent = 'Entrar como administrador';
+    }
+  }
+  function setupRoleControl(){
+    applyRoleVisibility();
+    const modal = document.getElementById('role-modal');
+    const input = document.getElementById('role-pass-input');
+    const error = document.getElementById('role-pass-error');
+    const modalTitle = modal.querySelector('h3');
+    const modalSub = modal.querySelector('.mh-sub');
+    const enterBtn = document.getElementById('role-pass-enter');
+    let modalMode = 'login';
+    const openModal = (mode) => {
+      modalMode = mode;
+      input.value = ''; error.style.display = 'none'; input.placeholder = 'Clave de administrador';
+      if (mode === 'change'){
+        modalTitle.textContent = 'Cambiar clave de administrador';
+        modalSub.textContent = 'Escribe la nueva clave (reemplaza la anterior en este navegador)';
+        enterBtn.textContent = 'Guardar nueva clave';
+      } else {
+        modalTitle.textContent = 'Modo Administrador';
+        modalSub.textContent = 'Escribe la clave para poder editar y publicar';
+        enterBtn.textContent = 'Entrar';
+      }
+      modal.hidden = false; input.focus();
+    };
+    const closeModal = () => { modal.hidden = true; };
+    document.getElementById('btn-role-toggle').addEventListener('click', () => {
+      if (isAdmin()){
+        try { localStorage.setItem(ROLE_KEY, 'user'); } catch(_err){}
+        applyRoleVisibility();
+        showToast('Saliste del modo Administrador.');
+      } else {
+        openModal('login');
+      }
+    });
+    document.getElementById('btn-role-change-pass').addEventListener('click', () => openModal('change'));
+    document.getElementById('role-modal-close').addEventListener('click', closeModal);
+    document.getElementById('role-pass-cancel').addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    const tryEnter = () => {
+      if (modalMode === 'change'){
+        if (!input.value.trim()){ error.textContent = 'Escribe una clave.'; error.style.display = 'block'; return; }
+        try { localStorage.setItem(ADMIN_HASH_KEY, hashStr(input.value)); } catch(_err){}
+        closeModal();
+        showToast('Clave de administrador actualizada en este navegador.');
+        return;
+      }
+      const hash = hashStr(input.value);
+      if (hash === getAdminHash()){
+        try { localStorage.setItem(ROLE_KEY, 'admin'); } catch(_err){}
+        closeModal();
+        applyRoleVisibility();
+        showToast('Modo Administrador activado.');
+      } else {
+        error.textContent = 'Clave incorrecta.';
+        error.style.display = 'block';
+      }
+    };
+    document.getElementById('role-pass-enter').addEventListener('click', tryEnter);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter'){ e.preventDefault(); tryEnter(); } });
+  }
+
   // ============ data ============
   let PHOTO_COUNTS = {};
   let LAST_RECORDS = null;
@@ -1142,6 +1259,7 @@ window.addEventListener('unhandledrejection', function(e){
   let GLOBAL_DESELECT_BOUND = false;
 
   setupThemeSwitch();
+  setupRoleControl();
   setupPhotoModal();
   setupCardModalClose();
   setupZipSync();
@@ -1296,8 +1414,8 @@ window.addEventListener('unhandledrejection', function(e){
           </div>
         </div>
         <div class="pend-actions">
-          <button class="btn-pend approve" data-approve-pkey="${escapeAttr(r._pkey)}" type="button">No es duplicado, mostrarlo</button>
-          <button class="btn-pend discard" data-discard-pkey="${escapeAttr(r._pkey)}" type="button">Eliminarlo</button>
+          <button class="btn-pend approve admin-only" data-approve-pkey="${escapeAttr(r._pkey)}" type="button">No es duplicado, mostrarlo</button>
+          <button class="btn-pend discard admin-only" data-discard-pkey="${escapeAttr(r._pkey)}" type="button">Eliminarlo</button>
         </div>
       </div>
     `).join('');
@@ -1496,10 +1614,10 @@ window.addEventListener('unhandledrejection', function(e){
       </div>
       <div class="ztl-actions">
         <button class="ztl-action-btn" data-hito-expand-pkey="${escapeAttr(h._pkey)}" type="button" title="Ver foto y texto en grande">🔍</button>
-        <button class="ztl-action-btn" data-hito-edit-pkey="${escapeAttr(h._pkey)}" data-hito-edit-ismanual="${h._manual?'1':'0'}" data-hito-edit-id="${escapeAttr(h.ID)}" type="button" title="Editar hito">✏️</button>
+        <button class="ztl-action-btn admin-only" data-hito-edit-pkey="${escapeAttr(h._pkey)}" data-hito-edit-ismanual="${h._manual?'1':'0'}" data-hito-edit-id="${escapeAttr(h.ID)}" type="button" title="Editar hito">✏️</button>
         ${h._manual
-          ? `<button class="ztl-action-btn danger" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="1" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="Eliminar hito">🗑</button>`
-          : `<button class="ztl-action-btn${h._hiddenFromTimeline ? ' ztl-off' : ''}" data-hito-toggle-pkey="${escapeAttr(h._pkey)}" type="button" title="${h._hiddenFromTimeline ? 'Encender (volver a mostrar en la línea de tiempo)' : 'Apagar (ocultar de la línea de tiempo, sin borrarlo)'}">⏻</button>`}
+          ? `<button class="ztl-action-btn danger admin-only" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="1" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="Eliminar hito">🗑</button>`
+          : `<button class="ztl-action-btn admin-only${h._hiddenFromTimeline ? ' ztl-off' : ''}" data-hito-toggle-pkey="${escapeAttr(h._pkey)}" type="button" title="${h._hiddenFromTimeline ? 'Encender (volver a mostrar en la línea de tiempo)' : 'Apagar (ocultar de la línea de tiempo, sin borrarlo)'}">⏻</button>`}
       </div>
       <span class="ztl-card-resize-x edge-l" data-pkey="${escapeAttr(h._pkey)}" data-edge="left" title="Arrastrar para angostar/ensanchar la tarjeta"></span>
       <span class="ztl-card-resize-x edge-r" data-pkey="${escapeAttr(h._pkey)}" data-edge="right" title="Arrastrar para angostar/ensanchar la tarjeta"></span>
@@ -1846,10 +1964,10 @@ window.addEventListener('unhandledrejection', function(e){
         <div class="ztl-sub">${cap(h.FRENTE)}</div>
         <div class="ztl-actions" style="opacity:.35;">
           <button class="ztl-action-btn" data-hito-expand-pkey="${escapeAttr(h._pkey)}" type="button" title="Ver foto y texto en grande">🔍</button>
-          <button class="ztl-action-btn" data-hito-edit-pkey="${escapeAttr(h._pkey)}" data-hito-edit-ismanual="${h._manual?'1':'0'}" data-hito-edit-id="${escapeAttr(h.ID)}" type="button" title="Editar hito">✏️</button>
+          <button class="ztl-action-btn admin-only" data-hito-edit-pkey="${escapeAttr(h._pkey)}" data-hito-edit-ismanual="${h._manual?'1':'0'}" data-hito-edit-id="${escapeAttr(h.ID)}" type="button" title="Editar hito">✏️</button>
           ${h._manual
-            ? `<button class="ztl-action-btn danger" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="1" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="Eliminar hito">🗑</button>`
-            : `<button class="ztl-action-btn${h._hiddenFromTimeline ? ' ztl-off' : ''}" data-hito-toggle-pkey="${escapeAttr(h._pkey)}" type="button" title="${h._hiddenFromTimeline ? 'Encender (volver a mostrar en la línea de tiempo)' : 'Apagar (ocultar de la línea de tiempo, sin borrarlo)'}">⏻</button>`}
+            ? `<button class="ztl-action-btn danger admin-only" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="1" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="Eliminar hito">🗑</button>`
+            : `<button class="ztl-action-btn admin-only${h._hiddenFromTimeline ? ' ztl-off' : ''}" data-hito-toggle-pkey="${escapeAttr(h._pkey)}" type="button" title="${h._hiddenFromTimeline ? 'Encender (volver a mostrar en la línea de tiempo)' : 'Apagar (ocultar de la línea de tiempo, sin borrarlo)'}">⏻</button>`}
         </div>
         <span class="ztl-card-resize-x edge-l" data-pkey="${escapeAttr(h._pkey)}" data-edge="left" title="Arrastrar para angostar/ensanchar el texto"></span>
         <span class="ztl-card-resize-x edge-r" data-pkey="${escapeAttr(h._pkey)}" data-edge="right" title="Arrastrar para angostar/ensanchar el texto"></span>
@@ -2066,8 +2184,8 @@ window.addEventListener('unhandledrejection', function(e){
               ${nPhotos ? `<img class="row-thumb" id="row-thumb-${cssSafe(r._pkey)}" data-event-id="${escapeAttr(r._pkey)}" data-display-id="${escapeAttr(r.ID)}" data-title="${escapeAttr(r.TIPO_EVENTO||'')}" alt="Foto del evento">` : ''}
               <div class="row-actions-line">
                 <button class="photo-btn${nPhotos?' has':''}" data-event-id="${escapeAttr(r._pkey)}" data-display-id="${escapeAttr(r.ID)}" data-title="${escapeAttr(r.TIPO_EVENTO||'')}" type="button">📷 ${nPhotos || ''}</button>
-                ${r._manual ? `<button class="row-edit-btn" data-edit-id="${escapeAttr(r.ID)}" type="button" title="Editar evento manual">✏️</button>` : ''}
-                ${r._manual ? `<button class="row-del-btn" data-del-id="${escapeAttr(r.ID)}" type="button" title="Eliminar evento manual">🗑</button>` : ''}
+                ${r._manual ? `<button class="row-edit-btn admin-only" data-edit-id="${escapeAttr(r.ID)}" type="button" title="Editar evento manual">✏️</button>` : ''}
+                ${r._manual ? `<button class="row-del-btn admin-only" data-del-id="${escapeAttr(r.ID)}" type="button" title="Eliminar evento manual">🗑</button>` : ''}
               </div>
             </div>
           </td>
