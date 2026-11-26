@@ -326,12 +326,11 @@
   .ztl-actions .ztl-action-btn:not(.ztl-power){ opacity:.3; transition:opacity .15s ease; }
   .ztl-draggable:hover .ztl-actions .ztl-action-btn{ opacity:1; }
   /* Interruptor visible de encender/apagar la tarjeta (siempre a la vista, no solo al pasar el cursor) */
-  .ztl-action-btn.ztl-power{ font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; border:1px solid var(--accent); background:var(--accent); color:var(--accent-ink); display:inline-flex; align-items:center; gap:3px; }
-  .ztl-action-btn.ztl-power:hover{ filter:brightness(1.1); color:var(--accent-ink); }
-  .ztl-action-btn.ztl-power.ztl-off{ background:var(--surface-2); color:var(--ink-muted); border-color:var(--hairline-strong); }
-  .ztl-action-btn.ztl-power.ztl-off:hover{ color:var(--accent); border-color:var(--accent); }
-  /* Modo presentacion: las tarjetas apagadas desaparecen del mural */
-  .panel-hitos.hide-off .ztl-hito-off{ display:none !important; }
+  .ztl-action-btn.ztl-power{ font-size:11px; padding:1px 3px; line-height:1; color:var(--accent); opacity:.75; }
+  .ztl-action-btn.ztl-power:hover{ opacity:1; color:var(--accent); }
+  .ztl-action-btn.ztl-power.ztl-off{ color:var(--ink-muted); }
+  .ztl-action-btn.ztl-power.ztl-off:hover{ color:var(--accent); }
+
   
   .ztl-action-btn{ background:none; border:none; cursor:pointer; font-size:10.5px; padding:1px 2px; line-height:1; color:var(--ink-muted); }
   .ztl-action-btn:hover{ color:var(--accent); }
@@ -575,7 +574,7 @@
   <div class="chips-row" id="hitos-chips-componente" style="margin-bottom:10px;"></div>
   <div class="filter-bar admin-only" id="hitos-hidden-bar" style="margin-bottom:10px; display:none;">
     <span class="count-pill" id="hitos-hidden-pill"></span>
-    <button class="reset-link push" id="btn-hide-off-hitos" type="button" title="Quita del mural las tarjetas apagadas (para presentar). Vuelva a hacer clic para verlas atenuadas otra vez.">Ocultar apagadas</button>
+    <button class="reset-link push" id="btn-hide-off-hitos" type="button" title="Muestra un momento las tarjetas apagadas (atenuadas) para poder encender alguna de nuevo">Ver apagadas</button>
     <button class="reset-link" id="btn-show-hidden-hitos" type="button">Encender todas</button>
   </div>
   <div class="hitos-resize-wrap" id="hitos-resize-wrap">
@@ -1365,10 +1364,29 @@ window.addEventListener('unhandledrejection', function(e){
     await init(merged);
   }
 
+  // Si bitacora_data.js trae una seleccion publicada de hitos apagados y este navegador
+  // aun no la ha aplicado, la aplica (una sola vez por publicacion). Despues, lo que se
+  // prenda/apague aqui manda hasta que llegue una publicacion nueva.
+  async function applyPublishedHiddenHitos(records){
+    if (typeof HIDDEN_HITOS === 'undefined' || typeof HIDDEN_HITOS_VER === 'undefined') return;
+    let applied = '';
+    try { applied = localStorage.getItem('bitacora_hidden_ver') || ''; } catch(_e){}
+    if (applied === HIDDEN_HITOS_VER) return;
+    const want = new Set(HIDDEN_HITOS);
+    const overrides = await getAllOverrides();
+    const keys = new Set(records.map(r => r._pkey).concat(Object.keys(overrides)));
+    for (const k of keys){
+      const ov = overrides[k] || {};
+      const hidden = want.has(k);
+      if (!!ov.hidden !== hidden) await saveOverride(k, { patch: ov.patch || {}, hidden });
+    }
+    try { localStorage.setItem('bitacora_hidden_ver', HIDDEN_HITOS_VER); } catch(_e){}
+  }
   async function init(records){
     LAST_RECORDS = records;
     YEARS = computeYears(records);
     records.forEach(r => { r._pkey = evKey(r); });
+    await applyPublishedHiddenHitos(records);
     const overrides = await getAllOverrides();
     records.forEach(r => {
       const ov = overrides[r._pkey];
@@ -1584,22 +1602,18 @@ window.addEventListener('unhandledrejection', function(e){
 
     await apply();
   }
-  // "Ocultar apagadas" (modo presentacion): las tarjetas apagadas desaparecen del mural
-  // en vez de verse atenuadas. Se recuerda en este navegador.
+  // Las tarjetas apagadas NO se ven en la linea de tiempo. "Ver apagadas" las muestra un
+  // momento (atenuadas, en su lugar) solo para poder encender alguna; no se recuerda.
+  let SHOW_OFF_HITOS = false;
   function setupHideOffToggle(){
     const btn = document.getElementById('btn-hide-off-hitos');
-    const panel = document.getElementById('hitos-panel');
-    if (!btn || !panel) return;
-    let on = false;
-    try { on = localStorage.getItem('bitacora_hide_off') === '1'; } catch(_e){}
-    const paint = () => { panel.classList.toggle('hide-off', on); btn.textContent = on ? 'Mostrar apagadas (atenuadas)' : 'Ocultar apagadas'; };
-    paint();
+    if (!btn) return;
+    btn.textContent = SHOW_OFF_HITOS ? 'Ocultar apagadas' : 'Ver apagadas';
     if (btn.dataset.bound) return;
     btn.dataset.bound = '1';
-    btn.addEventListener('click', () => {
-      on = !on;
-      try { localStorage.setItem('bitacora_hide_off', on ? '1' : '0'); } catch(_e){}
-      paint();
+    btn.addEventListener('click', async () => {
+      SHOW_OFF_HITOS = !SHOW_OFF_HITOS;
+      await loadAndRender(BASE_RECORDS);
     });
   }
   async function renderHitos(records){
@@ -1623,8 +1637,11 @@ window.addEventListener('unhandledrejection', function(e){
       return;
     }
 
+    // Las apagadas se quitan antes de agrupar por año: si en un año queda una sola tarjeta
+    // encendida, ese año se dibuja con el formato grande (circulo + año), como 2022 o 2026.
+    const shownHitos = SHOW_OFF_HITOS ? hitos : hitos.filter(h => !h._hiddenFromTimeline);
     const byYear = {};
-    hitos.forEach(h => { const y = h.FECHA.slice(0,4); (byYear[y] = byYear[y] || []).push(h); });
+    shownHitos.forEach(h => { const y = h.FECHA.slice(0,4); (byYear[y] = byYear[y] || []).push(h); });
     const years = Object.keys(byYear).sort();
     const positions = await getAllPositions();
 
@@ -1709,7 +1726,7 @@ window.addEventListener('unhandledrejection', function(e){
         ${h._manual
           ? `<button class="ztl-action-btn danger admin-only" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="1" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="Eliminar hito">🗑</button>`
           : ''}
-        <button class="ztl-action-btn ztl-power admin-only${h._hiddenFromTimeline ? ' ztl-off' : ''}" data-hito-toggle-pkey="${escapeAttr(h._pkey)}" type="button" title="${h._hiddenFromTimeline ? 'Apagada: clic para encenderla (volver a mostrarla)' : 'Encendida: clic para apagarla (ocultarla de la línea de tiempo, sin borrarla)'}">⏻ ${h._hiddenFromTimeline ? 'Off' : 'On'}</button>
+        <button class="ztl-action-btn ztl-power admin-only${h._hiddenFromTimeline ? ' ztl-off' : ''}" data-hito-toggle-pkey="${escapeAttr(h._pkey)}" type="button" title="${h._hiddenFromTimeline ? 'Apagada: clic para encenderla (volver a mostrarla)' : 'Encendida: clic para apagarla (desaparece de la línea de tiempo, sin borrarla)'}">⏻</button>
       </div>
       <span class="ztl-card-resize-x edge-l" data-pkey="${escapeAttr(h._pkey)}" data-edge="left" title="Arrastrar para angostar/ensanchar la tarjeta"></span>
       <span class="ztl-card-resize-x edge-r" data-pkey="${escapeAttr(h._pkey)}" data-edge="right" title="Arrastrar para angostar/ensanchar la tarjeta"></span>
@@ -2070,7 +2087,7 @@ window.addEventListener('unhandledrejection', function(e){
           ${h._manual
             ? `<button class="ztl-action-btn danger admin-only" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="1" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="Eliminar hito">🗑</button>`
             : ''}
-          <button class="ztl-action-btn ztl-power admin-only${h._hiddenFromTimeline ? ' ztl-off' : ''}" data-hito-toggle-pkey="${escapeAttr(h._pkey)}" type="button" title="${h._hiddenFromTimeline ? 'Apagada: clic para encenderla (volver a mostrarla)' : 'Encendida: clic para apagarla (ocultarla de la línea de tiempo, sin borrarla)'}">⏻ ${h._hiddenFromTimeline ? 'Off' : 'On'}</button>
+          <button class="ztl-action-btn ztl-power admin-only${h._hiddenFromTimeline ? ' ztl-off' : ''}" data-hito-toggle-pkey="${escapeAttr(h._pkey)}" type="button" title="${h._hiddenFromTimeline ? 'Apagada: clic para encenderla (volver a mostrarla)' : 'Encendida: clic para apagarla (desaparece de la línea de tiempo, sin borrarla)'}">⏻</button>
         </div>
         <span class="ztl-card-resize-x edge-l" data-pkey="${escapeAttr(h._pkey)}" data-edge="left" title="Arrastrar para angostar/ensanchar el texto"></span>
         <span class="ztl-card-resize-x edge-r" data-pkey="${escapeAttr(h._pkey)}" data-edge="right" title="Arrastrar para angostar/ensanchar el texto"></span>
@@ -2462,6 +2479,13 @@ window.addEventListener('unhandledrejection', function(e){
     Object.keys(r).forEach(k => { if (!k.startsWith('_')) out[k] = r[k]; });
     return out;
   }
+  // Lista de hitos apagados que viaja dentro de bitacora_data.js al publicar, para que
+  // quien abra el enlace (jefes, otros PC) vea exactamente la misma seleccion.
+  async function hiddenHitosJs(){
+    const overrides = await getAllOverrides();
+    const keys = Object.keys(overrides).filter(k => overrides[k].hidden).sort();
+    return 'const HIDDEN_HITOS = ' + JSON.stringify(keys) + ';\nconst HIDDEN_HITOS_VER = ' + JSON.stringify(String(Date.now())) + ';\n';
+  }
   async function exportDataJs(){
     if (!BASE_RECORDS || !BASE_RECORDS.length){
       showToast('Primero carga un Excel con "Cargar Excel actualizado".', 'error');
@@ -2469,7 +2493,7 @@ window.addEventListener('unhandledrejection', function(e){
     }
     const manual = await getManualEvents();
     const clean = BASE_RECORDS.concat(manual).map(cleanRecordForExport);
-    const out = 'const RECORDS_DATA = ' + JSON.stringify(clean, null, 2) + ';\n';
+    const out = 'const RECORDS_DATA = ' + JSON.stringify(clean, null, 2) + ';\n' + (await hiddenHitosJs());
     const blob = new Blob([out], { type: 'text/javascript' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -2535,7 +2559,7 @@ window.addEventListener('unhandledrejection', function(e){
       setStatus('Preparando datos…');
       const manual = await getManualEvents();
       const cleanData = BASE_RECORDS.concat(manual).map(cleanRecordForExport);
-      const dataJsText = 'const RECORDS_DATA = ' + JSON.stringify(cleanData, null, 2) + ';\n';
+      const dataJsText = 'const RECORDS_DATA = ' + JSON.stringify(cleanData, null, 2) + ';\n' + (await hiddenHitosJs());
 
       const fotos = await idbAllRecords();
       const manifest = fotos.map(f => ({ id: f.id, eventId: f.eventId, name: f.name, addedAt: f.addedAt, path: `fotos/${f.eventId}/${f.id}.jpg` }));
@@ -2676,6 +2700,11 @@ window.addEventListener('unhandledrejection', function(e){
           return;
         }
         document.getElementById('source-name').textContent = file.name;
+        const ovs = await getAllOverrides();
+        const offKeys = Object.keys(ovs).filter(k => ovs[k].hidden);
+        if (offKeys.length && confirm(`Hay ${offKeys.length} hito(s) apagado(s) en la línea de tiempo.\n\n¿Volver a encenderlos todos con este Excel nuevo?\n\n(Aceptar = encender todos · Cancelar = dejar la selección actual)`)){
+          for (const k of offKeys) await saveOverride(k, { patch: ovs[k].patch || {}, hidden: false });
+        }
         await loadAndRender(records);
         showToast(`Datos actualizados: ${records.length} eventos cargados desde "${file.name}".`);
       } catch (err){
