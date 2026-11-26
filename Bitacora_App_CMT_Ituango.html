@@ -297,11 +297,15 @@
   .ztl-photo.ztl-photo-lg.empty .plus{ font-size:30px; color:var(--accent); line-height:1; }
   .ztl-photo.ztl-photo-lg .count-badge{ font-size:10px; padding:1px 5px; }
   .ztl-year-big{ font-family:"IBM Plex Sans Condensed"; font-size:30px; font-weight:700; color:var(--accent); line-height:1; }
-  .ztl-yevent-desc-lg{ font-size:11px; font-weight:500; color:var(--ink); line-height:1.35; max-width:var(--card-w,210px); cursor:zoom-in; }
+  /* Descripcion resumida: hasta 3 lineas y "…" si es mas larga. El texto completo se ve al
+     hacer clic sobre la descripcion (ventana ampliada) o con la lupa 🔍. */
+  .ztl-yevent-desc-lg{ font-size:11px; font-weight:500; color:var(--ink); line-height:1.35; max-width:var(--card-w,210px); cursor:zoom-in;
+    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; line-clamp:3; overflow:hidden; }
   .ztl-ycontent-single:hover .ztl-actions{ opacity:1; }
   .ztl-yevent-text{ flex:1; min-width:0; }
   .ztl-yevent-date{ display:block; font-family:"IBM Plex Sans Condensed"; font-size:10px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:.03em; }
-  .ztl-yevent-desc{ display:block; font-size:10.5px; line-height:1.35; color:var(--ink); cursor:zoom-in; }
+  .ztl-yevent-desc{ font-size:10.5px; line-height:1.35; color:var(--ink); cursor:zoom-in;
+    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; line-clamp:3; overflow:hidden; }
   .ztl-actions{ display:flex; gap:6px; flex:none; opacity:.25; transition:opacity .15s ease; padding-top:2px; }
   .ztl-yevent:hover .ztl-actions{ opacity:1; }
   .ztl-action-btn{ background:none; border:none; cursor:pointer; font-size:10.5px; padding:1px 2px; line-height:1; color:var(--ink-muted); }
