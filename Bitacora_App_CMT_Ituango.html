@@ -317,13 +317,22 @@
      hacer clic sobre la descripcion (ventana ampliada) o con la lupa 🔍. */
   .ztl-yevent-desc-lg{ font-size:11px; font-weight:500; color:var(--ink); line-height:1.35; max-width:var(--card-w,210px); cursor:zoom-in;
     display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; line-clamp:3; overflow:hidden; }
-  .ztl-ycontent-single:hover .ztl-actions{ opacity:1; }
+  
   .ztl-yevent-text{ flex:1; min-width:0; }
   .ztl-yevent-date{ display:block; font-family:"IBM Plex Sans Condensed"; font-size:10px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:.03em; }
   .ztl-yevent-desc{ font-size:10.5px; line-height:1.35; color:var(--ink); cursor:zoom-in;
     display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; line-clamp:3; overflow:hidden; }
-  .ztl-actions{ display:flex; gap:6px; flex:none; opacity:.25; transition:opacity .15s ease; padding-top:2px; }
-  .ztl-yevent:hover .ztl-actions{ opacity:1; }
+  .ztl-actions{ display:flex; gap:6px; flex:none; align-items:center; transition:opacity .15s ease; padding-top:2px; }
+  .ztl-actions .ztl-action-btn:not(.ztl-power){ opacity:.3; transition:opacity .15s ease; }
+  .ztl-draggable:hover .ztl-actions .ztl-action-btn{ opacity:1; }
+  /* Interruptor visible de encender/apagar la tarjeta (siempre a la vista, no solo al pasar el cursor) */
+  .ztl-action-btn.ztl-power{ font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; border:1px solid var(--accent); background:var(--accent); color:var(--accent-ink); display:inline-flex; align-items:center; gap:3px; }
+  .ztl-action-btn.ztl-power:hover{ filter:brightness(1.1); color:var(--accent-ink); }
+  .ztl-action-btn.ztl-power.ztl-off{ background:var(--surface-2); color:var(--ink-muted); border-color:var(--hairline-strong); }
+  .ztl-action-btn.ztl-power.ztl-off:hover{ color:var(--accent); border-color:var(--accent); }
+  /* Modo presentacion: las tarjetas apagadas desaparecen del mural */
+  .panel-hitos.hide-off .ztl-hito-off{ display:none !important; }
+  
   .ztl-action-btn{ background:none; border:none; cursor:pointer; font-size:10.5px; padding:1px 2px; line-height:1; color:var(--ink-muted); }
   .ztl-action-btn:hover{ color:var(--accent); }
   .ztl-action-btn.danger:hover{ color:var(--critical-text); }
@@ -340,7 +349,7 @@
      pero atenuada, para que se note que esta apagada y se pueda prender de nuevo ahi mismo. */
   .ztl-draggable.ztl-hito-off{ opacity:.4; filter:grayscale(.6); }
   .ztl-draggable.ztl-hito-off:hover{ opacity:.7; }
-  .ztl-draggable.ztl-hito-off .ztl-actions{ opacity:.6; }
+  .ztl-draggable.ztl-hito-off .ztl-actions{ opacity:1; }
   .ztl-rel{ display:inline-block; font-size:9.5px; font-weight:600; padding:1px 7px; border-radius:999px; text-transform:uppercase; letter-spacing:.04em; }
 
   .filter-bar{ display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; background:var(--surface); border:var(--box-border); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow); }
@@ -566,7 +575,8 @@
   <div class="chips-row" id="hitos-chips-componente" style="margin-bottom:10px;"></div>
   <div class="filter-bar admin-only" id="hitos-hidden-bar" style="margin-bottom:10px; display:none;">
     <span class="count-pill" id="hitos-hidden-pill"></span>
-    <button class="reset-link push" id="btn-show-hidden-hitos" type="button">Encender todos</button>
+    <button class="reset-link push" id="btn-hide-off-hitos" type="button" title="Quita del mural las tarjetas apagadas (para presentar). Vuelva a hacer clic para verlas atenuadas otra vez.">Ocultar apagadas</button>
+    <button class="reset-link" id="btn-show-hidden-hitos" type="button">Encender todas</button>
   </div>
   <div class="hitos-resize-wrap" id="hitos-resize-wrap">
     <div class="panel panel-hitos" id="hitos-panel">
@@ -1574,6 +1584,24 @@ window.addEventListener('unhandledrejection', function(e){
 
     await apply();
   }
+  // "Ocultar apagadas" (modo presentacion): las tarjetas apagadas desaparecen del mural
+  // en vez de verse atenuadas. Se recuerda en este navegador.
+  function setupHideOffToggle(){
+    const btn = document.getElementById('btn-hide-off-hitos');
+    const panel = document.getElementById('hitos-panel');
+    if (!btn || !panel) return;
+    let on = false;
+    try { on = localStorage.getItem('bitacora_hide_off') === '1'; } catch(_e){}
+    const paint = () => { panel.classList.toggle('hide-off', on); btn.textContent = on ? 'Mostrar apagadas (atenuadas)' : 'Ocultar apagadas'; };
+    paint();
+    if (btn.dataset.bound) return;
+    btn.dataset.bound = '1';
+    btn.addEventListener('click', () => {
+      on = !on;
+      try { localStorage.setItem('bitacora_hide_off', on ? '1' : '0'); } catch(_e){}
+      paint();
+    });
+  }
   async function renderHitos(records){
     // Las tarjetas "apagadas" (_hiddenFromTimeline) ya NO se quitan del mural: se quedan en
     // su lugar pero atenuadas, con su propio boton ⏻ para encenderlas de nuevo una por una.
@@ -1588,6 +1616,7 @@ window.addEventListener('unhandledrejection', function(e){
       hiddenBar.style.display = 'none';
     }
     document.getElementById('hitos-note').textContent = `${hitos.length} hitos del proyecto${hiddenCount ? ` (${hiddenCount} apagado${hiddenCount===1?'':'s'})` : ''} · clic en la foto para ver o subir evidencia · Ctrl+clic en una tarjeta para ver su descripción completa · Shift+clic para seleccionar varias y moverlas/escalarlas juntas`;
+    setupHideOffToggle();
     const trackEl = document.getElementById('hitos-scroll');
     if (!hitos.length){
       trackEl.innerHTML = `<div class="ztl-line"></div><div style="color:var(--ink-muted); font-size:13px; padding:20px;">No hay eventos marcados como "Hito" todavía.</div>`;
@@ -1679,7 +1708,8 @@ window.addEventListener('unhandledrejection', function(e){
         <button class="ztl-action-btn admin-only" data-hito-edit-pkey="${escapeAttr(h._pkey)}" data-hito-edit-ismanual="${h._manual?'1':'0'}" data-hito-edit-id="${escapeAttr(h.ID)}" type="button" title="Editar hito">✏️</button>
         ${h._manual
           ? `<button class="ztl-action-btn danger admin-only" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="1" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="Eliminar hito">🗑</button>`
-          : `<button class="ztl-action-btn admin-only${h._hiddenFromTimeline ? ' ztl-off' : ''}" data-hito-toggle-pkey="${escapeAttr(h._pkey)}" type="button" title="${h._hiddenFromTimeline ? 'Encender (volver a mostrar en la línea de tiempo)' : 'Apagar (ocultar de la línea de tiempo, sin borrarlo)'}">⏻</button>`}
+          : ''}
+        <button class="ztl-action-btn ztl-power admin-only${h._hiddenFromTimeline ? ' ztl-off' : ''}" data-hito-toggle-pkey="${escapeAttr(h._pkey)}" type="button" title="${h._hiddenFromTimeline ? 'Apagada: clic para encenderla (volver a mostrarla)' : 'Encendida: clic para apagarla (ocultarla de la línea de tiempo, sin borrarla)'}">⏻ ${h._hiddenFromTimeline ? 'Off' : 'On'}</button>
       </div>
       <span class="ztl-card-resize-x edge-l" data-pkey="${escapeAttr(h._pkey)}" data-edge="left" title="Arrastrar para angostar/ensanchar la tarjeta"></span>
       <span class="ztl-card-resize-x edge-r" data-pkey="${escapeAttr(h._pkey)}" data-edge="right" title="Arrastrar para angostar/ensanchar la tarjeta"></span>
@@ -2034,12 +2064,13 @@ window.addEventListener('unhandledrejection', function(e){
         <div class="ztl-yevent-desc-lg" title="${escapeAttr(h.DESCRIPCION || h.TIPO_EVENTO || '')}">${escapeHtml(h.DESCRIPCION || cap(h.TIPO_EVENTO) || '')}</div>
         <div class="ztl-sub">${cap(h.FRENTE)}</div>
         <div class="ztl-yevent-subfrente">${escapeHtml(cap(h.SUBFRENTE) || '—')}</div>
-        <div class="ztl-actions" style="opacity:.35;">
+        <div class="ztl-actions">
           <button class="ztl-action-btn" data-hito-expand-pkey="${escapeAttr(h._pkey)}" type="button" title="Ver foto y texto en grande">🔍</button>
           <button class="ztl-action-btn admin-only" data-hito-edit-pkey="${escapeAttr(h._pkey)}" data-hito-edit-ismanual="${h._manual?'1':'0'}" data-hito-edit-id="${escapeAttr(h.ID)}" type="button" title="Editar hito">✏️</button>
           ${h._manual
             ? `<button class="ztl-action-btn danger admin-only" data-hito-del-pkey="${escapeAttr(h._pkey)}" data-hito-del-ismanual="1" data-hito-del-id="${escapeAttr(h.ID)}" type="button" title="Eliminar hito">🗑</button>`
-            : `<button class="ztl-action-btn admin-only${h._hiddenFromTimeline ? ' ztl-off' : ''}" data-hito-toggle-pkey="${escapeAttr(h._pkey)}" type="button" title="${h._hiddenFromTimeline ? 'Encender (volver a mostrar en la línea de tiempo)' : 'Apagar (ocultar de la línea de tiempo, sin borrarlo)'}">⏻</button>`}
+            : ''}
+          <button class="ztl-action-btn ztl-power admin-only${h._hiddenFromTimeline ? ' ztl-off' : ''}" data-hito-toggle-pkey="${escapeAttr(h._pkey)}" type="button" title="${h._hiddenFromTimeline ? 'Apagada: clic para encenderla (volver a mostrarla)' : 'Encendida: clic para apagarla (ocultarla de la línea de tiempo, sin borrarla)'}">⏻ ${h._hiddenFromTimeline ? 'Off' : 'On'}</button>
         </div>
         <span class="ztl-card-resize-x edge-l" data-pkey="${escapeAttr(h._pkey)}" data-edge="left" title="Arrastrar para angostar/ensanchar el texto"></span>
         <span class="ztl-card-resize-x edge-r" data-pkey="${escapeAttr(h._pkey)}" data-edge="right" title="Arrastrar para angostar/ensanchar el texto"></span>
