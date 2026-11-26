@@ -462,6 +462,7 @@
         <div id="gh-config-box" style="display:none; margin-top:8px; padding:10px; border:1px solid var(--hairline); border-radius:8px; max-width:480px;">
           <div style="font-size:12.5px; margin-bottom:6px;">Pega aquí tu clave de acceso personal de GitHub (solo se guarda en este navegador; se usa únicamente para hablar directo con GitHub, nunca se envía a ningún otro lado):</div>
           <input type="password" id="gh-token-input" placeholder="github_pat_..." style="width:100%; max-width:320px;">
+          <button class="reset-link pw-eye-toggle" data-target="gh-token-input" type="button" title="Mostrar/ocultar clave">👁</button>
           <button class="reset-link" id="btn-gh-token-save" type="button" style="margin-left:6px;">Guardar</button>
           <span id="gh-token-status" style="margin-left:6px; font-size:12px;"></span>
         </div>
@@ -477,7 +478,10 @@
         <button class="modal-close" id="role-modal-close" type="button">✕</button>
       </div>
       <div class="modal-body">
-        <input type="password" id="role-pass-input" placeholder="Clave de administrador" style="width:100%; padding:8px 10px; border:1px solid var(--hairline-strong); border-radius:7px; background:var(--surface-2); color:var(--ink);">
+        <div style="position:relative;">
+          <input type="password" id="role-pass-input" placeholder="Clave de administrador" style="width:100%; padding:8px 34px 8px 10px; border:1px solid var(--hairline-strong); border-radius:7px; background:var(--surface-2); color:var(--ink);">
+          <button class="pw-eye-toggle" data-target="role-pass-input" type="button" title="Mostrar/ocultar clave" style="position:absolute; right:4px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:15px; padding:4px;">👁</button>
+        </div>
         <div id="role-pass-error" style="color:var(--critical-text); font-size:12.5px; margin-top:6px; display:none;">Clave incorrecta.</div>
         <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:14px;">
           <button type="button" class="reset-link" id="role-pass-cancel">Cancelar</button>
@@ -1144,6 +1148,20 @@ window.addEventListener('unhandledrejection', function(e){
     const isDark = mode === 'dark' || (mode !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
     btn.setAttribute('aria-checked', String(isDark));
   }
+  // Boton de ojo reusable para cualquier campo de clave: alterna entre type="password"
+  // (puntitos) y type="text" (se ve lo que se escribio), para poder revisar que quedo bien
+  // escrita antes de guardar.
+  function setupPasswordEyeToggles(){
+    document.querySelectorAll('.pw-eye-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const input = document.getElementById(btn.dataset.target);
+        if (!input) return;
+        const showing = input.type === 'text';
+        input.type = showing ? 'password' : 'text';
+        btn.textContent = showing ? '👁' : '🙈';
+      });
+    });
+  }
   function setupThemeSwitch(){
     const btn = document.getElementById('theme-switch');
     const saved = localStorage.getItem(THEME_KEY);
@@ -1259,6 +1277,7 @@ window.addEventListener('unhandledrejection', function(e){
   let GLOBAL_DESELECT_BOUND = false;
 
   setupThemeSwitch();
+  setupPasswordEyeToggles();
   setupRoleControl();
   setupPhotoModal();
   setupCardModalClose();
