@@ -506,6 +506,7 @@
     <h2>Línea de tiempo de hitos</h2>
     <div class="note" id="hitos-note"></div>
     <button class="reset-link" id="btn-hitos-autofit" type="button" title="Vuelve el recuadro al tamaño que se ajusta justo al contenido actual (por si quedó un tamaño guardado de antes)">⤢ Ajustar tamaño automático</button>
+    <button class="reset-link" id="btn-hitos-zoom75" type="button" title="Pone el mismo tamaño (75%) a todas las tarjetas, para que queden parejas sin espacios sueltos">🔍 Parejar zoom al 75%</button>
   </div>
   <div class="filter-bar hitos-filter-bar" style="margin-bottom:10px;">
     <div class="filter-group">
@@ -2828,6 +2829,18 @@ window.addEventListener('unhandledrejection', function(e){
         const trackEl = document.getElementById('hitos-scroll');
         if (trackEl) computeAndApplyTrackHalfHeight(trackEl);
         autoFitHitosPanelHeight();
+      });
+    }
+    const zoom75Btn = document.getElementById('btn-hitos-zoom75');
+    if (zoom75Btn){
+      zoom75Btn.addEventListener('click', async () => {
+        if (!LAST_RECORDS) return;
+        const hitos = LAST_RECORDS.filter(r => r.EVENTO === 'HITO');
+        for (const h of hitos){
+          await updatePosition(h._pkey, { scale: 0.75 });
+        }
+        await loadAndRender(BASE_RECORDS);
+        showToast(`${hitos.length} tarjeta${hitos.length===1?'':'s'} puesta${hitos.length===1?'':'s'} al 75% de zoom.`);
       });
     }
   }
