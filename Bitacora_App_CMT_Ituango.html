@@ -255,6 +255,25 @@
      cuenta, para que al achicar el recuadro no queden dos barras de desplazamiento anidadas
      peleando entre si (eso hacia que desaparecieran). */
   .ztl-wrap{ padding:6px 4px 10px; }
+  /* ---- Impresion de la linea de tiempo (copia ajustada a una hoja horizontal) ---- */
+  #print-root{ display:none; }
+  #print-root .print-head{ display:flex; justify-content:space-between; align-items:baseline; gap:16px; border-bottom:2px solid #009653; padding-bottom:5px; margin-bottom:10px; font-family:"IBM Plex Sans Condensed", sans-serif; }
+  #print-root .print-head b{ font-size:18px; color:#009653; }
+  #print-root .print-head span{ font-size:11px; color:#555; }
+  #print-root .print-frame{ position:relative; overflow:hidden; margin:0 auto; }
+  #print-root .print-scale{ position:absolute; left:0; top:0; transform-origin:0 0; }
+  #print-root .ztl-track{ position:absolute; margin:0; }
+  #print-root .ztl-actions, #print-root .ztl-resize-handle, #print-root .ztl-card-resize, #print-root .ztl-card-resize-x,
+  #print-root .ztl-photo.empty .plus, #print-root .ztl-photo.empty > span{ display:none !important; }
+  #print-root .ztl-draggable{ outline:none !important; box-shadow:none !important; }
+  #print-root .ztl-hito-off{ display:none !important; }
+  @media print{
+    @page{ size:landscape; margin:8mm; }
+    html, body{ background:#fff !important; }
+    body.printing-timeline > *:not(#print-root){ display:none !important; }
+    body.printing-timeline #print-root{ display:block !important; }
+    #print-root, #print-root *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
   /* --ztl-half se recalcula por JS segun lo que realmente ocupan las tarjetas (con su
      escala actual), para que el recuadro no reserve siempre el peor caso (grupos de 5
      eventos) cuando todo esta mas pequeño — asi el espacio vacio y la barra de scroll
@@ -601,6 +620,7 @@
     <div class="note" id="hitos-note"></div>
     <button class="reset-link" id="btn-hitos-autofit" type="button" title="Vuelve el recuadro al tamaño que se ajusta justo al contenido actual (por si quedó un tamaño guardado de antes)">⤢ Ajustar tamaño automático</button>
     <button class="reset-link" id="btn-hitos-zoom75" type="button" title="Pone el mismo tamaño (75%) a todas las tarjetas, para que queden parejas sin espacios sueltos">🔍 Parejar zoom al 75%</button>
+    <button class="reset-link" id="btn-hitos-print" type="button" title="Imprime (o guarda en PDF) la línea de tiempo tal como están acomodadas las tarjetas, ajustada a una hoja horizontal">🖨 Imprimir línea de tiempo</button>
     <button class="reset-link proj-btn-all" type="button" data-project="hitos-resize-wrap" title="Mostrar en pantalla completa (para proyectar). Esc para salir.">⛶ Proyectar línea de tiempo</button>
   </div>
   <div class="filter-bar hitos-filter-bar" style="margin-bottom:10px;">
@@ -1414,11 +1434,72 @@ window.addEventListener('unhandledrejection', function(e){
   setupScaleBox();
   setupGithubPublish();
   setupProjectMode();
+  setupTimelinePrint();
 
   if (typeof RECORDS_DATA === 'undefined'){
     document.getElementById('table-body').innerHTML = '<tr class="empty-row"><td colspan="9">No se encontró bitacora_data.js — debe estar en la misma carpeta.</td></tr>';
   } else {
     loadAndRender(RECORDS_DATA);
+  }
+
+  // ============ imprimir linea de tiempo ============
+  // Mide donde quedaron realmente todas las tarjetas (como sea que se hayan movido o
+  // escalado), copia la linea de tiempo y la reduce para que todo quepa en una hoja
+  // horizontal (Carta o A4), centrada y con un margen pequeño alrededor.
+  function setupTimelinePrint(){
+    const btn = document.getElementById('btn-hitos-print');
+    if (btn) btn.addEventListener('click', printTimeline);
+  }
+  function printTimeline(){
+    const track = document.getElementById('hitos-scroll');
+    if (!track || !track.querySelector('.ztl-draggable')){ showToast('No hay hitos para imprimir.', 'error'); return; }
+    const root = document.documentElement;
+    const prevTheme = root.getAttribute('data-theme');
+    root.setAttribute('data-theme', 'light');   // en papel siempre con fondo claro
+    const tr = track.getBoundingClientRect();
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    track.querySelectorAll('.ztl-draggable, .ztl-dot, .ztl-dot-year').forEach(el => {
+      if (el.classList.contains('ztl-hito-off')) return;
+      const r = el.getBoundingClientRect();
+      if (!r.width && !r.height) return;
+      x0 = Math.min(x0, r.left); y0 = Math.min(y0, r.top); x1 = Math.max(x1, r.right); y1 = Math.max(y1, r.bottom);
+    });
+    const pad = 24;
+    x0 = x0 - tr.left - pad; y0 = y0 - tr.top - pad; x1 = x1 - tr.left + pad; y1 = y1 - tr.top + pad;
+    const w = x1 - x0, h = y1 - y0;
+    // Area util comun a Carta y A4 horizontales con margen de 8 mm (a 96 px por pulgada),
+    // descontando el encabezado.
+    const PAGE_W = 990, PAGE_H = 690;
+    const scale = Math.min(PAGE_W / w, PAGE_H / h, 1.6);
+
+    const old = document.getElementById('print-root'); if (old) old.remove();
+    const pr = document.createElement('div');
+    pr.id = 'print-root';
+    const fecha = new Date().toLocaleDateString('es-CO', { year:'numeric', month:'long', day:'numeric' });
+    pr.innerHTML = `<div class="print-head"><b>Línea de tiempo de hitos · Bitácora CMT Ituango</b><span>Impreso el ${fecha}</span></div>
+      <div class="print-frame" style="width:${Math.round(w*scale)}px; height:${Math.round(h*scale)}px;"><div class="print-scale" style="width:${Math.round(w)}px; height:${Math.round(h)}px; transform:scale(${scale});"></div></div>`;
+    const clone = track.cloneNode(true);
+    clone.removeAttribute('id');
+    clone.querySelectorAll('[id]').forEach(e => e.removeAttribute('id'));
+    clone.querySelectorAll('.ztl-selected').forEach(e => e.classList.remove('ztl-selected'));
+    clone.style.left = (-x0) + 'px';
+    clone.style.top = (-y0) + 'px';
+    clone.style.width = tr.width + 'px';
+    clone.style.minWidth = tr.width + 'px';
+    pr.querySelector('.print-scale').appendChild(clone);
+    document.body.appendChild(pr);
+    document.body.classList.add('printing-timeline');
+
+    let cleaned = false;
+    const cleanup = () => {
+      if (cleaned) return; cleaned = true;
+      document.body.classList.remove('printing-timeline');
+      pr.remove();
+      if (prevTheme) root.setAttribute('data-theme', prevTheme); else root.removeAttribute('data-theme');
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+    setTimeout(() => { window.print(); setTimeout(cleanup, 500); }, 150);
   }
 
   // ============ proyectar graficas (pantalla completa) ============
@@ -2646,7 +2727,7 @@ window.addEventListener('unhandledrejection', function(e){
   // Numero de version de esta pagina. Antes de publicar se compara con la pagina que esta
   // en GitHub: si alla hay una version mas nueva, se pide recargar primero, para que no se
   // publique con codigo viejo guardado en el navegador.
-  const APP_BUILD = '1795810546';
+  const APP_BUILD = '1795810851';
   async function isAppOutdated(){
     if (location.protocol === 'file:') return false;
     try {
