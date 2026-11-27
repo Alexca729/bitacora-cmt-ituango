@@ -1,6 +1,24 @@
 const RECORDS_DATA = [
   {
     "ID": 1,
+    "FECHA": "2018-06-06",
+    "ANIO": 2018,
+    "TRIMESTRE": "T2",
+    "NIVEL_RELEVANCIA": "Alta",
+    "EVENTO": "HITO",
+    "CATEGORIA_EVENTO": "MONITOREO E INSTRUMENTACIÓN",
+    "TIPO_EVENTO": "Monitoreo sismológico",
+    "DESCRIPCION": "El monitoreo del Centro de Monitoreo Técnico (CMT) en Hidroituango inició en junio de 2018, con reportes oficiales de su instalación y verificación hacia el",
+    "COMPONENTE": "CMT",
+    "TIPO_OBRA": "SUPERFICIAL",
+    "FRENTE": "EPM",
+    "SUBFRENTE": "EPM",
+    "ESTADO": "Monitoreo",
+    "ESTACION": "N/A",
+    "YEAR": 2018
+  },
+  {
+    "ID": 2,
     "FECHA": "2018-09-02",
     "ANIO": 2018,
     "TRIMESTRE": "T3",
@@ -18,7 +36,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 2,
+    "ID": 3,
     "FECHA": "2018-09-04",
     "ANIO": 2018,
     "TRIMESTRE": "T3",
@@ -36,7 +54,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 3,
+    "ID": 4,
     "FECHA": "2018-09-04",
     "ANIO": 2018,
     "TRIMESTRE": "T3",
@@ -54,7 +72,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 4,
+    "ID": 5,
     "FECHA": "2018-09-05",
     "ANIO": 2018,
     "TRIMESTRE": "T3",
@@ -72,7 +90,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 5,
+    "ID": 6,
     "FECHA": "2018-09-06",
     "ANIO": 2018,
     "TRIMESTRE": "T3",
@@ -90,7 +108,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 6,
+    "ID": 7,
     "FECHA": "2018-09-07",
     "ANIO": 2018,
     "TRIMESTRE": "T3",
@@ -108,7 +126,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 7,
+    "ID": 8,
     "FECHA": "2018-09-07",
     "ANIO": 2018,
     "TRIMESTRE": "T3",
@@ -126,7 +144,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 8,
+    "ID": 9,
     "FECHA": "2018-09-08",
     "ANIO": 2018,
     "TRIMESTRE": "T3",
@@ -144,7 +162,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 9,
+    "ID": 10,
     "FECHA": "2018-09-08",
     "ANIO": 2018,
     "TRIMESTRE": "T3",
@@ -162,7 +180,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 10,
+    "ID": 11,
     "FECHA": "2018-09-11",
     "ANIO": 2018,
     "TRIMESTRE": "T3",
@@ -180,7 +198,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 11,
+    "ID": 12,
     "FECHA": "2018-09-17",
     "ANIO": 2018,
     "TRIMESTRE": "T3",
@@ -198,7 +216,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 12,
+    "ID": 13,
     "FECHA": "2018-09-20",
     "ANIO": 2018,
     "TRIMESTRE": "T3",
@@ -216,7 +234,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 13,
+    "ID": 14,
     "FECHA": "2018-09-26",
     "ANIO": 2018,
     "TRIMESTRE": "T3",
@@ -234,7 +252,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 14,
+    "ID": 15,
     "FECHA": "2018-10-05",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -252,7 +270,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 15,
+    "ID": 16,
     "FECHA": "2018-10-12",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -270,7 +288,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 16,
+    "ID": 17,
     "FECHA": "2018-10-12",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -288,7 +306,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 17,
+    "ID": 18,
     "FECHA": "2018-10-12",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -306,7 +324,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 18,
+    "ID": 19,
     "FECHA": "2018-10-19",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -324,7 +342,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 19,
+    "ID": 20,
     "FECHA": "2018-10-30",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -342,7 +360,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 20,
+    "ID": 21,
     "FECHA": "2018-11-02",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -360,7 +378,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 21,
+    "ID": 22,
     "FECHA": "2018-11-05",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -378,7 +396,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 22,
+    "ID": 23,
     "FECHA": "2018-11-14",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -396,7 +414,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 23,
+    "ID": 24,
     "FECHA": "2018-11-15",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -414,7 +432,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 24,
+    "ID": 25,
     "FECHA": "2018-11-18",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -432,7 +450,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 25,
+    "ID": 26,
     "FECHA": "2018-11-27",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -450,7 +468,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 26,
+    "ID": 27,
     "FECHA": "2018-11-28",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -468,7 +486,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 27,
+    "ID": 28,
     "FECHA": "2018-11-29",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -486,7 +504,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 28,
+    "ID": 29,
     "FECHA": "2018-12-02",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -504,7 +522,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 29,
+    "ID": 30,
     "FECHA": "2018-12-03",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -522,7 +540,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 30,
+    "ID": 31,
     "FECHA": "2018-12-05",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -540,7 +558,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 31,
+    "ID": 32,
     "FECHA": "2018-12-21",
     "ANIO": 2018,
     "TRIMESTRE": "T4",
@@ -558,7 +576,7 @@ const RECORDS_DATA = [
     "YEAR": 2018
   },
   {
-    "ID": 32,
+    "ID": 33,
     "FECHA": "2019-01-09",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -576,7 +594,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 33,
+    "ID": 34,
     "FECHA": "2019-01-10",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -594,7 +612,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 34,
+    "ID": 35,
     "FECHA": "2019-01-10",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -612,7 +630,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 35,
+    "ID": 36,
     "FECHA": "2019-01-10",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -630,7 +648,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 36,
+    "ID": 37,
     "FECHA": "2019-01-10",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -645,24 +663,6 @@ const RECORDS_DATA = [
     "SUBFRENTE": "TALUD ANTIGUAS DESVIACIONES",
     "ESTADO": "N/A",
     "ESTACION": "INTERFEROMETRÍA",
-    "YEAR": 2019
-  },
-  {
-    "ID": 37,
-    "FECHA": "2019-01-11",
-    "ANIO": 2019,
-    "TRIMESTRE": "T1",
-    "NIVEL_RELEVANCIA": "Alta",
-    "EVENTO": "RELEVANTE",
-    "CATEGORIA_EVENTO": "GESTIÓN, SOCIAL Y EXTERNOS",
-    "TIPO_EVENTO": "Gestión social y comunicados",
-    "DESCRIPCION": "Con acompañamiento del gobernador de Antioquia, Luis Pérez Gutiérrez, el alcalde de Medellín, Federico Gutiérrez y el gerente general de EPM Jorge Londoño De La Cuesta. Del cual manifiestan que estiman que el cierre de la compuerta 2 sea el 16 de enero de 2019.\r\nadicoinalemnte el Consejo Departamental del Riesgo solicitó un plan de contingencia específico para proteger a las comunidades agua abajo desde el 11 de enero y hasta el día del cierre de la compuerta número 2.",
-    "COMPONENTE": "SOCIO-AMBIENTAL",
-    "TIPO_OBRA": "SUPERFICIAL",
-    "FRENTE": "AREA DE INFLUENCIA",
-    "SUBFRENTE": "RÍO CAUCA AGUAS ABAJO",
-    "ESTADO": "N/A",
-    "ESTACION": "N/A",
     "YEAR": 2019
   },
   {
@@ -685,24 +685,6 @@ const RECORDS_DATA = [
   },
   {
     "ID": 39,
-    "FECHA": "2019-01-14",
-    "ANIO": 2019,
-    "TRIMESTRE": "T1",
-    "NIVEL_RELEVANCIA": "Alta",
-    "EVENTO": "RELEVANTE",
-    "CATEGORIA_EVENTO": "GESTIÓN, SOCIAL Y EXTERNOS",
-    "TIPO_EVENTO": "Alerta y emergencia",
-    "DESCRIPCION": "Desde el Puesto de Mando Unificado (PMU), Empresas Públicas de Medellín definió protocolo de seguridad por el cierre de una compuerta número 2 en Hidroituango.",
-    "COMPONENTE": "PMU",
-    "TIPO_OBRA": "SUBTERRÁNEA",
-    "FRENTE": "CAMPAMENTO TACUÍ-CUNÍ",
-    "SUBFRENTE": "OFICINAS PRINCIPALES",
-    "ESTADO": "N/A",
-    "ESTACION": "N/A",
-    "YEAR": 2019
-  },
-  {
-    "ID": 40,
     "FECHA": "2019-01-16",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -720,7 +702,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 41,
+    "ID": 40,
     "FECHA": "2019-01-16",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -738,7 +720,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 42,
+    "ID": 41,
     "FECHA": "2019-01-17",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -756,7 +738,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 43,
+    "ID": 42,
     "FECHA": "2019-01-21",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -774,7 +756,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 44,
+    "ID": 43,
     "FECHA": "2019-02-03",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -792,7 +774,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 45,
+    "ID": 44,
     "FECHA": "2019-02-05",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -810,7 +792,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 46,
+    "ID": 45,
     "FECHA": "2019-02-05",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -828,7 +810,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 47,
+    "ID": 46,
     "FECHA": "2019-02-06",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -846,7 +828,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 48,
+    "ID": 47,
     "FECHA": "2019-02-06",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -864,7 +846,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 49,
+    "ID": 48,
     "FECHA": "2019-02-06",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -882,7 +864,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 50,
+    "ID": 49,
     "FECHA": "2019-02-08",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -900,7 +882,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 51,
+    "ID": 50,
     "FECHA": "2019-02-09",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -918,7 +900,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 52,
+    "ID": 51,
     "FECHA": "2019-02-10",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -936,7 +918,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 53,
+    "ID": 52,
     "FECHA": "2019-02-10",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -954,7 +936,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 54,
+    "ID": 53,
     "FECHA": "2019-02-22",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -972,7 +954,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 55,
+    "ID": 54,
     "FECHA": "2019-02-24",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -990,7 +972,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 56,
+    "ID": 55,
     "FECHA": "2019-02-24",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -1008,25 +990,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 57,
-    "FECHA": "2019-02-27",
-    "ANIO": 2019,
-    "TRIMESTRE": "T1",
-    "NIVEL_RELEVANCIA": "Alta",
-    "EVENTO": "RELEVANTE",
-    "CATEGORIA_EVENTO": "MONITOREO E INSTRUMENTACIÓN",
-    "TIPO_EVENTO": "Inspección",
-    "DESCRIPCION": "Funcionarios del área ambiental de EPM, realizan inspección a las condiciones del agua y el estado de las cavernas.",
-    "COMPONENTE": "SOCIO-AMBIENTAL",
-    "TIPO_OBRA": "SUBTERRÁNEA",
-    "FRENTE": "CAVERNAS",
-    "SUBFRENTE": "CASA MÁQUINAS",
-    "ESTADO": "N/A",
-    "ESTACION": "N/A",
-    "YEAR": 2019
-  },
-  {
-    "ID": 58,
+    "ID": 56,
     "FECHA": "2019-03-02",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -1044,7 +1008,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 59,
+    "ID": 57,
     "FECHA": "2019-03-05",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -1062,7 +1026,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 60,
+    "ID": 58,
     "FECHA": "2019-03-07",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -1080,7 +1044,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 61,
+    "ID": 59,
     "FECHA": "2019-03-11",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -1098,7 +1062,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 62,
+    "ID": 60,
     "FECHA": "2019-03-17",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -1116,7 +1080,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 63,
+    "ID": 61,
     "FECHA": "2019-03-19",
     "ANIO": 2019,
     "TRIMESTRE": "T1",
@@ -1134,7 +1098,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 64,
+    "ID": 62,
     "FECHA": "2019-04-06",
     "ANIO": 2019,
     "TRIMESTRE": "T2",
@@ -1152,7 +1116,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 65,
+    "ID": 63,
     "FECHA": "2019-11-09",
     "ANIO": 2019,
     "TRIMESTRE": "T4",
@@ -1170,7 +1134,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 66,
+    "ID": 64,
     "FECHA": "2019-12-08",
     "ANIO": 2019,
     "TRIMESTRE": "T4",
@@ -1188,7 +1152,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 67,
+    "ID": 65,
     "FECHA": "2019-12-15",
     "ANIO": 2019,
     "TRIMESTRE": "T4",
@@ -1206,7 +1170,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 68,
+    "ID": 66,
     "FECHA": "2019-12-17",
     "ANIO": 2019,
     "TRIMESTRE": "T4",
@@ -1224,7 +1188,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 69,
+    "ID": 67,
     "FECHA": "2019-12-19",
     "ANIO": 2019,
     "TRIMESTRE": "T4",
@@ -1242,7 +1206,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 70,
+    "ID": 68,
     "FECHA": "2019-12-26",
     "ANIO": 2019,
     "TRIMESTRE": "T4",
@@ -1260,7 +1224,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 71,
+    "ID": 69,
     "FECHA": "2019-12-28",
     "ANIO": 2019,
     "TRIMESTRE": "T4",
@@ -1278,7 +1242,7 @@ const RECORDS_DATA = [
     "YEAR": 2019
   },
   {
-    "ID": 72,
+    "ID": 70,
     "FECHA": "2020-01-12",
     "ANIO": 2020,
     "TRIMESTRE": "T1",
@@ -1296,7 +1260,7 @@ const RECORDS_DATA = [
     "YEAR": 2020
   },
   {
-    "ID": 73,
+    "ID": 71,
     "FECHA": "2020-01-18",
     "ANIO": 2020,
     "TRIMESTRE": "T1",
@@ -1314,7 +1278,7 @@ const RECORDS_DATA = [
     "YEAR": 2020
   },
   {
-    "ID": 74,
+    "ID": 72,
     "FECHA": "2020-01-20",
     "ANIO": 2020,
     "TRIMESTRE": "T1",
@@ -1332,7 +1296,7 @@ const RECORDS_DATA = [
     "YEAR": 2020
   },
   {
-    "ID": 75,
+    "ID": 73,
     "FECHA": "2020-02-14",
     "ANIO": 2020,
     "TRIMESTRE": "T1",
@@ -1350,7 +1314,7 @@ const RECORDS_DATA = [
     "YEAR": 2020
   },
   {
-    "ID": 76,
+    "ID": 74,
     "FECHA": "2020-02-17",
     "ANIO": 2020,
     "TRIMESTRE": "T1",
@@ -1368,7 +1332,7 @@ const RECORDS_DATA = [
     "YEAR": 2020
   },
   {
-    "ID": 77,
+    "ID": 75,
     "FECHA": "2020-03-20",
     "ANIO": 2020,
     "TRIMESTRE": "T1",
@@ -1386,7 +1350,7 @@ const RECORDS_DATA = [
     "YEAR": 2020
   },
   {
-    "ID": 78,
+    "ID": 76,
     "FECHA": "2020-03-24",
     "ANIO": 2020,
     "TRIMESTRE": "T1",
@@ -1404,7 +1368,7 @@ const RECORDS_DATA = [
     "YEAR": 2020
   },
   {
-    "ID": 79,
+    "ID": 77,
     "FECHA": "2020-03-26",
     "ANIO": 2020,
     "TRIMESTRE": "T1",
@@ -1422,7 +1386,7 @@ const RECORDS_DATA = [
     "YEAR": 2020
   },
   {
-    "ID": 80,
+    "ID": 78,
     "FECHA": "2022-11-09",
     "ANIO": 2022,
     "TRIMESTRE": "T4",
@@ -1440,7 +1404,7 @@ const RECORDS_DATA = [
     "YEAR": 2022
   },
   {
-    "ID": 81,
+    "ID": 79,
     "FECHA": "2022-11-14",
     "ANIO": 2022,
     "TRIMESTRE": "T4",
@@ -1458,7 +1422,7 @@ const RECORDS_DATA = [
     "YEAR": 2022
   },
   {
-    "ID": 82,
+    "ID": 80,
     "FECHA": "2022-11-21",
     "ANIO": 2022,
     "TRIMESTRE": "T4",
@@ -1476,7 +1440,7 @@ const RECORDS_DATA = [
     "YEAR": 2022
   },
   {
-    "ID": 83,
+    "ID": 81,
     "FECHA": "2022-11-26",
     "ANIO": 2022,
     "TRIMESTRE": "T4",
@@ -1494,7 +1458,7 @@ const RECORDS_DATA = [
     "YEAR": 2022
   },
   {
-    "ID": 84,
+    "ID": 82,
     "FECHA": "2022-11-30",
     "ANIO": 2022,
     "TRIMESTRE": "T4",
@@ -1512,7 +1476,7 @@ const RECORDS_DATA = [
     "YEAR": 2022
   },
   {
-    "ID": 85,
+    "ID": 83,
     "FECHA": "2022-11-30",
     "ANIO": 2022,
     "TRIMESTRE": "T4",
@@ -1530,7 +1494,7 @@ const RECORDS_DATA = [
     "YEAR": 2022
   },
   {
-    "ID": 86,
+    "ID": 84,
     "FECHA": "2022-12-07",
     "ANIO": 2022,
     "TRIMESTRE": "T4",
@@ -1548,7 +1512,7 @@ const RECORDS_DATA = [
     "YEAR": 2022
   },
   {
-    "ID": 87,
+    "ID": 85,
     "FECHA": "2022-12-14",
     "ANIO": 2022,
     "TRIMESTRE": "T4",
@@ -1566,7 +1530,7 @@ const RECORDS_DATA = [
     "YEAR": 2022
   },
   {
-    "ID": 88,
+    "ID": 86,
     "FECHA": "2022-12-14",
     "ANIO": 2022,
     "TRIMESTRE": "T4",
@@ -1584,7 +1548,7 @@ const RECORDS_DATA = [
     "YEAR": 2022
   },
   {
-    "ID": 89,
+    "ID": 87,
     "FECHA": "2023-04-01",
     "ANIO": 2023,
     "TRIMESTRE": "T2",
@@ -1602,7 +1566,7 @@ const RECORDS_DATA = [
     "YEAR": 2023
   },
   {
-    "ID": 90,
+    "ID": 88,
     "FECHA": "2023-05-08",
     "ANIO": 2023,
     "TRIMESTRE": "T2",
@@ -1620,7 +1584,7 @@ const RECORDS_DATA = [
     "YEAR": 2023
   },
   {
-    "ID": 91,
+    "ID": 89,
     "FECHA": "2023-05-12",
     "ANIO": 2023,
     "TRIMESTRE": "T2",
@@ -1638,7 +1602,7 @@ const RECORDS_DATA = [
     "YEAR": 2023
   },
   {
-    "ID": 92,
+    "ID": 90,
     "FECHA": "2023-05-24",
     "ANIO": 2023,
     "TRIMESTRE": "T2",
@@ -1656,7 +1620,7 @@ const RECORDS_DATA = [
     "YEAR": 2023
   },
   {
-    "ID": 93,
+    "ID": 91,
     "FECHA": "2023-05-28",
     "ANIO": 2023,
     "TRIMESTRE": "T2",
@@ -1668,31 +1632,31 @@ const RECORDS_DATA = [
     "COMPONENTE": "CMT",
     "TIPO_OBRA": "N/A",
     "FRENTE": "CAVERNAS",
-    "SUBFRENTE": "PROYECTO ITUANGO LOCAL",
+    "SUBFRENTE": "EPM",
     "ESTADO": "Finalizado",
     "ESTACION": "SISMOLOGÍA",
     "YEAR": 2023
   },
   {
-    "ID": 94,
-    "FECHA": "2024-07-09",
+    "ID": 92,
+    "FECHA": "2024-06-21",
     "ANIO": 2024,
-    "TRIMESTRE": "T3",
-    "NIVEL_RELEVANCIA": "Media",
+    "TRIMESTRE": "T2",
+    "NIVEL_RELEVANCIA": "Alta",
     "EVENTO": "RELEVANTE",
-    "CATEGORIA_EVENTO": "OBRA CIVIL",
-    "TIPO_EVENTO": "Tratamiento de roca",
-    "DESCRIPCION": "Se inician los trabajos de tratamientos en el túnel de descarga 3, con pruebas de adherancia acústica (tun tuneo)",
+    "CATEGORIA_EVENTO": "POR CLASIFICAR",
+    "TIPO_EVENTO": "Acta de entrega",
+    "DESCRIPCION": "Se realiza entrega parcial de circuito cerrado de televisión CCTV durante la construcción de la primera etapa del Proyecto Hidroeléctrico Ituango, correspondiente a los Servicios Auxiliares Eléctricos de Casa de Máquinas Norte, Caverna de Transformadores Norte, SE 500 kV, Vertedero, Captación, el cual hace parte del objeto del contrato CT-2016-000085, para la operación comercial de la central.",
     "COMPONENTE": "CIVIL",
     "TIPO_OBRA": "SUBTERRÁNEA",
-    "FRENTE": "DESCARGAS",
-    "SUBFRENTE": "DESCARGA 3",
-    "ESTADO": "En ejecución",
+    "FRENTE": "CAVERNAS",
+    "SUBFRENTE": "CASA DE MÁQUINAS NORTE",
+    "ESTADO": "Finalizado",
     "ESTACION": "CCTV",
     "YEAR": 2024
   },
   {
-    "ID": 95,
+    "ID": 93,
     "FECHA": "2024-07-25",
     "ANIO": 2024,
     "TRIMESTRE": "T3",
@@ -1710,7 +1674,7 @@ const RECORDS_DATA = [
     "YEAR": 2024
   },
   {
-    "ID": 96,
+    "ID": 94,
     "FECHA": "2024-07-26",
     "ANIO": 2024,
     "TRIMESTRE": "T3",
@@ -1728,7 +1692,7 @@ const RECORDS_DATA = [
     "YEAR": 2024
   },
   {
-    "ID": 97,
+    "ID": 95,
     "FECHA": "2024-07-29",
     "ANIO": 2024,
     "TRIMESTRE": "T3",
@@ -1746,25 +1710,7 @@ const RECORDS_DATA = [
     "YEAR": 2024
   },
   {
-    "ID": 98,
-    "FECHA": "2024-09-12",
-    "ANIO": 2024,
-    "TRIMESTRE": "T3",
-    "NIVEL_RELEVANCIA": "Media",
-    "EVENTO": "RELEVANTE",
-    "CATEGORIA_EVENTO": "OBRA CIVIL",
-    "TIPO_EVENTO": "Vaciado de concreto",
-    "DESCRIPCION": "Limpieza, lavado del área y vaciado de concreto km 0+427,90 / km 0+439,50; EL. 256,70 / 257,98",
-    "COMPONENTE": "CIVIL",
-    "TIPO_OBRA": "SUBTERRÁNEA",
-    "FRENTE": "DESCARGAS",
-    "SUBFRENTE": "TÚNEL DE DESCARGA INTERMEDIA",
-    "ESTADO": "Finalizado",
-    "ESTACION": "CCTV",
-    "YEAR": 2024
-  },
-  {
-    "ID": 99,
+    "ID": 96,
     "FECHA": "2024-09-15",
     "ANIO": 2024,
     "TRIMESTRE": "T3",
@@ -1782,7 +1728,25 @@ const RECORDS_DATA = [
     "YEAR": 2024
   },
   {
-    "ID": 100,
+    "ID": 97,
+    "FECHA": "2024-09-19",
+    "ANIO": 2024,
+    "TRIMESTRE": "T3",
+    "NIVEL_RELEVANCIA": "Alta",
+    "EVENTO": "HITO",
+    "CATEGORIA_EVENTO": "POR CLASIFICAR",
+    "TIPO_EVENTO": "Tapón TDD",
+    "DESCRIPCION": "Se finaliza vaciado del tapón definitivo en concreto del TDD",
+    "COMPONENTE": "CIVIL",
+    "TIPO_OBRA": "SUBTERRÁNEA",
+    "FRENTE": "TÚNELES DE DESVIACIONES",
+    "SUBFRENTE": "TÚNEL DE DESVIACIÓN DERECHO TDD",
+    "ESTADO": "Finalizado",
+    "ESTACION": "CCTV",
+    "YEAR": 2024
+  },
+  {
+    "ID": 98,
     "FECHA": "2026-04-25",
     "ANIO": 2026,
     "TRIMESTRE": "T2",
@@ -1800,7 +1764,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 101,
+    "ID": 99,
     "FECHA": "2026-04-27",
     "ANIO": 2026,
     "TRIMESTRE": "T2",
@@ -1818,7 +1782,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 102,
+    "ID": 100,
     "FECHA": "2026-05-04",
     "ANIO": 2026,
     "TRIMESTRE": "T2",
@@ -1836,7 +1800,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 103,
+    "ID": 101,
     "FECHA": "2026-06-01",
     "ANIO": 2026,
     "TRIMESTRE": "T2",
@@ -1854,7 +1818,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 104,
+    "ID": 102,
     "FECHA": "2026-06-02",
     "ANIO": 2026,
     "TRIMESTRE": "T2",
@@ -1872,7 +1836,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 105,
+    "ID": 103,
     "FECHA": "2026-06-08",
     "ANIO": 2026,
     "TRIMESTRE": "T2",
@@ -1890,7 +1854,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 106,
+    "ID": 104,
     "FECHA": "2026-06-08",
     "ANIO": 2026,
     "TRIMESTRE": "T2",
@@ -1908,7 +1872,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 107,
+    "ID": 105,
     "FECHA": "2026-06-21",
     "ANIO": 2026,
     "TRIMESTRE": "T2",
@@ -1926,7 +1890,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 108,
+    "ID": 106,
     "FECHA": "2026-07-08",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -1944,7 +1908,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 109,
+    "ID": 107,
     "FECHA": "2026-07-13",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -1962,7 +1926,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 110,
+    "ID": 108,
     "FECHA": "2026-07-13",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -1980,7 +1944,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 111,
+    "ID": 109,
     "FECHA": "2026-07-19",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -1998,7 +1962,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 112,
+    "ID": 110,
     "FECHA": "2026-08-05",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2016,7 +1980,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 113,
+    "ID": 111,
     "FECHA": "2026-08-17",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2034,7 +1998,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 114,
+    "ID": 112,
     "FECHA": "2026-08-20",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2042,7 +2006,7 @@ const RECORDS_DATA = [
     "EVENTO": "RELEVANTE",
     "CATEGORIA_EVENTO": "OBRA CIVIL",
     "TIPO_EVENTO": "Revestimiento",
-    "DESCRIPCION": "Instalación revestimiento inferior en la *U68",
+    "DESCRIPCION": "Instalación revestimiento inferior en la *UG8",
     "COMPONENTE": "ELECTROMECÁNICA",
     "TIPO_OBRA": "SUBTERRÁNEA",
     "FRENTE": "CAVERNAS",
@@ -2052,7 +2016,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 115,
+    "ID": 113,
     "FECHA": "2026-08-20",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2070,7 +2034,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 116,
+    "ID": 114,
     "FECHA": "2026-08-25",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2088,7 +2052,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 117,
+    "ID": 115,
     "FECHA": "2026-09-10",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2106,7 +2070,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 118,
+    "ID": 116,
     "FECHA": "2026-09-11",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2124,7 +2088,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 119,
+    "ID": 117,
     "FECHA": "2026-09-11",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2142,7 +2106,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 120,
+    "ID": 118,
     "FECHA": "2026-09-25",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2160,7 +2124,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 121,
+    "ID": 119,
     "FECHA": "2026-09-25",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2178,7 +2142,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 122,
+    "ID": 120,
     "FECHA": "2026-09-26",
     "ANIO": 2026,
     "TRIMESTRE": "T3",
@@ -2196,97 +2160,7 @@ const RECORDS_DATA = [
     "YEAR": 2026
   },
   {
-    "ID": 123,
-    "FECHA": "2026-09-27",
-    "ANIO": 2026,
-    "TRIMESTRE": "T3",
-    "NIVEL_RELEVANCIA": "Alta",
-    "EVENTO": "RELEVANTE",
-    "CATEGORIA_EVENTO": "OBRA CIVIL",
-    "TIPO_EVENTO": "Vaciado de concreto",
-    "DESCRIPCION": "Se realiza vaciado de concreto masivo entre la cota 208.80/210.90 camada 5 de la UG 5",
-    "COMPONENTE": "CIVIL",
-    "TIPO_OBRA": "SUBTERRÁNEA",
-    "FRENTE": "CAVERNAS",
-    "SUBFRENTE": "UNIDAD DE GENERACIÓN 5",
-    "ESTADO": "Finalizado",
-    "ESTACION": "CCTV",
-    "YEAR": 2026
-  },
-  {
-    "ID": 124,
-    "FECHA": "2026-09-30",
-    "ANIO": 2026,
-    "TRIMESTRE": "T3",
-    "NIVEL_RELEVANCIA": "Alta",
-    "EVENTO": "RELEVANTE",
-    "CATEGORIA_EVENTO": "OBRA CIVIL",
-    "TIPO_EVENTO": "Vaciado de concreto",
-    "DESCRIPCION": "Se realiza vaciado de concreto masivo entre la cota 205.50 /208.80 camada 2 de la UG 6",
-    "COMPONENTE": "CIVIL",
-    "TIPO_OBRA": "SUBTERRÁNEA",
-    "FRENTE": "CAVERNAS",
-    "SUBFRENTE": "UNIDAD DE GENERACIÓN 6",
-    "ESTADO": "Finalizado",
-    "ESTACION": "CCTV",
-    "YEAR": 2026
-  },
-  {
-    "ID": 125,
-    "FECHA": "2026-10-02",
-    "ANIO": 2026,
-    "TRIMESTRE": "T4",
-    "NIVEL_RELEVANCIA": "Alta",
-    "EVENTO": "RELEVANTE",
-    "CATEGORIA_EVENTO": "OPERACIÓN HIDRÁULICA",
-    "TIPO_EVENTO": "Llenado de embalse",
-    "DESCRIPCION": "Se registra por primera vez en la historia del proyecto en alcanzar los 409.50 m.s.n.m el embalse de la central Hidroituango",
-    "COMPONENTE": "CMT",
-    "TIPO_OBRA": "SUPERFICIAL",
-    "FRENTE": "EMBALSE",
-    "SUBFRENTE": "EMBALSE",
-    "ESTADO": "En ejecución",
-    "ESTACION": "HIDROMETRÍA",
-    "YEAR": 2026
-  },
-  {
-    "ID": 126,
-    "FECHA": "2026-10-06",
-    "ANIO": 2026,
-    "TRIMESTRE": "T4",
-    "NIVEL_RELEVANCIA": "Alta",
-    "EVENTO": "RELEVANTE",
-    "CATEGORIA_EVENTO": "OPERACIÓN HIDRÁULICA",
-    "TIPO_EVENTO": "Llenado de embalse",
-    "DESCRIPCION": "Se alcanza los 411.00 m.s.n.m de ascenso controlado del embalse legando a la primera etapa de acuerdo al manual desarrollado para la maniobra",
-    "COMPONENTE": "CMT",
-    "TIPO_OBRA": "SUPERFICIAL",
-    "FRENTE": "EMBALSE",
-    "SUBFRENTE": "EMBALSE",
-    "ESTADO": "En ejecución",
-    "ESTACION": "HIDROMETRÍA",
-    "YEAR": 2026
-  },
-  {
-    "ID": 127,
-    "FECHA": "2026-10-10",
-    "ANIO": 2026,
-    "TRIMESTRE": "T4",
-    "NIVEL_RELEVANCIA": "Media",
-    "EVENTO": "RELEVANTE",
-    "CATEGORIA_EVENTO": "OPERACIÓN HIDRÁULICA",
-    "TIPO_EVENTO": "Llenado de embalse",
-    "DESCRIPCION": "El día de hoy se presenta espejo de agua que acanza la altura 412 m.s.n.m en el embarcadero que hizo parte estructural en los trabajos subacuáticos de las captaciones",
-    "COMPONENTE": "CMT",
-    "TIPO_OBRA": "SUPERFICIAL",
-    "FRENTE": "EMBALSE",
-    "SUBFRENTE": "EMBALSE",
-    "ESTADO": "En ejecución",
-    "ESTACION": "CCTV",
-    "YEAR": 2026
-  },
-  {
-    "ID": 128,
+    "ID": 121,
     "FECHA": "2026-11-09",
     "ANIO": 2026,
     "TRIMESTRE": "T4",
@@ -2304,5 +2178,5 @@ const RECORDS_DATA = [
     "YEAR": 2026
   }
 ];
-const HIDDEN_HITOS = ["k2a8006c0","k4f3c5f3b","k7c1545d","kb6d666ce","kc246b140","kd781b1d7","ke5e43959"];
-const HIDDEN_HITOS_VER = "1795730347566";
+const HIDDEN_HITOS = [];
+const HIDDEN_HITOS_VER = "1795803836881";
