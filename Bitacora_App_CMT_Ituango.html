@@ -161,8 +161,25 @@
   .projecting:not(:fullscreen){ position:fixed !important; inset:0; z-index:9999; }
   .projecting .proj-btn{ opacity:.35; }
   /* toda la seccion */
-  #analisis-wrap.projecting{ padding:28px 36px; display:flex; flex-direction:column; gap:18px; }
-  #analisis-wrap.projecting .proj-title{ display:block; font-family:"IBM Plex Sans Condensed"; font-size:26px; font-weight:700; color:var(--accent); }
+  .proj-target.projecting{ padding:28px 36px; display:flex; flex-direction:column; gap:18px; }
+  .proj-target.projecting > .proj-title{ display:block; font-family:"IBM Plex Sans Condensed"; font-size:26px; font-weight:700; color:var(--accent); }
+  .projecting .proj-btn-all{ display:none; }
+  /* Resumen proyectado: tarjetas mas grandes */
+  #resumen-wrap.projecting{ justify-content:center; gap:10px; }
+  #resumen-wrap.projecting .section-head{ margin:18px 0 4px; }
+  #resumen-wrap.projecting .section-head h2{ font-size:26px; }
+  #resumen-wrap.projecting .stat{ padding:30px 22px; }
+  #resumen-wrap.projecting .stat .label{ font-size:15px; }
+  #resumen-wrap.projecting .stat .value{ font-size:48px; }
+  #resumen-wrap.projecting .stat .value small{ font-size:18px; }
+  #resumen-wrap.projecting .stat .foot{ font-size:14px; }
+  /* Linea de tiempo proyectada: el recuadro ocupa toda la pantalla */
+  #hitos-resize-wrap.projecting .panel-hitos{ width:100% !important; height:auto !important; flex:1; min-height:0; }
+  #hitos-resize-wrap.projecting .ztl-edge-resize{ display:none; }
+  /* Registro proyectado: tabla con letra mas grande y sin limite de alto */
+  #registro-wrap.projecting .table-wrap{ max-height:none; flex:1; min-height:0; }
+  #registro-wrap.projecting table{ font-size:15px; }
+  #registro-wrap.projecting .proj-title{ margin-bottom:4px; }
   #analisis-wrap.projecting .grid-analisis{ flex:1; }
   #analisis-wrap.projecting .panel h3{ font-size:18px; }
   #analisis-wrap.projecting .panel-sub{ font-size:13px; }
@@ -564,9 +581,12 @@
     </div>
   </div>
 
+  <div id="resumen-wrap" class="proj-target">
+  <div class="proj-title">Resumen · Bitácora CMT Ituango</div>
   <div class="section-head">
     <h2>Indicadores por estación CMT</h2>
     <div class="note">Eventos monitoreados por cada estación de instrumentación</div>
+    <button class="reset-link proj-btn-all" type="button" data-project="resumen-wrap" title="Mostrar en pantalla completa (para proyectar). Esc para salir.">⛶ Proyectar resumen</button>
   </div>
   <div class="stats-est" id="stat-strip-estaciones"></div>
 
@@ -574,12 +594,14 @@
     <h2>Indicadores generales</h2>
   </div>
   <div class="stats" id="stat-strip"></div>
+  </div>
 
   <div class="section-head" id="sec-hitos">
     <h2>Línea de tiempo de hitos</h2>
     <div class="note" id="hitos-note"></div>
     <button class="reset-link" id="btn-hitos-autofit" type="button" title="Vuelve el recuadro al tamaño que se ajusta justo al contenido actual (por si quedó un tamaño guardado de antes)">⤢ Ajustar tamaño automático</button>
     <button class="reset-link" id="btn-hitos-zoom75" type="button" title="Pone el mismo tamaño (75%) a todas las tarjetas, para que queden parejas sin espacios sueltos">🔍 Parejar zoom al 75%</button>
+    <button class="reset-link proj-btn-all" type="button" data-project="hitos-resize-wrap" title="Mostrar en pantalla completa (para proyectar). Esc para salir.">⛶ Proyectar línea de tiempo</button>
   </div>
   <div class="filter-bar hitos-filter-bar" style="margin-bottom:10px;">
     <div class="filter-group">
@@ -613,7 +635,8 @@
     <button class="reset-link push" id="btn-hide-off-hitos" type="button" title="Muestra un momento las tarjetas apagadas (atenuadas) para poder encender alguna de nuevo">Ver apagadas</button>
     <button class="reset-link" id="btn-show-hidden-hitos" type="button">Encender todas</button>
   </div>
-  <div class="hitos-resize-wrap" id="hitos-resize-wrap">
+  <div class="hitos-resize-wrap proj-target" id="hitos-resize-wrap">
+    <div class="proj-title">Línea de tiempo de hitos · Bitácora CMT Ituango</div>
     <div class="panel panel-hitos" id="hitos-panel">
       <div class="ztl-wrap">
         <div class="ztl-track" id="hitos-scroll"><div class="ztl-line"></div></div>
@@ -677,6 +700,7 @@
   <div class="section-head" id="sec-registro">
     <h2>Registro de eventos</h2>
     <div class="note" id="total-note"></div>
+    <button class="reset-link proj-btn-all" type="button" data-project="registro-wrap" title="Mostrar en pantalla completa (para proyectar). Esc para salir.">⛶ Proyectar registro</button>
   </div>
 
   <div class="filter-bar admin-only" style="margin-bottom:12px;">
@@ -685,6 +709,8 @@
     <button class="reset-link push" id="btn-export-manual" type="button">Exportar eventos manuales (CSV)</button>
   </div>
 
+  <div id="registro-wrap" class="proj-target">
+  <div class="proj-title">Registro de eventos · Bitácora CMT Ituango</div>
   <div class="filter-bar">
     <div class="filter-group">
       <span class="fg-label">Desde</span>
@@ -728,6 +754,7 @@
       </thead>
       <tbody id="table-body"></tbody>
     </table>
+  </div>
   </div>
 
   <div class="section-head admin-only" id="sec-pendientes">
@@ -2619,7 +2646,7 @@ window.addEventListener('unhandledrejection', function(e){
   // Numero de version de esta pagina. Antes de publicar se compara con la pagina que esta
   // en GitHub: si alla hay una version mas nueva, se pide recargar primero, para que no se
   // publique con codigo viejo guardado en el navegador.
-  const APP_BUILD = '1795810290';
+  const APP_BUILD = '1795810546';
   async function isAppOutdated(){
     if (location.protocol === 'file:') return false;
     try {
