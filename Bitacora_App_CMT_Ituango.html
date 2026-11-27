@@ -149,6 +149,42 @@
   .rank-row:hover{ background:var(--accent-wash); }
   /* Analisis: arriba 2 graficas grandes (mitad y mitad), abajo 3 rankings (un tercio cada uno). */
   .grid-analisis{ grid-template-columns:repeat(6,1fr); }
+  /* ---- Proyectar: una grafica sola o toda la seccion en pantalla completa ---- */
+  .grid-analisis > .panel{ position:relative; }
+  .proj-btn{ position:absolute; top:12px; right:12px; background:none; border:1px solid transparent; border-radius:7px; cursor:pointer;
+    font-size:15px; line-height:1; padding:4px 6px; color:var(--ink-muted); opacity:.55; transition:opacity .15s ease, color .15s ease, border-color .15s ease; }
+  .panel:hover .proj-btn{ opacity:1; }
+  .proj-btn:hover{ color:var(--accent); border-color:var(--accent); }
+  .proj-btn-all{ margin-left:auto; }
+  .proj-title{ display:none; }
+  .projecting{ background:var(--page) !important; overflow:auto; box-sizing:border-box; }
+  .projecting:not(:fullscreen){ position:fixed !important; inset:0; z-index:9999; }
+  .projecting .proj-btn{ opacity:.35; }
+  /* toda la seccion */
+  #analisis-wrap.projecting{ padding:28px 36px; display:flex; flex-direction:column; gap:18px; }
+  #analisis-wrap.projecting .proj-title{ display:block; font-family:"IBM Plex Sans Condensed"; font-size:26px; font-weight:700; color:var(--accent); }
+  #analisis-wrap.projecting .grid-analisis{ flex:1; }
+  #analisis-wrap.projecting .panel h3{ font-size:18px; }
+  #analisis-wrap.projecting .panel-sub{ font-size:13px; }
+  #analisis-wrap.projecting .rank-row .rname{ font-size:14px; }
+  #analisis-wrap.projecting .rank-row .rval{ font-size:14px; }
+  #analisis-wrap.projecting .rank-row{ grid-template-columns:170px 1fr 44px; }
+  /* una grafica sola */
+  .panel.projecting{ border-radius:0; padding:40px 56px; display:flex; flex-direction:column; justify-content:center; }
+  .panel.projecting h3{ font-size:30px; }
+  .panel.projecting .panel-sub{ font-size:17px; }
+  .panel.projecting #chart-timeline{ width:100%; height:auto; max-height:72vh; }
+  .panel.projecting .legend{ font-size:17px; justify-content:center; gap:22px; }
+  .panel.projecting .legend-swatch{ width:16px; height:16px; }
+  .panel.projecting .donut-wrap{ gap:70px; }
+  .panel.projecting .donut-wrap svg{ width:min(62vh,560px); height:min(62vh,560px); }
+  .panel.projecting .donut-legend{ font-size:20px; }
+  .panel.projecting .donut-legend-item{ font-size:20px; gap:12px; }
+  .panel.projecting .rank-row{ grid-template-columns:300px 1fr 70px; gap:18px; padding:10px 8px; }
+  .panel.projecting .rank-row .rname{ font-size:22px; }
+  .panel.projecting .rank-row .rval{ font-size:22px; }
+  .panel.projecting .rank-track{ height:30px; border-radius:5px; }
+  .panel.projecting .rank-fill{ border-radius:5px; }
   .grid-analisis .span-half{ grid-column:span 3; }
   .grid-analisis .span-third{ grid-column:span 2; }
   @media (max-width:900px){ .grid-analisis{ grid-template-columns:1fr; } .grid-analisis .span-half, .grid-analisis .span-third{ grid-column:auto; } }
@@ -596,15 +632,20 @@
 
   <div class="section-head" id="sec-analisis">
     <h2>Análisis</h2>
+    <button class="reset-link proj-btn-all" type="button" data-project="analisis-wrap" title="Mostrar todas las gráficas en pantalla completa (para proyectar). Esc para salir.">⛶ Proyectar gráficas</button>
   </div>
+  <div id="analisis-wrap" class="proj-target">
+  <div class="proj-title">Análisis · Bitácora CMT Ituango</div>
   <div class="grid-secondary grid-analisis">
     <div class="panel span-half">
+      <button class="proj-btn" type="button" data-project-panel title="Ver esta gráfica sola en pantalla completa (para proyectar). Esc para salir.">⛶</button>
       <h3>Eventos por año y componente</h3>
       <div class="panel-sub">2012 – 2023 · apilado por componente responsable</div>
       <svg id="chart-timeline" width="100%" viewBox="0 0 1120 340" preserveAspectRatio="xMidYMid meet" style="margin-top:14px;"></svg>
       <div class="legend" id="legend-componente"></div>
     </div>
     <div class="panel span-half">
+      <button class="proj-btn" type="button" data-project-panel title="Ver esta gráfica sola en pantalla completa (para proyectar). Esc para salir.">⛶</button>
       <h3>Distribución por estado</h3>
       <div class="panel-sub">Eventos según su estado</div>
       <div class="donut-wrap" style="margin-top:10px;">
@@ -613,20 +654,24 @@
       </div>
     </div>
     <div class="panel span-third">
+      <button class="proj-btn" type="button" data-project-panel title="Ver esta gráfica sola en pantalla completa (para proyectar). Esc para salir.">⛶</button>
       <h3>Tipo de obra</h3>
       <div class="panel-sub">Subterránea vs. superficial</div>
       <div id="rank-tipo-obra" style="margin-top:14px;"></div>
     </div>
     <div class="panel span-third">
+      <button class="proj-btn" type="button" data-project-panel title="Ver esta gráfica sola en pantalla completa (para proyectar). Esc para salir.">⛶</button>
       <h3>Frentes con más eventos</h3>
       <div class="panel-sub">Top 8 frentes registrados</div>
       <div id="rank-frente" style="margin-top:14px;"></div>
     </div>
     <div class="panel span-third">
+      <button class="proj-btn" type="button" data-project-panel title="Ver esta gráfica sola en pantalla completa (para proyectar). Esc para salir.">⛶</button>
       <h3>Tipos de evento más reportados</h3>
       <div class="panel-sub">Top 8 categorías</div>
       <div id="rank-tipo-evento" style="margin-top:14px;"></div>
     </div>
+  </div>
   </div>
 
   <div class="section-head" id="sec-registro">
@@ -1341,11 +1386,40 @@ window.addEventListener('unhandledrejection', function(e){
   setupGlobalDeselect();
   setupScaleBox();
   setupGithubPublish();
+  setupProjectMode();
 
   if (typeof RECORDS_DATA === 'undefined'){
     document.getElementById('table-body').innerHTML = '<tr class="empty-row"><td colspan="9">No se encontró bitacora_data.js — debe estar en la misma carpeta.</td></tr>';
   } else {
     loadAndRender(RECORDS_DATA);
+  }
+
+  // ============ proyectar graficas (pantalla completa) ============
+  function setupProjectMode(){
+    let current = null;
+    const exit = () => {
+      if (!current) return;
+      current.classList.remove('projecting');
+      current = null;
+      if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(()=>{});
+    };
+    const enter = async (el) => {
+      if (current === el){ exit(); return; }
+      exit();
+      current = el;
+      el.classList.add('projecting');
+      try { if (el.requestFullscreen) await el.requestFullscreen(); } catch(_e){ /* sin pantalla completa: queda a toda la ventana */ }
+    };
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement && current){ current.classList.remove('projecting'); current = null; }
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && current && !document.fullscreenElement) exit(); });
+    document.querySelectorAll('[data-project-panel]').forEach(btn => {
+      btn.addEventListener('click', (e) => { e.stopPropagation(); enter(btn.closest('.panel')); });
+    });
+    document.querySelectorAll('[data-project]').forEach(btn => {
+      btn.addEventListener('click', () => enter(document.getElementById(btn.dataset.project)));
+    });
   }
 
   async function loadAndRender(base){
@@ -2545,7 +2619,7 @@ window.addEventListener('unhandledrejection', function(e){
   // Numero de version de esta pagina. Antes de publicar se compara con la pagina que esta
   // en GitHub: si alla hay una version mas nueva, se pide recargar primero, para que no se
   // publique con codigo viejo guardado en el navegador.
-  const APP_BUILD = '1795730131';
+  const APP_BUILD = '1795810290';
   async function isAppOutdated(){
     if (location.protocol === 'file:') return false;
     try {
