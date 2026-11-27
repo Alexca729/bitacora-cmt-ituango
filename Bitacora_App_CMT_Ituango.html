@@ -271,7 +271,9 @@
     @page{ size:landscape; margin:8mm; }
     html, body{ background:#fff !important; }
     body.printing-timeline > *:not(#print-root){ display:none !important; }
-    body.printing-timeline #print-root{ display:block !important; }
+    /* la hoja completa (Carta o A4 horizontal menos margenes): el dibujo queda centrado en ella */
+    body.printing-timeline #print-root{ display:flex !important; flex-direction:column; height:190mm; box-sizing:border-box; overflow:hidden; }
+    body.printing-timeline #print-root .print-frame{ margin:auto; }
     #print-root, #print-root *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   }
   /* --ztl-half se recalcula por JS segun lo que realmente ocupan las tarjetas (con su
@@ -2727,7 +2729,7 @@ window.addEventListener('unhandledrejection', function(e){
   // Numero de version de esta pagina. Antes de publicar se compara con la pagina que esta
   // en GitHub: si alla hay una version mas nueva, se pide recargar primero, para que no se
   // publique con codigo viejo guardado en el navegador.
-  const APP_BUILD = '1795810851';
+  const APP_BUILD = '1795812534';
   async function isAppOutdated(){
     if (location.protocol === 'file:') return false;
     try {
